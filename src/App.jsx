@@ -61,7 +61,7 @@ export default function App() {
         style={{
           minHeight: "100vh",
           backgroundImage:
-            "url(https://images.unsplash.com/photo-1519741497674-611481863552?w=1600)",
+            "url(/assets/IMG_9690.jpg)",
           backgroundSize: "cover",
           backgroundPosition: "center",
           position: "relative",
@@ -239,9 +239,9 @@ export default function App() {
                 }}
               >
                 {[
-                  "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=800",
-                  "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800",
-                  "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800",
+                  { src: "/assets/IMG_9679.jpg", alt: "The Proposal" },
+                  { src: "/assets/IMG_9689.jpg", alt: "Engaged!" },
+                  { src: "/assets/IMG_3658.jpg", alt: "Fenway Kiss" },
                 ].map((img, i) => (
                   <motion.div
                     key={i}
@@ -255,8 +255,8 @@ export default function App() {
                     }}
                   >
                     <img
-                      src={img}
-                      alt={`Memory ${i + 1}`}
+                      src={img.src}
+                      alt={img.alt}
                       style={{
                         width: "100%",
                         height: "100%",
