@@ -1222,9 +1222,6 @@ const GroomCard = React.memo(({ person }) => {
             }}
           >
             <div>
-              <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", color: "#333", textAlign: "center" }}>
-                {person.name}'s Stats 💪
-              </h3>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.75rem", marginBottom: "1rem" }}>
                 <StatCell label="Max Bench" value={person.maxBench} color={color} />
                 <StatCell label="40-Yard" value={person.fortyYard} color={color} />
