@@ -405,7 +405,7 @@ export default function App() {
                   Click below to open our RSVP form:
                 </p>
                 <a
-                  href="YOUR_GOOGLE_FORM_URL_HERE"
+                  href="https://forms.gle/9U5nv3R1hasEXZYJA"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
