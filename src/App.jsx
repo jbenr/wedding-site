@@ -957,7 +957,7 @@ function WeddingPartyTab() {
       footballTeam: "Cleveland Browns",
       footballLogo: brown,
       comment:
-        "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
+        "Let's hope Harry shows up on time to the ceremony."
     },
     {
       name: "Chuck",
@@ -991,11 +991,11 @@ function WeddingPartyTab() {
       footballTeam: "The Hokies",
       footballLogo: vt,
       comment:
-        "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
+        "Probably the most controversial character in the lineup, look for Jacko to get up on stage for the late night."
     },
     {
-      name: "Cole D",
-      relation: "Dog",
+      name: "Cole Dickinson",
+      relation: "Friend",
       photos: colePhotos,
       role: "Groomsman",
       maxBench: "285 lbs",
@@ -1008,10 +1008,10 @@ function WeddingPartyTab() {
       footballTeam: "Washington Football Team",
       footballLogo: skins,
       comment:
-        "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
+        "It's too Cole for my Dickinson."
     },
     {
-      name: "Henry",
+      name: "Henry Kreienbaum",
       relation: "Friend",
       photos: henryPhotos,
       role: "Groomsman",
@@ -1020,12 +1020,12 @@ function WeddingPartyTab() {
       handicap: "15.0",
       relationshipStatus: "Taken",
       currentCity: "Atlanta, GA",
-      college: "James Madison University University",
+      college: "James Madison University",
       collegeLogo: dukes,
       footballTeam: "Washington Commanders",
       footballLogo: skins,
       comment:
-        "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
+        "Don't ask this guy about Nascar."
     },
     {
       name: "Oliver",
@@ -1042,7 +1042,7 @@ function WeddingPartyTab() {
       footballTeam: "Washington Redskins",
       footballLogo: skins,
       comment:
-        "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
+        "Can I get a roll tide."
     },
     {
       name: "Wyatt",
@@ -1059,7 +1059,7 @@ function WeddingPartyTab() {
       footballTeam: "The Vols",
       footballLogo: ut,
       comment:
-        "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
+        "Fill in description."
     }
   ];
 
