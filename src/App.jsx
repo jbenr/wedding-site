@@ -10,8 +10,6 @@ import heroImage from './assets/IMG_9690.jpg';
 import proposalPhoto from './assets/IMG_9679.jpg';
 import engagedPhoto from './assets/IMG_9689.jpg';
 import fenwayPhoto from './assets/IMG_3658.jpg';
-import groomsman1Photo1 from './assets/img_9215.jpg';
-import groomsman1Photo2 from './assets/img_0201.jpg';
 
 export default function App() {
   const [tab, setTab] = useState("main");
@@ -321,22 +319,139 @@ function GuestBookTab({ entries, setEntries }) {
   );
 }
 
+import groomsman1Photo1 from './assets/img_9215.jpg';
+import groomsman1Photo2 from './assets/img_0201.jpg';
+import g2p1 from './assets/img_0796.jpg'
+import w from './assets/W.png'
+import bears from './assets/bears.png'
+import j1 from './assets/img_5661.jpg'
+import j2 from './assets/img_0600.jpg'
+import T from './assets/UT.png'
+import sc from './assets/SC.png'
+import skins from './assets/skins.png'
+import dukes from './assets/JMU.webp'
+import UVA from './assets/UVA.png'
+import nu from './assets/NU.png'
+import wl from './assets/WL.png'
+import vt from './assets/hokies.webp'
+import brown from './assets/brown.png'
+import h1 from './assets/img_0175.jpg'
+
 function WeddingPartyTab() {
-  const groomsmen = [{
+  const groomsmen = [
+    {
     name: "Harry",
     relation: "Brother",
     photos: [groomsman1Photo1, groomsman1Photo2],
     role: "Best Man",
     maxBench: "135 lbs",
-    fortyYard: "4.8s",
+    fortyYard: "4.95s",
+    handicap: "20.0",
     relationshipStatus: "Taken",
     currentCity: "Williamsburg, NY",
     college: "Northwestern University",
-    collegeLogo: null, // Replace with: import northwesternLogo from './assets/northwestern.png'
+    collegeLogo: nu, // Replace with: import northwesternLogo from './assets/northwestern.png'
     footballTeam: "Cleveland Browns",
-    footballLogo: null, // Replace with: import brownsLogo from './assets/browns.png'
+    footballLogo: brown, // Replace with: import brownsLogo from './assets/browns.png'
     comment: "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
-  }];
+  },
+    {
+    name: "Chuck",
+    relation: "Brother",
+    photos: [g2p1, null],
+    role: "Groomsman",
+    maxBench: "105 lbs",
+    fortyYard: "5.2s",
+    handicap: "20.0",
+    relationshipStatus: "Taken",
+    currentCity: "Chicago, IL",
+    college: "University of Wisconsin",
+    collegeLogo: w, // Replace with: import northwesternLogo from './assets/northwestern.png'
+    footballTeam: "Chicago Bears",
+    footballLogo: bears, // Replace with: import brownsLogo from './assets/browns.png'
+    comment: "Known for his inconsistency off the tee and homer betting style, make sure your eyes are peeled for when Chuck hits the dance floor."
+  },
+    {
+    name: "Jacko",
+    relation: "Brother",
+    photos: [j1, j2],
+    role: "Groomsman",
+    maxBench: "185 lbs",
+    fortyYard: "5.8s",
+    handicap: "20.0",
+    relationshipStatus: "Single",
+    currentCity: "Washington DC",
+    college: "University of Virginia",
+    collegeLogo: UVA, // Replace with: import northwesternLogo from './assets/northwestern.png'
+    footballTeam: "The Hokies",
+    footballLogo: vt, // Replace with: import brownsLogo from './assets/browns.png'
+    comment: "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
+  },
+    {
+    name: "Cole D",
+    relation: "Dog",
+    photos: [null, null],
+    role: "Groomsman",
+    maxBench: "265 lbs",
+    fortyYard: "4.8s",
+    handicap: "9.5",
+    relationshipStatus: "Cuffed",
+    currentCity: "Charleston, SC",
+    college: "University of South Carolina",
+    collegeLogo: sc, // Replace with: import northwesternLogo from './assets/northwestern.png'
+    footballTeam: "The Washington Football Team",
+    footballLogo: skins, // Replace with: import brownsLogo from './assets/browns.png'
+    comment: "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
+  },
+      {
+    name: "Henry",
+    relation: "Groomsman",
+    photos: [h1, null],
+    role: "Groomsman",
+    maxBench: "225 lbs",
+    fortyYard: "5.3s",
+    handicap: "11.5",
+    relationshipStatus: "Taken",
+    currentCity: "Atlanta, GA",
+    college: "James Madison University University",
+    collegeLogo: dukes, // Replace with: import northwesternLogo from './assets/northwestern.png'
+    footballTeam: "The Washington Commanders",
+    footballLogo: skins, // Replace with: import brownsLogo from './assets/browns.png'
+    comment: "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
+  },
+      {
+    name: "Oliver",
+    relation: "Dog",
+    photos: [null, null],
+    role: "Groomsman",
+    maxBench: "255 lbs",
+    fortyYard: "4.6s",
+    handicap: "22.0",
+    relationshipStatus: "Taken",
+    currentCity: "New York, NY",
+    college: "Washington & Lee University",
+    collegeLogo: wl, // Replace with: import northwesternLogo from './assets/northwestern.png'
+    footballTeam: "Washington Redskins",
+    footballLogo: skins, // Replace with: import brownsLogo from './assets/browns.png'
+    comment: "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
+  },
+      {
+    name: "Wyatt",
+    relation: "Brother in law",
+    photos: [null, null],
+    role: "Groomsman",
+    maxBench: "225 lbs",
+    fortyYard: "4.8s",
+    handicap: "16.0",
+    relationshipStatus: "Single",
+    currentCity: "Knoxville, TN",
+    college: "University of Tennessee",
+    collegeLogo: T, // Replace with: import northwesternLogo from './assets/northwestern.png'
+    footballTeam: "The Vols",
+    footballLogo: T, // Replace with: import brownsLogo from './assets/browns.png'
+    comment: "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
+  }
+];
   
   const bridesmaids = [{
     name: "Sarah Johnson",
@@ -414,9 +529,10 @@ const GroomCard = React.memo(({ person }) => {
             style={{ background: "white", borderRadius: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.1)", borderTop: `6px solid ${color}`, padding: "2rem" }}
           >
             <h3 style={{ fontSize: "1.8rem", marginBottom: "1.5rem", color: "#333", textAlign: "center" }}>{person.name}'s Stats 💪</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1.5rem", marginBottom: "2rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5rem", marginBottom: "2rem" }}>
               <div style={{ textAlign: "center", padding: "1rem", background: "#f9f9f9", borderRadius: "12px" }}><div style={{ fontSize: "0.85rem", color: "#999", marginBottom: "0.5rem" }}>Max Bench</div><div style={{ fontSize: "1.5rem", fontWeight: "700", color }}>{person.maxBench}</div></div>
               <div style={{ textAlign: "center", padding: "1rem", background: "#f9f9f9", borderRadius: "12px" }}><div style={{ fontSize: "0.85rem", color: "#999", marginBottom: "0.5rem" }}>40-Yard Dash</div><div style={{ fontSize: "1.5rem", fontWeight: "700", color }}>{person.fortyYard}</div></div>
+              <div style={{ textAlign: "center", padding: "1rem", background: "#f9f9f9", borderRadius: "12px" }}><div style={{ fontSize: "0.85rem", color: "#999", marginBottom: "0.5rem" }}>GHIN Index</div><div style={{ fontSize: "1.5rem", fontWeight: "700", color }}>{person.handicap}</div></div>
             </div>
             <div style={{ marginBottom: "2rem" }}>
               <div style={{ fontSize: "0.85rem", color: "#999", marginBottom: "0.75rem", textAlign: "center" }}>College</div>
