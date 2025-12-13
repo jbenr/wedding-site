@@ -928,6 +928,18 @@ function GuestBookTab({ entries, setEntries }) {
 
 /* WEDDING PARTY TAB + CARDS (with folder-based photos and clean layout) */
 
+import bears from "./assets/bears.png"
+import brown from "./assets/brown.png"
+import vt from "./assets/hokies.png"
+import dukes from "./assets/JMU.png"
+import nu from "./assets/NU.png"
+import sc from "./assets/SC.png"
+import skins from "./assets/skins.png"
+import ut from "./assets/UT.png"
+import uva from "./assets/UVA.png"
+import w from "./assets/W.png"
+import WL from "./assets/WL.png"
+
 function WeddingPartyTab() {
   const groomsmen = [
     {
@@ -941,9 +953,9 @@ function WeddingPartyTab() {
       relationshipStatus: "Taken",
       currentCity: "Williamsburg, NY",
       college: "Northwestern University",
-      collegeLogo: null,
+      collegeLogo: nu,
       footballTeam: "Cleveland Browns",
-      footballLogo: null,
+      footballLogo: brown,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     },
@@ -958,9 +970,9 @@ function WeddingPartyTab() {
       relationshipStatus: "Taken",
       currentCity: "Chicago, IL",
       college: "University of Wisconsin",
-      collegeLogo: null,
+      collegeLogo: w,
       footballTeam: "Chicago Bears",
-      footballLogo: null,
+      footballLogo: bears,
       comment:
         "Known for his inconsistency off the tee and homer betting style, make sure your eyes are peeled for when Chuck hits the dance floor."
     },
@@ -975,9 +987,9 @@ function WeddingPartyTab() {
       relationshipStatus: "Single",
       currentCity: "Washington DC",
       college: "University of Virginia",
-      collegeLogo: null,
+      collegeLogo: uva,
       footballTeam: "The Hokies",
-      footballLogo: null,
+      footballLogo: hokies,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     },
@@ -986,38 +998,38 @@ function WeddingPartyTab() {
       relation: "Dog",
       photos: colePhotos,
       role: "Groomsman",
-      maxBench: "265 lbs",
+      maxBench: "285 lbs",
       fortyYard: "4.8s",
       handicap: "9.5",
-      relationshipStatus: "Cuffed",
+      relationshipStatus: "Married",
       currentCity: "Charleston, SC",
       college: "University of South Carolina",
-      collegeLogo: null,
-      footballTeam: "The Washington Football Team",
-      footballLogo: null,
+      collegeLogo: sc,
+      footballTeam: "Washington Football Team",
+      footballLogo: skins,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     },
     {
       name: "Henry",
-      relation: "Groomsman",
+      relation: "Friend",
       photos: henryPhotos,
       role: "Groomsman",
-      maxBench: "225 lbs",
+      maxBench: "265 lbs",
       fortyYard: "5.3s",
-      handicap: "11.5",
+      handicap: "15.0",
       relationshipStatus: "Taken",
       currentCity: "Atlanta, GA",
       college: "James Madison University University",
-      collegeLogo: null,
-      footballTeam: "The Washington Commanders",
-      footballLogo: null,
+      collegeLogo: jmu,
+      footballTeam: "Washington Commanders",
+      footballLogo: skins,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     },
     {
       name: "Oliver",
-      relation: "Dog",
+      relation: "Friend",
       photos: oliPhotos,
       role: "Groomsman",
       maxBench: "255 lbs",
@@ -1026,9 +1038,9 @@ function WeddingPartyTab() {
       relationshipStatus: "Taken",
       currentCity: "New York, NY",
       college: "Washington & Lee University",
-      collegeLogo: null,
+      collegeLogo: wl,
       footballTeam: "Washington Redskins",
-      footballLogo: null,
+      footballLogo: skins,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     },
@@ -1043,9 +1055,9 @@ function WeddingPartyTab() {
       relationshipStatus: "Single",
       currentCity: "Knoxville, TN",
       college: "University of Tennessee",
-      collegeLogo: null,
+      collegeLogo: ut,
       footballTeam: "The Vols",
-      footballLogo: null,
+      footballLogo: ut,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     }
