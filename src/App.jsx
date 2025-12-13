@@ -5,31 +5,37 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { FaHeart, FaCamera, FaGift, FaCalendar } from "react-icons/fa";
 
-import heroImage from "./assets/IMG_9690.jpg";
-import proposalPhoto from "./assets/IMG_9679.jpg";
-import engagedPhoto from "./assets/IMG_9689.jpg";
-import fenwayPhoto from "./assets/IMG_3658.jpg";
+import heroImage from "./assets/hero.jpg";
 
-import groomsman1Photo1 from "./assets/img_9215.jpg";
-import groomsman1Photo2 from "./assets/img_0201.jpg";
-import g2p1 from "./assets/img_0796.jpg";
-import w from "./assets/W.png";
-import bears from "./assets/bears.png";
-import j1 from "./assets/img_5661.jpg";
-import j2 from "./assets/img_0600.jpg";
-import T from "./assets/UT.png";
-import sc from "./assets/SC.png";
-import skins from "./assets/skins.png";
-import dukes from "./assets/JMU.webp";
-import UVA from "./assets/UVA.png";
-import nu from "./assets/NU.png";
-import wl from "./assets/WL.png";
-import vt from "./assets/hokies.webp";
-import brown from "./assets/brown.png";
-import h1 from "./assets/img_0175.jpg";
+// Helper to turn an import.meta.glob result into an array of URLs
+const globToArray = (modules) =>
+  Object.values(modules)
+    .map((m) => (m && typeof m === "object" && "default" in m ? m.default : m))
+    .filter(Boolean);
+
+// Main page photo buckets – folders: assets/b1, b2, b3
+const mainPhotoBuckets = [
+  globToArray(import.meta.glob("./assets/b1/*", { eager: true })),
+  globToArray(import.meta.glob("./assets/b2/*", { eager: true })),
+  globToArray(import.meta.glob("./assets/b3/*", { eager: true }))
+];
+
+// Groomsmen photo buckets – folders: assets/harry, chuck, jacko, cole, henry, oli, wyatt
+const harryPhotos = globToArray(import.meta.glob("./assets/harry/*", { eager: true }));
+const chuckPhotos = globToArray(import.meta.glob("./assets/chuck/*", { eager: true }));
+const jackoPhotos = globToArray(import.meta.glob("./assets/jacko/*", { eager: true }));
+const colePhotos = globToArray(import.meta.glob("./assets/cole/*", { eager: true }));
+const henryPhotos = globToArray(import.meta.glob("./assets/henry/*", { eager: true }));
+const oliPhotos = globToArray(import.meta.glob("./assets/oli/*", { eager: true }));
+const wyattPhotos = globToArray(import.meta.glob("./assets/wyatt/*", { eager: true }));
+
+// Bridesmaid example bucket – folder: assets/brides_sarah
+const sarahPhotos = globToArray(import.meta.glob("./assets/brides_sarah/*", { eager: true }));
 
 const CARD_HEIGHT = 320;
-const PHOTO_WIDTH = 260;
+const MOBILE_CARD_HEIGHT = 260;
+const DESKTOP_PHOTO_WIDTH = 260;
+const MOBILE_PHOTO_WIDTH = 120;
 
 const StatCell = ({ label, value, color }) => (
   <div style={{ textAlign: "center", background: "#f9f9f9", padding: "0.75rem", borderRadius: 10 }}>
@@ -46,7 +52,7 @@ export default function App() {
 
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 500], [0, 150]);
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0.3]);
+  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0.3]); // stays in this range
 
   useEffect(() => {
     const weddingDate = new Date("2026-10-24T16:00:00");
@@ -72,7 +78,8 @@ export default function App() {
   }, []);
 
   const triggerConfetti = () => {
-    const count = 200, defaults = { origin: { y: 0.7 }, zIndex: 9999 };
+    const count = 200;
+    const defaults = { origin: { y: 0.7 }, zIndex: 9999 };
     const fire = (ratio, opts) => confetti({ ...defaults, ...opts, particleCount: Math.floor(count * ratio) });
     fire(0.25, { spread: 26, startVelocity: 55 });
     fire(0.2, { spread: 60 });
@@ -170,6 +177,7 @@ END:VCALENDAR`;
           style={{
             position: "absolute",
             inset: 0,
+            // static gradient so it doesn't "snap" at end of animation
             background: "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6))"
           }}
         />
@@ -214,11 +222,16 @@ END:VCALENDAR`;
           >
             Charlottesville, Virginia
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1, duration: 0.9 }}
-            style={{ display: "flex", gap: "1.5rem", justifyContent: "center", marginBottom: "2rem", flexWrap: "wrap" }}
+
+          {/* Countdown */}
+          <div
+            style={{
+              display: "flex",
+              gap: "1.5rem",
+              justifyContent: "center",
+              marginBottom: "2rem",
+              flexWrap: "wrap"
+            }}
           >
             {[
               { v: countdown.days, l: "Days" },
@@ -226,11 +239,8 @@ END:VCALENDAR`;
               { v: countdown.minutes, l: "Minutes" },
               { v: countdown.seconds, l: "Seconds" }
             ].map((x, i) => (
-              <motion.div
+              <div
                 key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.1 + i * 0.05, duration: 0.4 }}
                 style={{
                   background: "rgba(255,255,255,0.12)",
                   backdropFilter: "blur(8px)",
@@ -241,9 +251,10 @@ END:VCALENDAR`;
               >
                 <div style={{ fontSize: "2rem", fontWeight: 600 }}>{x.v}</div>
                 <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>{x.l}</div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
+
           <motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -276,7 +287,7 @@ END:VCALENDAR`;
         </motion.div>
       </section>
 
-      {/* TABS */}
+      {/* TAB BAR */}
       <div
         id="content"
         style={{
@@ -310,12 +321,11 @@ END:VCALENDAR`;
         </div>
       </div>
 
+      {/* CONTENT TABS */}
       <section style={{ padding: "3rem 1rem", minHeight: "70vh" }}>
         {tab === "main" && (
           <MainTab
-            proposalPhoto={proposalPhoto}
-            engagedPhoto={engagedPhoto}
-            fenwayPhoto={fenwayPhoto}
+            photoBuckets={mainPhotoBuckets}
             buttonCount={buttonCount}
             handleButtonClick={handleButtonClick}
             downloadCalendarEvent={downloadCalendarEvent}
@@ -325,23 +335,32 @@ END:VCALENDAR`;
         {tab === "info" && <InfoTab />}
         {tab === "party" && <WeddingPartyTab />}
         {tab === "registry" && <RegistryTab />}
-        {tab === "guestbook" && <GuestBookTab entries={guestBookEntries} setEntries={setGuestBookEntries} />}
+        {tab === "guestbook" && (
+          <GuestBookTab entries={guestBookEntries} setEntries={setGuestBookEntries} />
+        )}
       </section>
 
       <footer style={{ textAlign: "center", padding: "3rem 1.5rem", background: "#111", color: "#eee" }}>
         <p style={{ fontSize: "1.25rem", marginBottom: "0.5rem" }}>We can't wait to celebrate with you</p>
         <p style={{ fontSize: "2rem" }}>🤍</p>
-        <p style={{ fontSize: "0.9rem", opacity: 0.7, marginTop: "1.5rem" }}>Ben & Emily • October 24, 2026</p>
+        <p style={{ fontSize: "0.9rem", opacity: 0.7, marginTop: "1.5rem" }}>
+          Ben & Emily • October 24, 2026
+        </p>
       </footer>
     </div>
   );
 }
 
-/* MAIN TAB – clickable photo buckets */
-function MainTab({ proposalPhoto, engagedPhoto, fenwayPhoto, buttonCount, handleButtonClick, downloadCalendarEvent }) {
-  const photos = [proposalPhoto, engagedPhoto, fenwayPhoto];
-  const [idx, setIdx] = useState([0, 1, 2]);
-  const cycle = (i) => setIdx((p) => p.map((v, j) => (j === i ? (v + 1) % photos.length : v)));
+/* MAIN TAB – folder-based photo buckets */
+
+function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalendarEvent }) {
+  const [indices, setIndices] = useState(photoBuckets.map(() => 0));
+  const cycle = (slot) =>
+    setIndices((prev) =>
+      prev.map((v, i) =>
+        i === slot && photoBuckets[slot].length > 0 ? (v + 1) % photoBuckets[slot].length : v
+      )
+    );
 
   return (
     <div style={{ maxWidth: 800, margin: "0 auto" }}>
@@ -364,31 +383,56 @@ function MainTab({ proposalPhoto, engagedPhoto, fenwayPhoto, buttonCount, handle
           marginBottom: "3rem"
         }}
       >
-        {idx.map((v, i) => (
-          <motion.div
-            key={i + "-" + v}
-            onClick={() => cycle(i)}
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.35 }}
-            style={{ borderRadius: 12, overflow: "hidden", aspectRatio: "4/5", cursor: "pointer" }}
-          >
-            <img
-              src={photos[v]}
-              alt={`Story ${i + 1}`}
+        {photoBuckets.map((bucket, i) => {
+          const hasPhotos = bucket.length > 0;
+          const src = hasPhotos ? bucket[indices[i] % bucket.length] : undefined;
+          return (
+            <motion.div
+              key={`${i}-${indices[i]}`}
+              onClick={() => hasPhotos && cycle(i)}
+              initial={{ opacity: 0.2, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.35 }}
               style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: i === 2 ? "40% center" : "center"
+                borderRadius: 12,
+                overflow: "hidden",
+                aspectRatio: "4/5",
+                cursor: hasPhotos ? "pointer" : "default",
+                background: hasPhotos ? "transparent" : "#eee",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
               }}
-            />
-          </motion.div>
-        ))}
+            >
+              {src ? (
+                <img
+                  src={src}
+                  alt={`Story ${i + 1}`}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: i === 2 ? "40% center" : "center"
+                  }}
+                />
+              ) : (
+                <span style={{ color: "#aaa" }}>Add photos to assets/b{i + 1}</span>
+              )}
+            </motion.div>
+          );
+        })}
       </div>
 
       <div style={{ background: "#f9f9f9", padding: "2.5rem", borderRadius: 16, marginBottom: "3rem" }}>
-        <p style={{ fontSize: "1.15rem", lineHeight: 1.8, color: "#333", textAlign: "center", marginBottom: "1.5rem" }}>
+        <p
+          style={{
+            fontSize: "1.15rem",
+            lineHeight: 1.8,
+            color: "#333",
+            textAlign: "center",
+            marginBottom: "1.5rem"
+          }}
+        >
           What started as a chance meeting turned into countless adventures, inside jokes, and a love that grows deeper
           every day. We've laughed through the chaos, supported each other through challenges, and built a life filled
           with joy.
@@ -410,7 +454,9 @@ function MainTab({ proposalPhoto, engagedPhoto, fenwayPhoto, buttonCount, handle
       >
         <FaCalendar style={{ fontSize: "3rem", color: "#667eea", marginBottom: "1rem" }} />
         <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", color: "#333" }}>Save the Date!</h3>
-        <p style={{ marginBottom: "1.5rem", color: "#666" }}>Add our wedding to your calendar so you don't forget!</p>
+        <p style={{ marginBottom: "1.5rem", color: "#666" }}>
+          Add our wedding to your calendar so you don't forget!
+        </p>
         <button
           onClick={downloadCalendarEvent}
           style={{
@@ -465,13 +511,16 @@ function MainTab({ proposalPhoto, engagedPhoto, fenwayPhoto, buttonCount, handle
         >
           Can't Wait! 💕
         </button>
-        <div style={{ fontSize: "1.25rem", fontWeight: 500 }}>Total clicks: {buttonCount.toLocaleString()}</div>
+        <div style={{ fontSize: "1.25rem", fontWeight: 500 }}>
+          Total clicks: {buttonCount.toLocaleString()}
+        </div>
       </div>
     </div>
   );
 }
 
-/* RSVP */
+/* RSVP, INFO, REGISTRY, GUESTBOOK (unchanged from last version) */
+
 function RSVPTab() {
   return (
     <div style={{ maxWidth: 700, margin: "0 auto" }}>
@@ -517,13 +566,14 @@ function RSVPTab() {
         >
           Open RSVP Form →
         </a>
-        <p style={{ marginTop: "1.5rem", fontSize: "0.95rem", color: "#888" }}>Please respond by September 1, 2026</p>
+        <p style={{ marginTop: "1.5rem", fontSize: "0.95rem", color: "#888" }}>
+          Please respond by September 1, 2026
+        </p>
       </div>
     </div>
   );
 }
 
-/* INFO */
 function InfoTab() {
   return (
     <div style={{ maxWidth: 800, margin: "0 auto" }}>
@@ -539,7 +589,9 @@ function InfoTab() {
         Wedding Information
       </h2>
       <div style={{ background: "#f9f9f9", padding: "2rem", borderRadius: 16, marginBottom: "2rem" }}>
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: "#333" }}>Schedule</h3>
+        <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: "#333" }}>
+          Schedule
+        </h3>
         <div style={{ maxWidth: 500, margin: "0 auto" }}>
           {[
             ["4:00 PM", "Ceremony"],
@@ -564,7 +616,9 @@ function InfoTab() {
         </div>
       </div>
       <div style={{ background: "#f9f9f9", padding: "2rem", borderRadius: 16, marginBottom: "2rem" }}>
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", textAlign: "center", color: "#333" }}>Venue</h3>
+        <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", textAlign: "center", color: "#333" }}>
+          Venue
+        </h3>
         <p style={{ textAlign: "center", fontSize: "1.1rem", color: "#333" }}>
           <strong>The Garden Estate</strong>
           <br />
@@ -613,7 +667,6 @@ function InfoTab() {
   );
 }
 
-/* REGISTRY */
 function RegistryTab() {
   const registries = [
     { name: "Amazon", url: "https://amazon.com/wedding/your-registry", color: "#FF9900", icon: "🛍️" },
@@ -688,7 +741,6 @@ function RegistryTab() {
   );
 }
 
-/* GUEST BOOK */
 function GuestBookTab({ entries, setEntries }) {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
@@ -738,7 +790,9 @@ function GuestBookTab({ entries, setEntries }) {
         style={{ background: "#f9f9f9", padding: "2.5rem", borderRadius: 16, marginBottom: "3rem" }}
       >
         <div style={{ marginBottom: "1.5rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 600, color: "#333" }}>Your Name</label>
+          <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 600, color: "#333" }}>
+            Your Name
+          </label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -872,13 +926,14 @@ function GuestBookTab({ entries, setEntries }) {
   );
 }
 
-/* WEDDING PARTY */
+/* WEDDING PARTY TAB + CARDS (with folder-based photos and clean layout) */
+
 function WeddingPartyTab() {
   const groomsmen = [
     {
       name: "Harry",
       relation: "Brother",
-      photos: [groomsman1Photo1, groomsman1Photo2],
+      photos: harryPhotos,
       role: "Best Man",
       maxBench: "135 lbs",
       fortyYard: "4.95s",
@@ -886,16 +941,16 @@ function WeddingPartyTab() {
       relationshipStatus: "Taken",
       currentCity: "Williamsburg, NY",
       college: "Northwestern University",
-      collegeLogo: nu,
+      collegeLogo: null,
       footballTeam: "Cleveland Browns",
-      footballLogo: brown,
+      footballLogo: null,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     },
     {
       name: "Chuck",
       relation: "Brother",
-      photos: [g2p1, null],
+      photos: chuckPhotos,
       role: "Groomsman",
       maxBench: "105 lbs",
       fortyYard: "5.2s",
@@ -903,16 +958,16 @@ function WeddingPartyTab() {
       relationshipStatus: "Taken",
       currentCity: "Chicago, IL",
       college: "University of Wisconsin",
-      collegeLogo: w,
+      collegeLogo: null,
       footballTeam: "Chicago Bears",
-      footballLogo: bears,
+      footballLogo: null,
       comment:
         "Known for his inconsistency off the tee and homer betting style, make sure your eyes are peeled for when Chuck hits the dance floor."
     },
     {
       name: "Jacko",
       relation: "Brother",
-      photos: [j1, j2],
+      photos: jackoPhotos,
       role: "Groomsman",
       maxBench: "185 lbs",
       fortyYard: "5.8s",
@@ -920,16 +975,16 @@ function WeddingPartyTab() {
       relationshipStatus: "Single",
       currentCity: "Washington DC",
       college: "University of Virginia",
-      collegeLogo: UVA,
+      collegeLogo: null,
       footballTeam: "The Hokies",
-      footballLogo: vt,
+      footballLogo: null,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     },
     {
       name: "Cole D",
       relation: "Dog",
-      photos: [null, null],
+      photos: colePhotos,
       role: "Groomsman",
       maxBench: "265 lbs",
       fortyYard: "4.8s",
@@ -937,16 +992,16 @@ function WeddingPartyTab() {
       relationshipStatus: "Cuffed",
       currentCity: "Charleston, SC",
       college: "University of South Carolina",
-      collegeLogo: sc,
+      collegeLogo: null,
       footballTeam: "The Washington Football Team",
-      footballLogo: skins,
+      footballLogo: null,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     },
     {
       name: "Henry",
       relation: "Groomsman",
-      photos: [h1, null],
+      photos: henryPhotos,
       role: "Groomsman",
       maxBench: "225 lbs",
       fortyYard: "5.3s",
@@ -954,16 +1009,16 @@ function WeddingPartyTab() {
       relationshipStatus: "Taken",
       currentCity: "Atlanta, GA",
       college: "James Madison University University",
-      collegeLogo: dukes,
+      collegeLogo: null,
       footballTeam: "The Washington Commanders",
-      footballLogo: skins,
+      footballLogo: null,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     },
     {
       name: "Oliver",
       relation: "Dog",
-      photos: [null, null],
+      photos: oliPhotos,
       role: "Groomsman",
       maxBench: "255 lbs",
       fortyYard: "4.6s",
@@ -971,16 +1026,16 @@ function WeddingPartyTab() {
       relationshipStatus: "Taken",
       currentCity: "New York, NY",
       college: "Washington & Lee University",
-      collegeLogo: wl,
+      collegeLogo: null,
       footballTeam: "Washington Redskins",
-      footballLogo: skins,
+      footballLogo: null,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     },
     {
       name: "Wyatt",
       relation: "Brother in law",
-      photos: [null, null],
+      photos: wyattPhotos,
       role: "Groomsman",
       maxBench: "225 lbs",
       fortyYard: "4.8s",
@@ -988,9 +1043,9 @@ function WeddingPartyTab() {
       relationshipStatus: "Single",
       currentCity: "Knoxville, TN",
       college: "University of Tennessee",
-      collegeLogo: T,
+      collegeLogo: null,
       footballTeam: "The Vols",
-      footballLogo: T,
+      footballLogo: null,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     }
@@ -1000,7 +1055,7 @@ function WeddingPartyTab() {
     {
       name: "Sarah Johnson",
       relation: "Sister",
-      photos: [null, null],
+      photos: sarahPhotos,
       role: "Maid of Honor",
       relationshipStatus: "Taken",
       currentCity: "Boston, MA",
@@ -1052,12 +1107,15 @@ function WeddingPartyTab() {
   );
 }
 
-/* GROOM CARD – photo cycles, right side flips, consistent size */
 const GroomCard = React.memo(({ person }) => {
   const [showBack, setShowBack] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const color = "#667eea";
-  const photos = person.photos?.filter(Boolean) ?? [];
+  const photos = (person.photos || []).filter(Boolean);
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const cardHeight = isMobile ? MOBILE_CARD_HEIGHT : CARD_HEIGHT;
+  const photoWidth = isMobile ? MOBILE_PHOTO_WIDTH : DESKTOP_PHOTO_WIDTH;
+
   const nextPhoto = (e) => {
     e.stopPropagation();
     if (photos.length <= 1) return;
@@ -1082,9 +1140,9 @@ const GroomCard = React.memo(({ person }) => {
               borderTop: `6px solid ${color}`,
               cursor: "pointer",
               overflow: "hidden",
-              height: CARD_HEIGHT,
+              height: cardHeight,
               display: "flex",
-              flexDirection: window.innerWidth < 768 ? "column" : "row"
+              flexDirection: "row"
             }}
           >
             <motion.div
@@ -1094,8 +1152,8 @@ const GroomCard = React.memo(({ person }) => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
               style={{
-                width: window.innerWidth < 768 ? "100%" : PHOTO_WIDTH,
-                height: window.innerWidth < 768 ? 180 : "100%",
+                width: photoWidth,
+                height: "100%",
                 background: photos[photoIndex]
                   ? `url(${photos[photoIndex]})`
                   : `linear-gradient(135deg,${color},${color}dd)`,
@@ -1144,7 +1202,7 @@ const GroomCard = React.memo(({ person }) => {
               boxShadow: "0 3px 16px rgba(0,0,0,0.1)",
               borderTop: `6px solid ${color}`,
               padding: "1.5rem",
-              height: CARD_HEIGHT,
+              height: cardHeight,
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
@@ -1160,53 +1218,46 @@ const GroomCard = React.memo(({ person }) => {
                 <StatCell label="40-Yard" value={person.fortyYard} color={color} />
                 <StatCell label="GHIN Index" value={person.handicap} color={color} />
               </div>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "1rem",
-                  marginBottom: "1rem"
-                }}
-              >
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: "0.8rem", color: "#999" }}>College</div>
-                  <div
-                    style={{
-                      fontSize: "1rem",
-                      fontWeight: 600,
-                      color: "#333",
-                      display: "flex",
-                      justifyContent: "center",
-                      gap: 8,
-                      alignItems: "center",
-                      marginTop: "0.25rem"
-                    }}
-                  >
-                    {person.collegeLogo && (
-                      <img src={person.collegeLogo} alt="College Logo" style={{ width: 28, height: 28, objectFit: "contain" }} />
-                    )}
-                    {person.college}
-                  </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1rem" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    flexWrap: "wrap"
+                  }}
+                >
+                  <span style={{ fontSize: "0.85rem", color: "#999" }}>College:</span>
+                  {person.collegeLogo && (
+                    <img
+                      src={person.collegeLogo}
+                      alt="College Logo"
+                      style={{ width: 24, height: 24, objectFit: "contain" }}
+                    />
+                  )}
+                  <span style={{ fontSize: "1rem", fontWeight: 600, color: "#333" }}>{person.college}</span>
                 </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: "0.8rem", color: "#999" }}>Team</div>
-                  <div
-                    style={{
-                      fontSize: "1rem",
-                      fontWeight: 600,
-                      color: "#333",
-                      display: "flex",
-                      justifyContent: "center",
-                      gap: 8,
-                      alignItems: "center",
-                      marginTop: "0.25rem"
-                    }}
-                  >
-                    {person.footballLogo && (
-                      <img src={person.footballLogo} alt="Team Logo" style={{ width: 28, height: 28, objectFit: "contain" }} />
-                    )}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    flexWrap: "wrap"
+                  }}
+                >
+                  <span style={{ fontSize: "0.85rem", color: "#999" }}>Football Team:</span>
+                  {person.footballLogo && (
+                    <img
+                      src={person.footballLogo}
+                      alt="Team Logo"
+                      style={{ width: 24, height: 24, objectFit: "contain" }}
+                    />
+                  )}
+                  <span style={{ fontSize: "1rem", fontWeight: 600, color: "#333" }}>
                     {person.footballTeam}
-                  </div>
+                  </span>
                 </div>
               </div>
               <div
@@ -1230,12 +1281,15 @@ const GroomCard = React.memo(({ person }) => {
   );
 });
 
-/* BRIDESMAID CARD – same sizing, photo cycle on left, flip on right */
 const BridesmaidCard = React.memo(({ person }) => {
   const [showBack, setShowBack] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const color = "#764ba2";
-  const photos = person.photos?.filter(Boolean) ?? [];
+  const photos = (person.photos || []).filter(Boolean);
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const cardHeight = isMobile ? MOBILE_CARD_HEIGHT : CARD_HEIGHT;
+  const photoWidth = isMobile ? MOBILE_PHOTO_WIDTH : DESKTOP_PHOTO_WIDTH;
+
   const nextPhoto = (e) => {
     e.stopPropagation();
     if (photos.length <= 1) return;
@@ -1260,9 +1314,9 @@ const BridesmaidCard = React.memo(({ person }) => {
               borderTop: `6px solid ${color}`,
               boxShadow: "0 3px 16px rgba(0,0,0,0.1)",
               cursor: "pointer",
-              height: CARD_HEIGHT,
+              height: cardHeight,
               display: "flex",
-              flexDirection: window.innerWidth < 768 ? "column" : "row"
+              flexDirection: "row"
             }}
           >
             <motion.div
@@ -1272,8 +1326,8 @@ const BridesmaidCard = React.memo(({ person }) => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
               style={{
-                width: window.innerWidth < 768 ? "100%" : PHOTO_WIDTH,
-                height: window.innerWidth < 768 ? 180 : "100%",
+                width: photoWidth,
+                height: "100%",
                 background: photos[photoIndex]
                   ? `url(${photos[photoIndex]})`
                   : `linear-gradient(135deg,${color},${color}dd)`,
@@ -1296,11 +1350,15 @@ const BridesmaidCard = React.memo(({ person }) => {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "0.5rem" }}>
                 <div>
                   <div style={{ fontSize: "0.8rem", color: "#999" }}>Status</div>
-                  <div style={{ fontSize: "0.95rem", color: "#333", fontWeight: 600 }}>{person.relationshipStatus}</div>
+                  <div style={{ fontSize: "0.95rem", color: "#333", fontWeight: 600 }}>
+                    {person.relationshipStatus}
+                  </div>
                 </div>
                 <div>
                   <div style={{ fontSize: "0.8rem", color: "#999" }}>City</div>
-                  <div style={{ fontSize: "0.95rem", color: "#333", fontWeight: 600 }}>{person.currentCity}</div>
+                  <div style={{ fontSize: "0.95rem", color: "#333", fontWeight: 600 }}>
+                    {person.currentCity}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1316,7 +1374,7 @@ const BridesmaidCard = React.memo(({ person }) => {
             style={{
               background: "white",
               borderRadius: 16,
-              height: CARD_HEIGHT,
+              height: cardHeight,
               boxShadow: "0 3px 16px rgba(0,0,0,0.1)",
               borderTop: `6px solid ${color}`,
               padding: "1.5rem",
