@@ -242,8 +242,8 @@ END:VCALENDAR`;
               <div
                 key={i}
                 style={{
-                  background: "rgba(255,255,255,0.12)",
-                  backdropFilter: "blur(8px)",
+                  background: "rgba(255,255,255,0.06)",
+                  backdropFilter: "blur(1px)",
                   padding: "1rem 1.5rem",
                   borderRadius: 12,
                   minWidth: 80
@@ -261,9 +261,9 @@ END:VCALENDAR`;
             transition={{ delay: 1.5, duration: 0.8 }}
             onClick={() => document.getElementById("content")?.scrollIntoView({ behavior: "smooth" })}
             style={{
-              background: "rgba(255,255,255,0.2)",
-              backdropFilter: "blur(10px)",
-              border: "1px solid rgba(255,255,255,0.3)",
+              background: "rgba(255,255,255,0.1)",
+              backdropFilter: "blur(4px)",
+              border: "1px solid rgba(255,255,255,0.25)",
               color: "white",
               padding: "1rem 2.5rem",
               fontSize: "1rem",
@@ -274,7 +274,7 @@ END:VCALENDAR`;
               letterSpacing: "0.05em"
             }}
             onMouseEnter={(e) => {
-              e.target.style.background = "rgba(255,255,255,0.3)";
+              e.target.style.background = "rgba(255,255,255,0.18)";
               e.target.style.transform = "translateY(-2px)";
             }}
             onMouseLeave={(e) => {
@@ -930,7 +930,7 @@ function GuestBookTab({ entries, setEntries }) {
 
 import bears from "./assets/bears.png"
 import brown from "./assets/brown.png"
-import vt from "./assets/hokies.png"
+import vt from "./assets/hokies.webp"
 import dukes from "./assets/JMU.png"
 import nu from "./assets/NU.png"
 import sc from "./assets/SC.png"
@@ -938,7 +938,7 @@ import skins from "./assets/skins.png"
 import ut from "./assets/UT.png"
 import uva from "./assets/UVA.png"
 import w from "./assets/W.png"
-import WL from "./assets/WL.png"
+import wl from "./assets/WL.png"
 
 function WeddingPartyTab() {
   const groomsmen = [
@@ -989,7 +989,7 @@ function WeddingPartyTab() {
       college: "University of Virginia",
       collegeLogo: uva,
       footballTeam: "The Hokies",
-      footballLogo: hokies,
+      footballLogo: vt,
       comment:
         "The guy who somehow convinced his brother to let him be Best Man. Known for dad jokes and questionable dance moves."
     },
@@ -1021,7 +1021,7 @@ function WeddingPartyTab() {
       relationshipStatus: "Taken",
       currentCity: "Atlanta, GA",
       college: "James Madison University University",
-      collegeLogo: jmu,
+      collegeLogo: dukes,
       footballTeam: "Washington Commanders",
       footballLogo: skins,
       comment:
