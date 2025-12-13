@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Import your photos from src/assets
+import heroImage from './assets/IMG_9690.jpg';
+import proposalPhoto from './assets/IMG_9679.jpg';
+import engagedPhoto from './assets/IMG_9689.jpg';
+import fenwayPhoto from './assets/IMG_3658.jpg';
+
 export default function App() {
   const [tab, setTab] = useState("main");
   const [buttonCount, setButtonCount] = useState(0);
@@ -60,8 +66,7 @@ export default function App() {
       <section
         style={{
           minHeight: "100vh",
-          backgroundImage:
-            "url(/assets/IMG_9690.jpg)",
+          backgroundImage: `url(${heroImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           position: "relative",
@@ -239,9 +244,9 @@ export default function App() {
                 }}
               >
                 {[
-                  { src: "/assets/IMG_9679.jpg", alt: "The Proposal" },
-                  { src: "/assets/IMG_9689.jpg", alt: "Engaged!" },
-                  { src: "/assets/IMG_3658.jpg", alt: "Fenway Kiss" },
+                  { src: proposalPhoto, alt: "The Proposal" },
+                  { src: engagedPhoto, alt: "Engaged!" },
+                  { src: fenwayPhoto, alt: "Fenway Kiss" },
                 ].map((img, i) => (
                   <motion.div
                     key={i}
@@ -440,33 +445,6 @@ export default function App() {
                   Please respond by September 1, 2026
                 </p>
               </div>
-
-              {/* Alternative: Embedded iframe - uncomment to use */}
-              {/* <div
-                style={{
-                  position: "relative",
-                  paddingBottom: "100%",
-                  height: 0,
-                  overflow: "hidden",
-                  borderRadius: "16px",
-                  marginTop: "2rem",
-                }}
-              >
-                <iframe
-                  src="YOUR_GOOGLE_FORM_EMBED_URL_HERE"
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    border: "none",
-                  }}
-                  title="RSVP Form"
-                >
-                  Loading…
-                </iframe>
-              </div> */}
             </motion.div>
           )}
 
