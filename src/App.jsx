@@ -7,6 +7,19 @@ import { FaHeart, FaCamera, FaGift, FaCalendar } from "react-icons/fa";
 
 import heroImage from "./assets/hero.jpg";
 
+// Import team logos
+import bears from "./assets/bears.png";
+import brown from "./assets/brown.png";
+import vt from "./assets/hokies.webp";
+import dukes from "./assets/JMU.png";
+import nu from "./assets/NU.svg";
+import sc from "./assets/SC.png";
+import skins from "./assets/skins.png";
+import ut from "./assets/UT.png";
+import uva from "./assets/UVA.png";
+import w from "./assets/W.svg";
+import wl from "./assets/WL.png";
+
 // Helper to turn an import.meta.glob result into an array of URLs
 const globToArray = (modules) =>
   Object.values(modules)
@@ -20,7 +33,7 @@ const mainPhotoBuckets = [
   globToArray(import.meta.glob("./assets/b3/*", { eager: true }))
 ];
 
-// Groomsmen photo buckets – folders: assets/harry, chuck, jacko, cole, henry, oli, wyatt
+// Groomsmen photo buckets
 const harryPhotos = globToArray(import.meta.glob("./assets/harry/*", { eager: true }));
 const chuckPhotos = globToArray(import.meta.glob("./assets/chuck/*", { eager: true }));
 const jackoPhotos = globToArray(import.meta.glob("./assets/jacko/*", { eager: true }));
@@ -28,9 +41,26 @@ const colePhotos = globToArray(import.meta.glob("./assets/cole/*", { eager: true
 const henryPhotos = globToArray(import.meta.glob("./assets/henry/*", { eager: true }));
 const oliPhotos = globToArray(import.meta.glob("./assets/oli/*", { eager: true }));
 const wyattPhotos = globToArray(import.meta.glob("./assets/wyatt/*", { eager: true }));
+const laurenPhotos = globToArray(import.meta.glob("./assets/lauren/*", { eager: true }));
 
-// Bridesmaid example bucket – folder: assets/brides_sarah
+// Bridesmaid photo buckets
 const sarahPhotos = globToArray(import.meta.glob("./assets/brides_sarah/*", { eager: true }));
+
+// FALL THEME COLORS
+const COLORS = {
+  bg: "#FAF8F5", // Soft off-white with warm undertone
+  cardBg: "#FFFFFF",
+  primary: "#8B5A3C", // Warm terracotta brown
+  secondary: "#C17F5E", // Burnt sienna
+  accent: "#D4A574", // Golden harvest
+  darkText: "#2D2520", // Rich espresso
+  mediumText: "#5C4A42", // Warm gray-brown
+  lightText: "#8B7D77", // Muted taupe
+  border: "#E8DDD4", // Light sand
+  groomAccent: "#7B6B5D", // Sage brown
+  brideAccent: "#A67B5B", // Rose gold brown
+  highlight: "#DEB887" // Burlywood accent
+};
 
 const CARD_HEIGHT = 320;
 const MOBILE_CARD_HEIGHT = 260;
@@ -38,9 +68,19 @@ const DESKTOP_PHOTO_WIDTH = 260;
 const MOBILE_PHOTO_WIDTH = 120;
 
 const StatCell = ({ label, value, color }) => (
-  <div style={{ textAlign: "center", background: "#f9f9f9", padding: "0.75rem", borderRadius: 10 }}>
-    <div style={{ fontSize: "0.75rem", color: "#999", marginBottom: "0.25rem" }}>{label}</div>
-    <div style={{ fontSize: "1.25rem", fontWeight: 700, color }}>{value}</div>
+  <div
+    style={{
+      textAlign: "center",
+      background: `${COLORS.bg}`,
+      padding: "0.75rem",
+      borderRadius: 12,
+      border: `1px solid ${COLORS.border}`
+    }}
+  >
+    <div style={{ fontSize: "0.75rem", color: COLORS.lightText, marginBottom: "0.25rem", letterSpacing: "0.5px" }}>
+      {label}
+    </div>
+    <div style={{ fontSize: "1.25rem", fontWeight: 600, color }}>{value}</div>
   </div>
 );
 
@@ -52,7 +92,7 @@ export default function App() {
 
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 500], [0, 150]);
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0.3]); // stays in this range
+  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0.3]);
 
   useEffect(() => {
     const weddingDate = new Date("2026-10-24T16:00:00");
@@ -80,7 +120,13 @@ export default function App() {
   const triggerConfetti = () => {
     const count = 200;
     const defaults = { origin: { y: 0.7 }, zIndex: 9999 };
-    const fire = (ratio, opts) => confetti({ ...defaults, ...opts, particleCount: Math.floor(count * ratio) });
+    const fire = (ratio, opts) =>
+      confetti({
+        ...defaults,
+        ...opts,
+        particleCount: Math.floor(count * ratio),
+        colors: [COLORS.primary, COLORS.secondary, COLORS.accent, COLORS.highlight]
+      });
     fire(0.25, { spread: 26, startVelocity: 55 });
     fire(0.2, { spread: 60 });
     fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
@@ -127,9 +173,9 @@ END:VCALENDAR`;
         flex: 1,
         padding: "0.875rem 1rem",
         border: "none",
-        background: tab === id ? "#111" : "transparent",
-        color: tab === id ? "white" : "#333",
-        fontSize: "0.95rem",
+        background: tab === id ? COLORS.primary : "transparent",
+        color: tab === id ? "#FFFFFF" : COLORS.mediumText,
+        fontSize: "0.9rem",
         fontWeight: tab === id ? 600 : 500,
         borderRadius: 12,
         cursor: "pointer",
@@ -137,7 +183,8 @@ END:VCALENDAR`;
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: "0.5rem"
+        gap: "0.5rem",
+        letterSpacing: "0.3px"
       }}
     >
       {icon}
@@ -146,7 +193,14 @@ END:VCALENDAR`;
   );
 
   return (
-    <div style={{ fontFamily: "'Inter', -apple-system, sans-serif", lineHeight: 1.6 }}>
+    <div
+      style={{
+        fontFamily: "'Crimson Text', 'Cormorant Garamond', Georgia, serif",
+        lineHeight: 1.7,
+        background: COLORS.bg,
+        minHeight: "100vh"
+      }}
+    >
       <Analytics />
       <SpeedInsights />
 
@@ -177,26 +231,26 @@ END:VCALENDAR`;
           style={{
             position: "absolute",
             inset: 0,
-            // static gradient so it doesn't "snap" at end of animation
-            background: "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6))"
+            background: "linear-gradient(to bottom, rgba(45,37,32,0.4), rgba(45,37,32,0.65))"
           }}
         />
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
           style={{ position: "relative", zIndex: 1, textAlign: "center", padding: "2rem", maxWidth: 900 }}
         >
           <motion.h1
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
+            transition={{ delay: 0.3, duration: 1 }}
             style={{
-              fontSize: "clamp(3rem, 10vw, 5rem)",
+              fontSize: "clamp(3.5rem, 12vw, 6rem)",
               marginBottom: "1rem",
-              fontWeight: 300,
-              letterSpacing: "0.05em",
-              fontFamily: "'Playfair Display', Georgia, serif"
+              fontWeight: 400,
+              letterSpacing: "0.08em",
+              fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif",
+              textShadow: "0 2px 20px rgba(0,0,0,0.3)"
             }}
           >
             Ben & Emily
@@ -204,12 +258,14 @@ END:VCALENDAR`;
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
+            transition={{ delay: 0.7, duration: 0.9 }}
             style={{
-              fontSize: "clamp(1.1rem, 3vw, 1.5rem)",
-              marginBottom: "2rem",
+              fontSize: "clamp(1.3rem, 3.5vw, 1.8rem)",
+              marginBottom: "2.5rem",
               fontWeight: 300,
-              letterSpacing: "0.1em"
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              fontFamily: "'Crimson Text', serif"
             }}
           >
             October 24, 2026
@@ -217,8 +273,13 @@ END:VCALENDAR`;
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.9, duration: 0.8 }}
-            style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)", fontWeight: 300, marginBottom: "2rem" }}
+            transition={{ delay: 1, duration: 0.9 }}
+            style={{
+              fontSize: "clamp(1.1rem, 2.8vw, 1.4rem)",
+              fontWeight: 300,
+              marginBottom: "3rem",
+              letterSpacing: "0.1em"
+            }}
           >
             Charlottesville, Virginia
           </motion.div>
@@ -229,7 +290,7 @@ END:VCALENDAR`;
               display: "flex",
               gap: "1.5rem",
               justifyContent: "center",
-              marginBottom: "2rem",
+              marginBottom: "3rem",
               flexWrap: "wrap"
             }}
           >
@@ -242,15 +303,20 @@ END:VCALENDAR`;
               <div
                 key={i}
                 style={{
-                  background: "rgba(255,255,255,0.06)",
-                  backdropFilter: "blur(1px)",
-                  padding: "1rem 1.5rem",
-                  borderRadius: 12,
-                  minWidth: 80
+                  background: "rgba(255,255,255,0.12)",
+                  backdropFilter: "blur(8px)",
+                  padding: "1.2rem 1.8rem",
+                  borderRadius: 16,
+                  minWidth: 90,
+                  border: "1px solid rgba(255,255,255,0.2)"
                 }}
               >
-                <div style={{ fontSize: "2rem", fontWeight: 600 }}>{x.v}</div>
-                <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>{x.l}</div>
+                <div style={{ fontSize: "2.2rem", fontWeight: 300, fontFamily: "'Cormorant Garamond', serif" }}>
+                  {x.v}
+                </div>
+                <div style={{ fontSize: "0.85rem", opacity: 0.9, letterSpacing: "1px", textTransform: "uppercase" }}>
+                  {x.l}
+                </div>
               </div>
             ))}
           </div>
@@ -258,28 +324,31 @@ END:VCALENDAR`;
           <motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 0.8 }}
+            transition={{ delay: 1.5, duration: 0.9 }}
             onClick={() => document.getElementById("content")?.scrollIntoView({ behavior: "smooth" })}
             style={{
-              background: "rgba(255,255,255,0.1)",
-              backdropFilter: "blur(4px)",
-              border: "1px solid rgba(255,255,255,0.25)",
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(10px)",
+              border: "1.5px solid rgba(255,255,255,0.3)",
               color: "white",
-              padding: "1rem 2.5rem",
-              fontSize: "1rem",
+              padding: "1.1rem 3rem",
+              fontSize: "1.05rem",
               borderRadius: 50,
               cursor: "pointer",
-              transition: "all 0.3s ease",
-              fontWeight: 500,
-              letterSpacing: "0.05em"
+              transition: "all 0.4s ease",
+              fontWeight: 400,
+              letterSpacing: "1.5px",
+              textTransform: "uppercase"
             }}
             onMouseEnter={(e) => {
-              e.target.style.background = "rgba(255,255,255,0.18)";
-              e.target.style.transform = "translateY(-2px)";
+              e.target.style.background = "rgba(255,255,255,0.22)";
+              e.target.style.transform = "translateY(-3px)";
+              e.target.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
             }}
             onMouseLeave={(e) => {
-              e.target.style.background = "rgba(255,255,255,0.2)";
+              e.target.style.background = "rgba(255,255,255,0.15)";
               e.target.style.transform = "translateY(0)";
+              e.target.style.boxShadow = "none";
             }}
           >
             Explore ↓
@@ -293,11 +362,12 @@ END:VCALENDAR`;
         style={{
           position: "sticky",
           top: 0,
-          background: "rgba(255,255,255,0.95)",
-          backdropFilter: "blur(10px)",
-          borderBottom: "1px solid #e5e5e5",
+          background: `rgba(250, 248, 245, 0.98)`,
+          backdropFilter: "blur(12px)",
+          borderBottom: `1px solid ${COLORS.border}`,
           zIndex: 100,
-          padding: "1rem"
+          padding: "1rem",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
         }}
       >
         <div
@@ -306,10 +376,11 @@ END:VCALENDAR`;
             margin: "0 auto",
             display: "flex",
             gap: "0.5rem",
-            background: "#f8f8f8",
+            background: COLORS.cardBg,
             padding: "0.5rem",
             borderRadius: 16,
-            flexWrap: "wrap"
+            flexWrap: "wrap",
+            border: `1px solid ${COLORS.border}`
           }}
         >
           <TabButton id="main" label="Main" icon={<FaHeart />} />
@@ -335,15 +406,22 @@ END:VCALENDAR`;
         {tab === "info" && <InfoTab />}
         {tab === "party" && <WeddingPartyTab />}
         {tab === "registry" && <RegistryTab />}
-        {tab === "guestbook" && (
-          <GuestBookTab entries={guestBookEntries} setEntries={setGuestBookEntries} />
-        )}
+        {tab === "guestbook" && <GuestBookTab entries={guestBookEntries} setEntries={setGuestBookEntries} />}
       </section>
 
-      <footer style={{ textAlign: "center", padding: "3rem 1.5rem", background: "#111", color: "#eee" }}>
-        <p style={{ fontSize: "1.25rem", marginBottom: "0.5rem" }}>We can't wait to celebrate with you</p>
-        <p style={{ fontSize: "2rem" }}>🤍</p>
-        <p style={{ fontSize: "0.9rem", opacity: 0.7, marginTop: "1.5rem" }}>
+      <footer
+        style={{
+          textAlign: "center",
+          padding: "4rem 1.5rem",
+          background: COLORS.darkText,
+          color: COLORS.bg
+        }}
+      >
+        <p style={{ fontSize: "1.35rem", marginBottom: "0.75rem", fontWeight: 300, letterSpacing: "1px" }}>
+          We can't wait to celebrate with you
+        </p>
+        <p style={{ fontSize: "2.5rem", margin: "1rem 0" }}>🍂</p>
+        <p style={{ fontSize: "0.95rem", opacity: 0.7, marginTop: "1.5rem", letterSpacing: "1px" }}>
           Ben & Emily • October 24, 2026
         </p>
       </footer>
@@ -351,15 +429,13 @@ END:VCALENDAR`;
   );
 }
 
-/* MAIN TAB – folder-based photo buckets */
+/* MAIN TAB */
 
 function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalendarEvent }) {
   const [indices, setIndices] = useState(photoBuckets.map(() => 0));
   const cycle = (slot) =>
     setIndices((prev) =>
-      prev.map((v, i) =>
-        i === slot && photoBuckets[slot].length > 0 ? (v + 1) % photoBuckets[slot].length : v
-      )
+      prev.map((v, i) => (i === slot && photoBuckets[slot].length > 0 ? (v + 1) % photoBuckets[slot].length : v))
     );
 
   return (
@@ -367,10 +443,12 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       <h2
         style={{
           textAlign: "center",
-          fontSize: "clamp(2rem,5vw,2.5rem)",
-          marginBottom: "2rem",
-          fontFamily: "'Playfair Display',Georgia,serif",
-          fontWeight: 400
+          fontSize: "clamp(2.5rem, 6vw, 3.2rem)",
+          marginBottom: "2.5rem",
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontWeight: 400,
+          color: COLORS.darkText,
+          letterSpacing: "1px"
         }}
       >
         Our Story
@@ -378,8 +456,8 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))",
-          gap: "1rem",
+          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+          gap: "1.2rem",
           marginBottom: "3rem"
         }}
       >
@@ -392,16 +470,18 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
               onClick={() => hasPhotos && cycle(i)}
               initial={{ opacity: 0.2, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.35 }}
+              transition={{ duration: 0.4 }}
               style={{
-                borderRadius: 12,
+                borderRadius: 16,
                 overflow: "hidden",
                 aspectRatio: "4/5",
                 cursor: hasPhotos ? "pointer" : "default",
-                background: hasPhotos ? "transparent" : "#eee",
+                background: hasPhotos ? "transparent" : COLORS.border,
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center"
+                justifyContent: "center",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+                border: `1px solid ${COLORS.border}`
               }}
             >
               {src ? (
@@ -416,28 +496,37 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
                   }}
                 />
               ) : (
-                <span style={{ color: "#aaa" }}>Add photos to assets/b{i + 1}</span>
+                <span style={{ color: COLORS.lightText, fontSize: "0.9rem" }}>Add photos to assets/b{i + 1}</span>
               )}
             </motion.div>
           );
         })}
       </div>
 
-      <div style={{ background: "#f9f9f9", padding: "2.5rem", borderRadius: 16, marginBottom: "3rem" }}>
+      <div
+        style={{
+          background: COLORS.cardBg,
+          padding: "3rem 2.5rem",
+          borderRadius: 20,
+          marginBottom: "3rem",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+          border: `1px solid ${COLORS.border}`
+        }}
+      >
         <p
           style={{
-            fontSize: "1.15rem",
-            lineHeight: 1.8,
-            color: "#333",
+            fontSize: "1.2rem",
+            lineHeight: 1.9,
+            color: COLORS.mediumText,
             textAlign: "center",
-            marginBottom: "1.5rem"
+            marginBottom: "1.8rem"
           }}
         >
           What started as a chance meeting turned into countless adventures, inside jokes, and a love that grows deeper
           every day. We've laughed through the chaos, supported each other through challenges, and built a life filled
           with joy.
         </p>
-        <p style={{ fontSize: "1.15rem", lineHeight: 1.8, color: "#333", textAlign: "center" }}>
+        <p style={{ fontSize: "1.2rem", lineHeight: 1.9, color: COLORS.mediumText, textAlign: "center" }}>
           Now, we're ready to celebrate this next chapter with the people who mean the most to us. We can't wait to
           share this special day with you!
         </p>
@@ -446,37 +535,52 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       <div
         style={{
           textAlign: "center",
-          padding: "2rem",
-          background: "#f0f7ff",
-          borderRadius: 16,
-          marginBottom: "2rem"
+          padding: "2.5rem",
+          background: COLORS.cardBg,
+          borderRadius: 20,
+          marginBottom: "2rem",
+          border: `2px solid ${COLORS.accent}`,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)"
         }}
       >
-        <FaCalendar style={{ fontSize: "3rem", color: "#667eea", marginBottom: "1rem" }} />
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", color: "#333" }}>Save the Date!</h3>
-        <p style={{ marginBottom: "1.5rem", color: "#666" }}>
+        <FaCalendar style={{ fontSize: "3.5rem", color: COLORS.primary, marginBottom: "1.2rem" }} />
+        <h3
+          style={{
+            fontSize: "1.8rem",
+            marginBottom: "1rem",
+            color: COLORS.darkText,
+            fontWeight: 400,
+            letterSpacing: "0.5px"
+          }}
+        >
+          Save the Date
+        </h3>
+        <p style={{ marginBottom: "1.8rem", color: COLORS.mediumText, fontSize: "1.05rem" }}>
           Add our wedding to your calendar so you don't forget!
         </p>
         <button
           onClick={downloadCalendarEvent}
           style={{
-            background: "#667eea",
-            color: "white",
+            background: COLORS.primary,
+            color: "#FFFFFF",
             border: "none",
-            padding: "1rem 2.5rem",
-            fontSize: "1.1rem",
-            fontWeight: 600,
+            padding: "1.1rem 3rem",
+            fontSize: "1.05rem",
+            fontWeight: 500,
             borderRadius: 50,
             cursor: "pointer",
-            transition: "all 0.3s ease"
+            transition: "all 0.3s ease",
+            letterSpacing: "0.5px"
           }}
           onMouseEnter={(e) => {
-            e.target.style.background = "#5568d3";
+            e.target.style.background = COLORS.secondary;
             e.target.style.transform = "translateY(-2px)";
+            e.target.style.boxShadow = "0 6px 20px rgba(139,90,60,0.3)";
           }}
           onMouseLeave={(e) => {
-            e.target.style.background = "#667eea";
+            e.target.style.background = COLORS.primary;
             e.target.style.transform = "translateY(0)";
+            e.target.style.boxShadow = "none";
           }}
         >
           Download Calendar Event
@@ -486,32 +590,46 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       <div
         style={{
           textAlign: "center",
-          padding: "2rem",
-          background: "linear-gradient(135deg,#667eea 0%,#764ba2 100%)",
-          borderRadius: 16,
-          color: "white"
+          padding: "3rem 2.5rem",
+          background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`,
+          borderRadius: 20,
+          color: "white",
+          boxShadow: "0 6px 25px rgba(139,90,60,0.25)"
         }}
       >
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", fontWeight: 500 }}>How excited are you? 🎉</h3>
-        <p style={{ marginBottom: "1.5rem", opacity: 0.9 }}>Click the button to show your excitement!</p>
+        <h3 style={{ fontSize: "1.8rem", marginBottom: "1.2rem", fontWeight: 400, letterSpacing: "0.5px" }}>
+          How excited are you? 🍁
+        </h3>
+        <p style={{ marginBottom: "2rem", opacity: 0.95, fontSize: "1.05rem" }}>
+          Click the button to show your excitement!
+        </p>
         <button
           onClick={handleButtonClick}
           style={{
             background: "white",
-            color: "#667eea",
+            color: COLORS.primary,
             border: "none",
-            padding: "1.25rem 3rem",
-            fontSize: "1.25rem",
+            padding: "1.3rem 3.5rem",
+            fontSize: "1.3rem",
             fontWeight: 600,
             borderRadius: 50,
             cursor: "pointer",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-            marginBottom: "1.5rem"
+            boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
+            marginBottom: "1.8rem",
+            transition: "all 0.3s ease"
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.transform = "scale(1.05)";
+            e.target.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = "scale(1)";
+            e.target.style.boxShadow = "0 6px 20px rgba(0,0,0,0.2)";
           }}
         >
-          Can't Wait! 💕
+          Can't Wait! 🎉
         </button>
-        <div style={{ fontSize: "1.25rem", fontWeight: 500 }}>
+        <div style={{ fontSize: "1.35rem", fontWeight: 400, letterSpacing: "0.5px" }}>
           Total clicks: {buttonCount.toLocaleString()}
         </div>
       </div>
@@ -519,7 +637,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
   );
 }
 
-/* RSVP, INFO, REGISTRY, GUESTBOOK (unchanged from last version) */
+/* RSVP, INFO, REGISTRY, GUESTBOOK */
 
 function RSVPTab() {
   return (
@@ -527,46 +645,62 @@ function RSVPTab() {
       <h2
         style={{
           textAlign: "center",
-          fontSize: "clamp(2rem,5vw,2.5rem)",
-          marginBottom: "1.5rem",
-          fontFamily: "'Playfair Display',Georgia,serif",
-          fontWeight: 400
+          fontSize: "clamp(2.5rem, 6vw, 3.2rem)",
+          marginBottom: "2rem",
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontWeight: 400,
+          color: COLORS.darkText,
+          letterSpacing: "1px"
         }}
       >
         RSVP
       </h2>
-      <p style={{ textAlign: "center", fontSize: "1.1rem", marginBottom: "2.5rem", color: "#666" }}>
+      <p style={{ textAlign: "center", fontSize: "1.15rem", marginBottom: "3rem", color: COLORS.mediumText }}>
         Please let us know if you can join us by filling out the form below
       </p>
-      <div style={{ background: "#f9f9f9", padding: "2rem", borderRadius: 16, textAlign: "center" }}>
-        <p style={{ marginBottom: "1.5rem", fontSize: "1.05rem" }}>Click below to open our RSVP form:</p>
+      <div
+        style={{
+          background: COLORS.cardBg,
+          padding: "3rem 2.5rem",
+          borderRadius: 20,
+          textAlign: "center",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+          border: `1px solid ${COLORS.border}`
+        }}
+      >
+        <p style={{ marginBottom: "2rem", fontSize: "1.1rem", color: COLORS.mediumText }}>
+          Click below to open our RSVP form:
+        </p>
         <a
           href="https://forms.gle/9U5nv3R1hasEXZYJA"
           target="_blank"
           rel="noopener noreferrer"
           style={{
             display: "inline-block",
-            background: "#111",
+            background: COLORS.darkText,
             color: "white",
-            padding: "1.25rem 3rem",
+            padding: "1.3rem 3.5rem",
             fontSize: "1.1rem",
-            fontWeight: 600,
+            fontWeight: 500,
             borderRadius: 50,
             textDecoration: "none",
-            transition: "all 0.3s ease"
+            transition: "all 0.3s ease",
+            letterSpacing: "0.5px"
           }}
           onMouseEnter={(e) => {
-            e.target.style.background = "#333";
+            e.target.style.background = COLORS.primary;
             e.target.style.transform = "translateY(-2px)";
+            e.target.style.boxShadow = "0 6px 20px rgba(45,37,32,0.25)";
           }}
           onMouseLeave={(e) => {
-            e.target.style.background = "#111";
+            e.target.style.background = COLORS.darkText;
             e.target.style.transform = "translateY(0)";
+            e.target.style.boxShadow = "none";
           }}
         >
           Open RSVP Form →
         </a>
-        <p style={{ marginTop: "1.5rem", fontSize: "0.95rem", color: "#888" }}>
+        <p style={{ marginTop: "2rem", fontSize: "1rem", color: COLORS.lightText, letterSpacing: "0.3px" }}>
           Please respond by September 1, 2026
         </p>
       </div>
@@ -580,16 +714,36 @@ function InfoTab() {
       <h2
         style={{
           textAlign: "center",
-          fontSize: "clamp(2rem,5vw,2.5rem)",
+          fontSize: "clamp(2.5rem, 6vw, 3.2rem)",
           marginBottom: "3rem",
-          fontFamily: "'Playfair Display',Georgia,serif",
-          fontWeight: 400
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontWeight: 400,
+          color: COLORS.darkText,
+          letterSpacing: "1px"
         }}
       >
         Wedding Information
       </h2>
-      <div style={{ background: "#f9f9f9", padding: "2rem", borderRadius: 16, marginBottom: "2rem" }}>
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: "#333" }}>
+      <div
+        style={{
+          background: COLORS.cardBg,
+          padding: "2.5rem",
+          borderRadius: 20,
+          marginBottom: "2rem",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+          border: `1px solid ${COLORS.border}`
+        }}
+      >
+        <h3
+          style={{
+            fontSize: "1.8rem",
+            marginBottom: "2rem",
+            textAlign: "center",
+            color: COLORS.darkText,
+            fontWeight: 400,
+            letterSpacing: "0.5px"
+          }}
+        >
           Schedule
         </h3>
         <div style={{ maxWidth: 500, margin: "0 auto" }}>
@@ -604,43 +758,79 @@ function InfoTab() {
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                padding: "1rem 0",
-                borderBottom: i < 3 ? "1px solid #e0e0e0" : "none",
-                color: "#333"
+                padding: "1.2rem 0",
+                borderBottom: i < 3 ? `1px solid ${COLORS.border}` : "none",
+                color: COLORS.mediumText
               }}
             >
-              <span style={{ fontWeight: 600, color: "#667eea" }}>{time}</span>
-              <span>{ev}</span>
+              <span style={{ fontWeight: 600, color: COLORS.primary, fontSize: "1.05rem" }}>{time}</span>
+              <span style={{ fontSize: "1.05rem" }}>{ev}</span>
             </div>
           ))}
         </div>
       </div>
-      <div style={{ background: "#f9f9f9", padding: "2rem", borderRadius: 16, marginBottom: "2rem" }}>
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem", textAlign: "center", color: "#333" }}>
+      <div
+        style={{
+          background: COLORS.cardBg,
+          padding: "2.5rem",
+          borderRadius: 20,
+          marginBottom: "2rem",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+          border: `1px solid ${COLORS.border}`
+        }}
+      >
+        <h3
+          style={{
+            fontSize: "1.8rem",
+            marginBottom: "1.5rem",
+            textAlign: "center",
+            color: COLORS.darkText,
+            fontWeight: 400,
+            letterSpacing: "0.5px"
+          }}
+        >
           Venue
         </h3>
-        <p style={{ textAlign: "center", fontSize: "1.1rem", color: "#333" }}>
-          <strong>The Garden Estate</strong>
+        <p style={{ textAlign: "center", fontSize: "1.15rem", color: COLORS.mediumText, lineHeight: 1.8 }}>
+          <strong style={{ color: COLORS.darkText }}>The Garden Estate</strong>
           <br />
           123 Vineyard Lane
           <br />
           Charlottesville, VA 22902
         </p>
       </div>
-      <div style={{ background: "#f9f9f9", padding: "2rem", borderRadius: 16, marginBottom: "2rem" }}>
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: "#333" }}>
+      <div
+        style={{
+          background: COLORS.cardBg,
+          padding: "2.5rem",
+          borderRadius: 20,
+          marginBottom: "2rem",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+          border: `1px solid ${COLORS.border}`
+        }}
+      >
+        <h3
+          style={{
+            fontSize: "1.8rem",
+            marginBottom: "2rem",
+            textAlign: "center",
+            color: COLORS.darkText,
+            fontWeight: 400,
+            letterSpacing: "0.5px"
+          }}
+        >
           Travel & Stay
         </h3>
-        <div style={{ lineHeight: 1.8, color: "#333" }}>
-          <p style={{ marginBottom: "1rem" }}>
-            <strong>Hotel Blocks:</strong>
+        <div style={{ lineHeight: 1.9, color: COLORS.mediumText, fontSize: "1.05rem" }}>
+          <p style={{ marginBottom: "1.2rem" }}>
+            <strong style={{ color: COLORS.darkText }}>Hotel Blocks:</strong>
           </p>
-          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.5rem" }}>
-            <li>The Charlottesville Inn - Book by Sept 1, 2026</li>
+          <ul style={{ paddingLeft: "1.8rem", marginBottom: "2rem" }}>
+            <li style={{ marginBottom: "0.5rem" }}>The Charlottesville Inn - Book by Sept 1, 2026</li>
             <li>Downtown Suites - Book by Sept 1, 2026</li>
           </ul>
           <p>
-            <strong>Getting There:</strong>
+            <strong style={{ color: COLORS.darkText }}>Getting There:</strong>
             <br />
             Charlottesville-Albemarle Airport (CHO) is 15 minutes from downtown. Rideshare and rental cars are readily
             available.
@@ -649,18 +839,21 @@ function InfoTab() {
       </div>
       <div
         style={{
-          background: "linear-gradient(135deg,#667eea 0%,#764ba2 100%)",
-          padding: "2rem",
-          borderRadius: 16,
+          background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`,
+          padding: "2.5rem",
+          borderRadius: 20,
           color: "white",
-          textAlign: "center"
+          textAlign: "center",
+          boxShadow: "0 6px 25px rgba(139,90,60,0.25)"
         }}
       >
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>Dress Code</h3>
-        <p style={{ fontSize: "1.1rem" }}>
+        <h3 style={{ fontSize: "1.8rem", marginBottom: "1rem", fontWeight: 400, letterSpacing: "0.5px" }}>
+          Dress Code
+        </h3>
+        <p style={{ fontSize: "1.2rem", lineHeight: 1.7 }}>
           Cocktail Attire
           <br />
-          <span style={{ fontSize: "0.95rem", opacity: 0.9 }}>(The ceremony will be outdoors on grass)</span>
+          <span style={{ fontSize: "1rem", opacity: 0.9 }}>(The ceremony will be outdoors on grass)</span>
         </p>
       </div>
     </div>
@@ -669,35 +862,31 @@ function InfoTab() {
 
 function RegistryTab() {
   const registries = [
-    { name: "Amazon", url: "https://amazon.com/wedding/your-registry", color: "#FF9900", icon: "🛍️" },
-    { name: "Target", url: "https://target.com/gift-registry", color: "#CC0000", icon: "🎯" },
-    { name: "Zola", url: "https://zola.com/registry", color: "#FF6B6B", icon: "💝" },
-    { name: "Honeymoon Fund", url: "#", color: "#4ECDC4", icon: "✈️" }
+    { name: "Amazon", url: "https://amazon.com/wedding/your-registry", color: COLORS.primary, icon: "🛍️" },
+    { name: "Target", url: "https://target.com/gift-registry", color: COLORS.secondary, icon: "🎯" },
+    { name: "Zola", url: "https://zola.com/registry", color: COLORS.accent, icon: "💝" },
+    { name: "Honeymoon Fund", url: "#", color: COLORS.highlight, icon: "✈️" }
   ];
   return (
     <div style={{ maxWidth: 800, margin: "0 auto" }}>
       <h2
         style={{
           textAlign: "center",
-          fontSize: "clamp(2rem,5vw,2.5rem)",
-          marginBottom: "1.5rem",
-          fontFamily: "'Playfair Display',Georgia,serif",
-          fontWeight: 400
+          fontSize: "clamp(2.5rem, 6vw, 3.2rem)",
+          marginBottom: "2rem",
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontWeight: 400,
+          color: COLORS.darkText,
+          letterSpacing: "1px"
         }}
       >
         Registry
       </h2>
-      <p style={{ textAlign: "center", fontSize: "1.1rem", marginBottom: "3rem", color: "#666" }}>
+      <p style={{ textAlign: "center", fontSize: "1.15rem", marginBottom: "3.5rem", color: COLORS.mediumText }}>
         Your presence is the best gift, but if you'd like to contribute to our future together, we've registered at
         these locations:
       </p>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))",
-          gap: "1.5rem"
-        }}
-      >
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem" }}>
         {registries.map((r) => (
           <a
             key={r.name}
@@ -705,33 +894,57 @@ function RegistryTab() {
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              background: "#f9f9f9",
-              padding: "2.5rem",
-              borderRadius: 16,
+              background: COLORS.cardBg,
+              padding: "3rem 2.5rem",
+              borderRadius: 20,
               textAlign: "center",
               textDecoration: "none",
-              color: "#333",
-              border: "2px solid transparent",
-              transition: "all 0.3s ease"
+              color: COLORS.darkText,
+              border: `2px solid ${COLORS.border}`,
+              transition: "all 0.3s ease",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = r.color;
-              e.currentTarget.style.background = "#fff";
+              e.currentTarget.style.transform = "translateY(-4px)";
+              e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.12)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "transparent";
-              e.currentTarget.style.background = "#f9f9f9";
+              e.currentTarget.style.borderColor = COLORS.border;
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 15px rgba(0,0,0,0.05)";
             }}
           >
-            <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>{r.icon}</div>
-            <h3 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>{r.name}</h3>
-            <p style={{ fontSize: "0.9rem", color: "#888" }}>Click to view registry →</p>
+            <div style={{ fontSize: "4.5rem", marginBottom: "1.2rem" }}>{r.icon}</div>
+            <h3
+              style={{
+                fontSize: "1.6rem",
+                marginBottom: "0.6rem",
+                fontWeight: 500,
+                color: COLORS.darkText,
+                letterSpacing: "0.3px"
+              }}
+            >
+              {r.name}
+            </h3>
+            <p style={{ fontSize: "0.95rem", color: COLORS.lightText }}>Click to view registry →</p>
           </a>
         ))}
       </div>
-      <div style={{ marginTop: "3rem", padding: "2rem", background: "#fff9e6", borderRadius: 16, textAlign: "center" }}>
-        <p style={{ fontSize: "1.05rem", color: "#666", lineHeight: 1.8 }}>
-          <strong>💛 A Note from Us:</strong>
+      <div
+        style={{
+          marginTop: "3.5rem",
+          padding: "2.5rem",
+          background: COLORS.cardBg,
+          borderRadius: 20,
+          textAlign: "center",
+          border: `2px solid ${COLORS.accent}`,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)"
+        }}
+      >
+        <p style={{ fontSize: "1.1rem", color: COLORS.mediumText, lineHeight: 1.9 }}>
+          <strong style={{ color: COLORS.primary, fontSize: "1.3rem" }}>🍂 A Note from Us</strong>
+          <br />
           <br />
           The most important gift is your presence on our special day. If you'd still like to give something, we'd be
           grateful for contributions toward our honeymoon adventure or home together!
@@ -766,7 +979,12 @@ function GuestBookTab({ entries, setEntries }) {
     setMessage("");
     setPhotoPreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
-    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: [COLORS.primary, COLORS.secondary, COLORS.accent, COLORS.highlight]
+    });
   };
 
   return (
@@ -774,23 +992,40 @@ function GuestBookTab({ entries, setEntries }) {
       <h2
         style={{
           textAlign: "center",
-          fontSize: "clamp(2rem,5vw,2.5rem)",
-          marginBottom: "1.5rem",
-          fontFamily: "'Playfair Display',Georgia,serif",
-          fontWeight: 400
+          fontSize: "clamp(2.5rem, 6vw, 3.2rem)",
+          marginBottom: "2rem",
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontWeight: 400,
+          color: COLORS.darkText,
+          letterSpacing: "1px"
         }}
       >
         Guest Book
       </h2>
-      <p style={{ textAlign: "center", fontSize: "1.1rem", marginBottom: "3rem", color: "#666" }}>
+      <p style={{ textAlign: "center", fontSize: "1.15rem", marginBottom: "3rem", color: COLORS.mediumText }}>
         Leave us a message and snap a selfie! 📸
       </p>
       <form
         onSubmit={handleSubmit}
-        style={{ background: "#f9f9f9", padding: "2.5rem", borderRadius: 16, marginBottom: "3rem" }}
+        style={{
+          background: COLORS.cardBg,
+          padding: "3rem 2.5rem",
+          borderRadius: 20,
+          marginBottom: "3.5rem",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+          border: `1px solid ${COLORS.border}`
+        }}
       >
-        <div style={{ marginBottom: "1.5rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 600, color: "#333" }}>
+        <div style={{ marginBottom: "1.8rem" }}>
+          <label
+            style={{
+              display: "block",
+              marginBottom: "0.6rem",
+              fontWeight: 600,
+              color: COLORS.darkText,
+              letterSpacing: "0.3px"
+            }}
+          >
             Your Name
           </label>
           <input
@@ -800,16 +1035,26 @@ function GuestBookTab({ entries, setEntries }) {
             required
             style={{
               width: "100%",
-              padding: "1rem",
-              border: "2px solid #e0e0e0",
+              padding: "1.1rem",
+              border: `2px solid ${COLORS.border}`,
               borderRadius: 12,
-              fontSize: "1rem",
-              fontFamily: "inherit"
+              fontSize: "1.05rem",
+              fontFamily: "inherit",
+              color: COLORS.darkText,
+              background: COLORS.bg
             }}
           />
         </div>
-        <div style={{ marginBottom: "1.5rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 600, color: "#333" }}>
+        <div style={{ marginBottom: "1.8rem" }}>
+          <label
+            style={{
+              display: "block",
+              marginBottom: "0.6rem",
+              fontWeight: 600,
+              color: COLORS.darkText,
+              letterSpacing: "0.3px"
+            }}
+          >
             Your Message
           </label>
           <textarea
@@ -820,17 +1065,27 @@ function GuestBookTab({ entries, setEntries }) {
             rows={4}
             style={{
               width: "100%",
-              padding: "1rem",
-              border: "2px solid #e0e0e0",
+              padding: "1.1rem",
+              border: `2px solid ${COLORS.border}`,
               borderRadius: 12,
-              fontSize: "1rem",
+              fontSize: "1.05rem",
               fontFamily: "inherit",
-              resize: "vertical"
+              resize: "vertical",
+              color: COLORS.darkText,
+              background: COLORS.bg
             }}
           />
         </div>
-        <div style={{ marginBottom: "1.5rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: 600, color: "#333" }}>
+        <div style={{ marginBottom: "1.8rem" }}>
+          <label
+            style={{
+              display: "block",
+              marginBottom: "0.6rem",
+              fontWeight: 600,
+              color: COLORS.darkText,
+              letterSpacing: "0.3px"
+            }}
+          >
             Add a Selfie (Optional)
           </label>
           <input
@@ -840,18 +1095,25 @@ function GuestBookTab({ entries, setEntries }) {
             onChange={handlePhotoChange}
             style={{
               width: "100%",
-              padding: "1rem",
-              border: "2px dashed #e0e0e0",
+              padding: "1.1rem",
+              border: `2px dashed ${COLORS.border}`,
               borderRadius: 12,
-              cursor: "pointer"
+              cursor: "pointer",
+              background: COLORS.bg
             }}
           />
           {photoPreview && (
-            <div style={{ marginTop: "1rem", textAlign: "center" }}>
+            <div style={{ marginTop: "1.2rem", textAlign: "center" }}>
               <img
                 src={photoPreview}
                 alt="Preview"
-                style={{ maxWidth: 200, maxHeight: 200, borderRadius: 12, objectFit: "cover" }}
+                style={{
+                  maxWidth: 220,
+                  maxHeight: 220,
+                  borderRadius: 16,
+                  objectFit: "cover",
+                  border: `2px solid ${COLORS.border}`
+                }}
               />
             </div>
           )}
@@ -860,64 +1122,86 @@ function GuestBookTab({ entries, setEntries }) {
           type="submit"
           style={{
             width: "100%",
-            background: "linear-gradient(135deg,#667eea 0%,#764ba2 100%)",
+            background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`,
             color: "white",
             border: "none",
-            padding: "1.25rem",
-            fontSize: "1.1rem",
+            padding: "1.3rem",
+            fontSize: "1.15rem",
             fontWeight: 600,
             borderRadius: 12,
             cursor: "pointer",
-            transition: "all 0.3s ease"
+            transition: "all 0.3s ease",
+            letterSpacing: "0.5px"
           }}
           onMouseEnter={(e) => {
             e.target.style.transform = "translateY(-2px)";
-            e.target.style.boxShadow = "0 8px 20px rgba(102,126,234,0.4)";
+            e.target.style.boxShadow = "0 8px 25px rgba(139,90,60,0.3)";
           }}
           onMouseLeave={(e) => {
             e.target.style.transform = "translateY(0)";
             e.target.style.boxShadow = "none";
           }}
         >
-          Sign Guest Book 💕
+          Sign Guest Book 🍁
         </button>
       </form>
       <div>
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "2rem", textAlign: "center", color: "#333" }}>
-          Messages from Our Guests ({entries.length})
-        </h3>
-        <div
+        <h3
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))",
-            gap: "1.5rem"
+            fontSize: "1.8rem",
+            marginBottom: "2.5rem",
+            textAlign: "center",
+            color: COLORS.darkText,
+            fontWeight: 400,
+            letterSpacing: "0.5px"
           }}
         >
+          Messages from Our Guests ({entries.length})
+        </h3>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.5rem" }}>
           {entries.map((entry) => (
             <div
               key={entry.id}
               style={{
-                background: "white",
-                padding: "1.5rem",
-                borderRadius: 12,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                transform: `rotate(${Math.random() * 4 - 2}deg)`
+                background: COLORS.cardBg,
+                padding: "1.8rem",
+                borderRadius: 16,
+                boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+                border: `1px solid ${COLORS.border}`,
+                transform: `rotate(${Math.random() * 3 - 1.5}deg)`
               }}
             >
               {entry.photo && (
                 <img
                   src={entry.photo}
                   alt={entry.name}
-                  style={{ width: "100%", height: 200, objectFit: "cover", borderRadius: 8, marginBottom: "1rem" }}
+                  style={{
+                    width: "100%",
+                    height: 200,
+                    objectFit: "cover",
+                    borderRadius: 12,
+                    marginBottom: "1.2rem",
+                    border: `1px solid ${COLORS.border}`
+                  }}
                 />
               )}
-              <p style={{ fontWeight: 600, marginBottom: "0.5rem", color: "#333" }}>{entry.name}</p>
-              <p style={{ fontSize: "0.95rem", color: "#666", lineHeight: 1.6 }}>"{entry.message}"</p>
+              <p style={{ fontWeight: 600, marginBottom: "0.6rem", color: COLORS.darkText, fontSize: "1.05rem" }}>
+                {entry.name}
+              </p>
+              <p style={{ fontSize: "1rem", color: COLORS.mediumText, lineHeight: 1.7 }}>"{entry.message}"</p>
             </div>
           ))}
         </div>
         {entries.length === 0 && (
-          <p style={{ textAlign: "center", color: "#999", fontSize: "1.1rem", marginTop: "1.5rem" }}>
+          <p
+            style={{
+              textAlign: "center",
+              color: COLORS.lightText,
+              fontSize: "1.15rem",
+              marginTop: "2rem",
+              fontStyle: "italic"
+            }}
+          >
             Be the first to sign the guest book! ✨
           </p>
         )}
@@ -926,19 +1210,7 @@ function GuestBookTab({ entries, setEntries }) {
   );
 }
 
-/* WEDDING PARTY TAB + CARDS (with folder-based photos and clean layout) */
-
-import bears from "./assets/bears.png"
-import brown from "./assets/brown.png"
-import vt from "./assets/hokies.webp"
-import dukes from "./assets/JMU.png"
-import nu from "./assets/NU.png"
-import sc from "./assets/SC.png"
-import skins from "./assets/skins.png"
-import ut from "./assets/UT.png"
-import uva from "./assets/UVA.png"
-import w from "./assets/W.png"
-import wl from "./assets/WL.png"
+/* WEDDING PARTY TAB + CARDS */
 
 function WeddingPartyTab() {
   const groomsmen = [
@@ -947,26 +1219,25 @@ function WeddingPartyTab() {
       relation: "Brother",
       photos: harryPhotos,
       role: "Best Man",
-      maxBench: "135 lbs",
+      maxBench: "175 lbs",
       fortyYard: "4.95s",
-      handicap: "20.0",
+      handicap: "19.0",
       relationshipStatus: "Taken",
       currentCity: "Williamsburg, NY",
       college: "Northwestern University",
       collegeLogo: nu,
       footballTeam: "Cleveland Browns",
       footballLogo: brown,
-      comment:
-        "Let's hope Harry shows up on time to the ceremony."
+      comment: "Let's hope Harry shows up on time to the ceremony."
     },
     {
       name: "Chuck",
       relation: "Brother",
       photos: chuckPhotos,
       role: "Groomsman",
-      maxBench: "105 lbs",
-      fortyYard: "5.2s",
-      handicap: "20.0",
+      maxBench: "135lbs",
+      fortyYard: "5.4s",
+      handicap: "13.5",
       relationshipStatus: "Taken",
       currentCity: "Chicago, IL",
       college: "University of Wisconsin",
@@ -981,7 +1252,7 @@ function WeddingPartyTab() {
       relation: "Brother",
       photos: jackoPhotos,
       role: "Groomsman",
-      maxBench: "185 lbs",
+      maxBench: "185lbs",
       fortyYard: "5.8s",
       handicap: "20.0",
       relationshipStatus: "Single",
@@ -998,8 +1269,8 @@ function WeddingPartyTab() {
       relation: "Friend",
       photos: colePhotos,
       role: "Groomsman",
-      maxBench: "285 lbs",
-      fortyYard: "4.8s",
+      maxBench: "285lbs",
+      fortyYard: "4.9s",
       handicap: "9.5",
       relationshipStatus: "Married",
       currentCity: "Charleston, SC",
@@ -1007,15 +1278,14 @@ function WeddingPartyTab() {
       collegeLogo: sc,
       footballTeam: "Washington Football Team",
       footballLogo: skins,
-      comment:
-        "It's too Cole for my Dickinson."
+      comment: "It's too Cole for my Dickinson."
     },
     {
       name: "Henry Kreienbaum",
       relation: "Friend",
       photos: henryPhotos,
       role: "Groomsman",
-      maxBench: "265 lbs",
+      maxBench: "265lbs",
       fortyYard: "5.3s",
       handicap: "15.0",
       relationshipStatus: "Taken",
@@ -1024,15 +1294,14 @@ function WeddingPartyTab() {
       collegeLogo: dukes,
       footballTeam: "Washington Commanders",
       footballLogo: skins,
-      comment:
-        "Don't ask this guy about Nascar."
+      comment: "Don't ask this guy about Nascar."
     },
     {
       name: "Oliver",
       relation: "Friend",
       photos: oliPhotos,
       role: "Groomsman",
-      maxBench: "255 lbs",
+      maxBench: "255lbs",
       fortyYard: "4.6s",
       handicap: "22.0",
       relationshipStatus: "Taken",
@@ -1041,39 +1310,38 @@ function WeddingPartyTab() {
       collegeLogo: wl,
       footballTeam: "Washington Redskins",
       footballLogo: skins,
-      comment:
-        "Can I get a roll tide."
+      comment: "Can I get a roll tide."
     },
     {
       name: "Wyatt",
       relation: "Brother in law",
       photos: wyattPhotos,
       role: "Groomsman",
-      maxBench: "225 lbs",
-      fortyYard: "4.8s",
-      handicap: "16.0",
+      maxBench: "225lbs",
+      fortyYard: "5.5s",
+      handicap: "8.0",
       relationshipStatus: "Single",
       currentCity: "Knoxville, TN",
       college: "University of Tennessee",
       collegeLogo: ut,
       footballTeam: "The Vols",
       footballLogo: ut,
-      comment:
-        "Fill in description."
+      comment: "Fill in description."
     }
   ];
 
   const bridesmaids = [
     {
-      name: "Sarah Johnson",
-      relation: "Sister",
-      photos: sarahPhotos,
-      role: "Maid of Honor",
+      name: "Lauren Turnbull",
+      relation: "Friend",
+      photos: laurenPhotos,
+      role: "Bridesmaid",
       relationshipStatus: "Taken",
-      currentCity: "Boston, MA",
-      college: "Boston College",
-      sorority: "Kappa Kappa Gamma",
-      comment: "Can recite every line from The Office. Yes, all 9 seasons. It's both impressive and concerning."
+      currentCity: "Nashville, TN",
+      college: "Univsersity of Tennessee | Vanderbilt University | Belmont School of Medicine",
+      favoriteDrink: "Pinot Grigio",
+      danceFloorSong: "Valerie by Amy Winehouse",
+      funFact: "Emily and Lauren met in our first class freshman year of college."
     }
   ];
 
@@ -1082,21 +1350,34 @@ function WeddingPartyTab() {
       <h2
         style={{
           textAlign: "center",
-          fontSize: "clamp(2rem,5vw,2.5rem)",
-          marginBottom: "1.5rem",
-          fontFamily: "'Playfair Display',Georgia,serif",
-          fontWeight: 400
+          fontSize: "clamp(2.5rem, 6vw, 3.2rem)",
+          marginBottom: "2rem",
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontWeight: 400,
+          color: COLORS.darkText,
+          letterSpacing: "1px"
         }}
       >
         Our Wedding Party
       </h2>
-      <p style={{ textAlign: "center", fontSize: "1.1rem", marginBottom: "4rem", color: "#666" }}>
+      <p style={{ textAlign: "center", fontSize: "1.15rem", marginBottom: "4rem", color: COLORS.mediumText }}>
         Meet the amazing people standing by our side!
         <br />
-        <span style={{ fontSize: "0.95rem", fontStyle: "italic" }}>(Tap the cards to see more!)</span>
+        <span style={{ fontSize: "1rem", fontStyle: "italic", color: COLORS.lightText }}>
+          (Tap the cards to see more!)
+        </span>
       </p>
       <div style={{ marginBottom: "4rem" }}>
-        <h3 style={{ fontSize: "1.8rem", marginBottom: "2rem", textAlign: "center", color: "#667eea" }}>
+        <h3
+          style={{
+            fontSize: "2rem",
+            marginBottom: "2.5rem",
+            textAlign: "center",
+            color: COLORS.groomAccent,
+            fontWeight: 400,
+            letterSpacing: "0.5px"
+          }}
+        >
           Groom's Side 🤵
         </h3>
         <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
@@ -1106,7 +1387,16 @@ function WeddingPartyTab() {
         </div>
       </div>
       <div>
-        <h3 style={{ fontSize: "1.8rem", marginBottom: "2rem", textAlign: "center", color: "#764ba2" }}>
+        <h3
+          style={{
+            fontSize: "2rem",
+            marginBottom: "2.5rem",
+            textAlign: "center",
+            color: COLORS.brideAccent,
+            fontWeight: 400,
+            letterSpacing: "0.5px"
+          }}
+        >
           Bride's Side 👰
         </h3>
         <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
@@ -1122,7 +1412,7 @@ function WeddingPartyTab() {
 const GroomCard = React.memo(({ person }) => {
   const [showBack, setShowBack] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const color = "#667eea";
+  const color = COLORS.groomAccent;
   const photos = (person.photos || []).filter(Boolean);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const cardHeight = isMobile ? MOBILE_CARD_HEIGHT : CARD_HEIGHT;
@@ -1146,15 +1436,16 @@ const GroomCard = React.memo(({ person }) => {
             transition={{ duration: 0.25 }}
             onClick={() => setShowBack(true)}
             style={{
-              background: "white",
-              borderRadius: 16,
-              boxShadow: "0 3px 16px rgba(0,0,0,0.1)",
+              background: COLORS.cardBg,
+              borderRadius: 20,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
               borderTop: `6px solid ${color}`,
               cursor: "pointer",
               overflow: "hidden",
               height: cardHeight,
               display: "flex",
-              flexDirection: "row"
+              flexDirection: "row",
+              border: `1px solid ${COLORS.border}`
             }}
           >
             <motion.div
@@ -1180,22 +1471,24 @@ const GroomCard = React.memo(({ person }) => {
             >
               {!photos[photoIndex] && "👤"}
             </motion.div>
-            <div style={{ flex: 1, padding: "1.5rem", overflow: "hidden" }}>
-              <h3 style={{ fontSize: "1.5rem", marginBottom: "0.25rem", color: "#333" }}>{person.name}</h3>
-              <p style={{ color, fontWeight: 600, marginBottom: "0.25rem", fontSize: "1rem" }}>{person.role}</p>
-              <p style={{ fontSize: "0.95rem", color: "#666", marginBottom: "1rem" }}>
+            <div style={{ flex: 1, padding: "1.8rem", overflow: "hidden" }}>
+              <h3 style={{ fontSize: "1.6rem", marginBottom: "0.3rem", color: COLORS.darkText, letterSpacing: "0.3px" }}>
+                {person.name}
+              </h3>
+              <p style={{ color, fontWeight: 600, marginBottom: "0.3rem", fontSize: "1.05rem" }}>{person.role}</p>
+              <p style={{ fontSize: "1rem", color: COLORS.mediumText, marginBottom: "1.2rem" }}>
                 <strong>Relation:</strong> {person.relation}
               </p>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "0.5rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "0.6rem" }}>
                 <div>
-                  <div style={{ fontSize: "0.8rem", color: "#999" }}>Status</div>
-                  <div style={{ fontSize: "0.95rem", color: "#333", fontWeight: 600 }}>
+                  <div style={{ fontSize: "0.85rem", color: COLORS.lightText, letterSpacing: "0.3px" }}>Status</div>
+                  <div style={{ fontSize: "1rem", color: COLORS.darkText, fontWeight: 600 }}>
                     {person.relationshipStatus}
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: "0.8rem", color: "#999" }}>City</div>
-                  <div style={{ fontSize: "0.95rem", color: "#333", fontWeight: 600 }}>{person.currentCity}</div>
+                  <div style={{ fontSize: "0.85rem", color: COLORS.lightText, letterSpacing: "0.3px" }}>City</div>
+                  <div style={{ fontSize: "1rem", color: COLORS.darkText, fontWeight: 600 }}>{person.currentCity}</div>
                 </div>
               </div>
             </div>
@@ -1209,25 +1502,26 @@ const GroomCard = React.memo(({ person }) => {
             transition={{ duration: 0.25 }}
             onClick={() => setShowBack(false)}
             style={{
-              background: "white",
-              borderRadius: 16,
-              boxShadow: "0 3px 16px rgba(0,0,0,0.1)",
+              background: COLORS.cardBg,
+              borderRadius: 20,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
               borderTop: `6px solid ${color}`,
-              padding: "1.5rem",
+              padding: "1.8rem",
               height: cardHeight,
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              cursor: "pointer"
+              cursor: "pointer",
+              border: `1px solid ${COLORS.border}`
             }}
           >
             <div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.75rem", marginBottom: "1rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.8rem", marginBottom: "1.2rem" }}>
                 <StatCell label="Max Bench" value={person.maxBench} color={color} />
                 <StatCell label="40-Yard" value={person.fortyYard} color={color} />
                 <StatCell label="GHIN Index" value={person.handicap} color={color} />
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", marginBottom: "1.2rem" }}>
                 <div
                   style={{
                     display: "flex",
@@ -1237,15 +1531,17 @@ const GroomCard = React.memo(({ person }) => {
                     flexWrap: "wrap"
                   }}
                 >
-                  <span style={{ fontSize: "0.85rem", color: "#999" }}>College:</span>
+                  <span style={{ fontSize: "0.9rem", color: COLORS.lightText, letterSpacing: "0.3px" }}>College:</span>
                   {person.collegeLogo && (
                     <img
                       src={person.collegeLogo}
                       alt="College Logo"
-                      style={{ width: 24, height: 24, objectFit: "contain" }}
+                      style={{ width: 26, height: 26, objectFit: "contain" }}
                     />
                   )}
-                  <span style={{ fontSize: "1rem", fontWeight: 600, color: "#333" }}>{person.college}</span>
+                  <span style={{ fontSize: "1.05rem", fontWeight: 600, color: COLORS.darkText }}>
+                    {person.college}
+                  </span>
                 </div>
                 <div
                   style={{
@@ -1256,28 +1552,31 @@ const GroomCard = React.memo(({ person }) => {
                     flexWrap: "wrap"
                   }}
                 >
-                  <span style={{ fontSize: "0.85rem", color: "#999" }}>Football Team:</span>
+                  <span style={{ fontSize: "0.9rem", color: COLORS.lightText, letterSpacing: "0.3px" }}>
+                    Football Team:
+                  </span>
                   {person.footballLogo && (
                     <img
                       src={person.footballLogo}
                       alt="Team Logo"
-                      style={{ width: 24, height: 24, objectFit: "contain" }}
+                      style={{ width: 26, height: 26, objectFit: "contain" }}
                     />
                   )}
-                  <span style={{ fontSize: "1rem", fontWeight: 600, color: "#333" }}>
+                  <span style={{ fontSize: "1.05rem", fontWeight: 600, color: COLORS.darkText }}>
                     {person.footballTeam}
                   </span>
                 </div>
               </div>
               <div
                 style={{
-                  padding: "1rem",
-                  background: "#f0f7ff",
-                  borderRadius: 12,
-                  fontSize: "0.9rem",
-                  color: "#555",
+                  padding: "1.2rem",
+                  background: COLORS.bg,
+                  borderRadius: 14,
+                  fontSize: "0.95rem",
+                  color: COLORS.mediumText,
                   fontStyle: "italic",
-                  lineHeight: 1.5
+                  lineHeight: 1.6,
+                  border: `1px solid ${COLORS.border}`
                 }}
               >
                 💬 {person.comment}
@@ -1293,7 +1592,7 @@ const GroomCard = React.memo(({ person }) => {
 const BridesmaidCard = React.memo(({ person }) => {
   const [showBack, setShowBack] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const color = "#764ba2";
+  const color = COLORS.brideAccent;
   const photos = (person.photos || []).filter(Boolean);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const cardHeight = isMobile ? MOBILE_CARD_HEIGHT : CARD_HEIGHT;
@@ -1317,15 +1616,16 @@ const BridesmaidCard = React.memo(({ person }) => {
             transition={{ duration: 0.25 }}
             onClick={() => setShowBack(true)}
             style={{
-              background: "white",
-              borderRadius: 16,
+              background: COLORS.cardBg,
+              borderRadius: 20,
               overflow: "hidden",
               borderTop: `6px solid ${color}`,
-              boxShadow: "0 3px 16px rgba(0,0,0,0.1)",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
               cursor: "pointer",
               height: cardHeight,
               display: "flex",
-              flexDirection: "row"
+              flexDirection: "row",
+              border: `1px solid ${COLORS.border}`
             }}
           >
             <motion.div
@@ -1350,22 +1650,24 @@ const BridesmaidCard = React.memo(({ person }) => {
             >
               {!photos[photoIndex] && "👤"}
             </motion.div>
-            <div style={{ flex: 1, padding: "1.5rem" }}>
-              <h3 style={{ fontSize: "1.5rem", marginBottom: "0.25rem", color: "#333" }}>{person.name}</h3>
-              <p style={{ color, fontWeight: 600, marginBottom: "0.25rem", fontSize: "1rem" }}>{person.role}</p>
-              <p style={{ color: "#666", fontSize: "0.95rem", marginBottom: "1rem" }}>
+            <div style={{ flex: 1, padding: "1.8rem" }}>
+              <h3 style={{ fontSize: "1.6rem", marginBottom: "0.3rem", color: COLORS.darkText, letterSpacing: "0.3px" }}>
+                {person.name}
+              </h3>
+              <p style={{ color, fontWeight: 600, marginBottom: "0.3rem", fontSize: "1.05rem" }}>{person.role}</p>
+              <p style={{ color: COLORS.mediumText, fontSize: "1rem", marginBottom: "1.2rem" }}>
                 <strong>Relation:</strong> {person.relation}
               </p>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "0.5rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "0.6rem" }}>
                 <div>
-                  <div style={{ fontSize: "0.8rem", color: "#999" }}>Status</div>
-                  <div style={{ fontSize: "0.95rem", color: "#333", fontWeight: 600 }}>
+                  <div style={{ fontSize: "0.85rem", color: COLORS.lightText, letterSpacing: "0.3px" }}>Status</div>
+                  <div style={{ fontSize: "1rem", color: COLORS.darkText, fontWeight: 600 }}>
                     {person.relationshipStatus}
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: "0.8rem", color: "#999" }}>City</div>
-                  <div style={{ fontSize: "0.95rem", color: "#333", fontWeight: 600 }}>
+                  <div style={{ fontSize: "0.85rem", color: COLORS.lightText, letterSpacing: "0.3px" }}>City</div>
+                  <div style={{ fontSize: "1rem", color: COLORS.darkText, fontWeight: 600 }}>
                     {person.currentCity}
                   </div>
                 </div>
@@ -1381,42 +1683,93 @@ const BridesmaidCard = React.memo(({ person }) => {
             transition={{ duration: 0.25 }}
             onClick={() => setShowBack(false)}
             style={{
-              background: "white",
-              borderRadius: 16,
+              background: COLORS.cardBg,
+              borderRadius: 20,
               height: cardHeight,
-              boxShadow: "0 3px 16px rgba(0,0,0,0.1)",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
               borderTop: `6px solid ${color}`,
-              padding: "1.5rem",
+              padding: "1.8rem",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              cursor: "pointer"
+              cursor: "pointer",
+              border: `1px solid ${COLORS.border}`
             }}
           >
             <div>
-              <h3 style={{ textAlign: "center", marginBottom: "1rem", fontSize: "1.5rem", color: "#333" }}>
-                More About {person.name} ✨
+              <h3
+                style={{
+                  textAlign: "center",
+                  marginBottom: "1rem",
+                  fontSize: "1.5rem",
+                  color: COLORS.darkText,
+                  fontWeight: 400,
+                  letterSpacing: "0.3px"
+                }}
+              >
+                {person.name} ✨
               </h3>
-              <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-                <div style={{ fontSize: "0.8rem", color: "#999" }}>College</div>
-                <div style={{ fontSize: "1rem", fontWeight: 600, color: "#333" }}>{person.college}</div>
-              </div>
-              <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-                <div style={{ fontSize: "0.8rem", color: "#999" }}>Sorority</div>
-                <div style={{ fontSize: "1rem", fontWeight: 600, color }}>{person.sorority}</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem", marginBottom: "1rem" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    flexWrap: "wrap"
+                  }}
+                >
+                  <span style={{ fontSize: "0.9rem", color: COLORS.lightText, letterSpacing: "0.3px" }}>College:</span>
+                  <span style={{ fontSize: "1.05rem", fontWeight: 600, color: COLORS.darkText }}>
+                    {person.college}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    flexWrap: "wrap"
+                  }}
+                >
+                  <span style={{ fontSize: "0.9rem", color: COLORS.lightText, letterSpacing: "0.3px" }}>
+                    Favorite Drink:
+                  </span>
+                  <span style={{ fontSize: "1.05rem", fontWeight: 600, color }}>
+                    {person.favoriteDrink || "TBD"}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    flexWrap: "wrap"
+                  }}
+                >
+                  <span style={{ fontSize: "0.9rem", color: COLORS.lightText, letterSpacing: "0.3px" }}>
+                    Dance Floor Anthem:
+                  </span>
+                  <span style={{ fontSize: "1.05rem", fontWeight: 600, color: COLORS.darkText }}>
+                    {person.danceFloorSong || "TBD"}
+                  </span>
+                </div>
               </div>
               <div
                 style={{
-                  padding: "1rem",
-                  background: "#fff0f7",
-                  borderRadius: 12,
-                  fontSize: "0.9rem",
-                  color: "#555",
+                  padding: "1.2rem",
+                  background: COLORS.bg,
+                  borderRadius: 14,
+                  fontSize: "0.95rem",
+                  color: COLORS.mediumText,
                   fontStyle: "italic",
-                  lineHeight: 1.5
+                  lineHeight: 1.6,
+                  border: `1px solid ${COLORS.border}`
                 }}
               >
-                💬 {person.comment}
+                💕 <strong>Fun Fact:</strong> {person.funFact || person.comment}
               </div>
             </div>
           </motion.div>
