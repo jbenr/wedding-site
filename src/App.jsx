@@ -1341,7 +1341,7 @@ function WeddingPartyTab() {
       college: "Univsersity of Tennessee | Vanderbilt University | Belmont School of Medicine",
       favoriteDrink: "Pinot Grigio",
       danceFloorSong: "Valerie by Amy Winehouse",
-      funFact: "Emily and Lauren met in our first class freshman year of college."
+      funFact: "Emily and Lauren met in their first class freshman year of college."
     }
   ];
 
