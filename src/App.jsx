@@ -116,7 +116,7 @@ const TennesseeCheckerboard = () => (
       bottom: 0,
       width: "calc((100vw - 900px) / 2)",
       zIndex: 0,
-      opacity: 0.35,
+      opacity: 0.4,
       backgroundImage: `
         linear-gradient(45deg, ${COLORS.tennesseeOrange} 25%, transparent 25%),
         linear-gradient(-45deg, ${COLORS.tennesseeOrange} 25%, transparent 25%),
@@ -140,7 +140,7 @@ const IndianaCandyStripe = () => (
       bottom: 0,
       width: "calc((100vw - 900px) / 2)",
       zIndex: 0,
-      opacity: 0.35,
+      opacity: 0.4,
       backgroundImage: `repeating-linear-gradient(
         90deg,
         ${COLORS.indianaCrimson},
