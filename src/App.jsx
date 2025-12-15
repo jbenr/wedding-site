@@ -522,9 +522,12 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
             marginBottom: "1.8rem"
           }}
         >
-          What started as a chance meeting turned into countless adventures, inside jokes, and a love that grows deeper
-          every day. We've laughed through the chaos, supported each other through challenges, and built a life filled
-          with joy.
+          Emily and Ben met on a crisp Halloween night in Atlanta - she as Padmé,
+          he as Anakin - two characters whose destinies were always intertwined. Since then,
+          they’ve traded lightsabers for subways, building a life together on the Upper East Side
+          of New York. Through every city, challenge, and adventure, their connection has only
+          deepened, proving that sometimes the universe really does send the right person at the
+          right time.
         </p>
         <p style={{ fontSize: "1.2rem", lineHeight: 1.9, color: COLORS.mediumText, textAlign: "center" }}>
           Now, we're ready to celebrate this next chapter with the people who mean the most to us. We can't wait to
