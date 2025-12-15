@@ -383,12 +383,12 @@ END:VCALENDAR`;
             border: `1px solid ${COLORS.border}`
           }}
         >
-          <TabButton id="main" label="Main" icon={<FaHeart />} />
+          <TabButton id="main" label="Main" />
           <TabButton id="rsvp" label="RSVP" />
           <TabButton id="info" label="Info" />
           <TabButton id="party" label="Wedding Party" />
-          <TabButton id="registry" label="Registry" icon={<FaGift />} />
-          <TabButton id="guestbook" label="Guest Book" icon={<FaCamera />} />
+          <TabButton id="registry" label="Registry" />
+          <TabButton id="guestbook" label="Guest Book" />
         </div>
       </div>
 
@@ -792,11 +792,9 @@ function InfoTab() {
           Venue
         </h3>
         <p style={{ textAlign: "center", fontSize: "1.15rem", color: COLORS.mediumText, lineHeight: 1.8 }}>
-          <strong style={{ color: COLORS.darkText }}>The Garden Estate</strong>
-          <br />
-          123 Vineyard Lane
-          <br />
-          Charlottesville, VA 22902
+          <strong style={{ color: COLORS.darkText }}>241 Rosemont Farm Way</strong>
+          <br/>
+          <strong style={{ color: COLORS.darkText }}>Charlottesville, VA 22903</strong>
         </p>
       </div>
       <div
@@ -825,14 +823,43 @@ function InfoTab() {
           <p style={{ marginBottom: "1.2rem" }}>
             <strong style={{ color: COLORS.darkText }}>Hotel Blocks:</strong>
           </p>
+
           <ul style={{ paddingLeft: "1.8rem", marginBottom: "2rem" }}>
-            <li style={{ marginBottom: "0.5rem" }}>The Charlottesville Inn - Book by Sept 1, 2026</li>
-            <li>Downtown Suites - Book by Sept 1, 2026</li>
+            <li style={{ marginBottom: "0.5rem" }}>
+              <a
+                href="https://www.reservationcounter.com/hotels/show/5fa6aba/boars-head-resort-charlottesville-virginia/?cid=sem::TPRC::AW::Reservation_Counter_US_Northeast_Virginia_Western_Virginia::::boar%27s%20head%20resort::e&creative=612108614140&device=c&AdPos=&utm_source=google&utm_medium=cpc&utm_term=boar%27s%20head%20resort&utm_campaign=Reservation_Counter_US_Northeast_Virginia_Western_Virginia&iv_=__iv_p_1_a_981240653_g_76689024709_w_kwd-18532732713_h_9004331_ii__d_c_v__n_g_c_612108614140_k_boar%27s%20head%20resort_m_e_l__t__e__r__vi__&gad_source=1&gad_campaignid=981240653&gbraid=0AAAAAD1Ss5yyV4_PVTbKwgrH6Hdg-syrG&gclid=CjwKCAiA3fnJBhAgEiwAyqmY5RJw47LeSbPJsThwuzag9KEWDbiCKm6CpkYn2i-yRB4M77x2_o5ZlBoCfcIQAvD_BwE"   // ← INSERT HOTEL URL
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: COLORS.darkText,
+                  textDecoration: "underline",
+                  opacity: 0.9
+                }}
+              >
+                Boars Head Resort
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="https://www.hilton.com/en/hotels/chogcgu-graduate-charlottesville/"    // ← INSERT HOTEL URL
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: COLORS.darkText,
+                  textDecoration: "underline",
+                  opacity: 0.9
+                }}
+              >
+                The Graduate
+              </a>
+            </li>
           </ul>
+
           <p>
             <strong style={{ color: COLORS.darkText }}>Getting There:</strong>
             <br />
-            Charlottesville-Albemarle Airport (CHO) is 15 minutes from downtown. Rideshare and rental cars are readily
+            Charlottesville-Albemarle Airport (CHO) is 20 minutes from downtown. Rideshare and rental cars are readily
             available.
           </p>
         </div>
@@ -864,7 +891,6 @@ function RegistryTab() {
   const registries = [
     { name: "Amazon", url: "https://amazon.com/wedding/your-registry", color: COLORS.primary, icon: "🛍️" },
     { name: "Target", url: "https://target.com/gift-registry", color: COLORS.secondary, icon: "🎯" },
-    { name: "Zola", url: "https://zola.com/registry", color: COLORS.accent, icon: "💝" },
     { name: "Honeymoon Fund", url: "#", color: COLORS.highlight, icon: "✈️" }
   ];
   return (
