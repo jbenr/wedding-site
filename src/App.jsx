@@ -304,7 +304,7 @@ END:VCALENDAR`;
                 key={i}
                 style={{
                   background: "rgba(255,255,255,0.12)",
-                  backdropFilter: "blur(8px)",
+                  backdropFilter: "blur(1px)",
                   padding: "1.2rem 1.8rem",
                   borderRadius: 16,
                   minWidth: 90,
@@ -328,7 +328,7 @@ END:VCALENDAR`;
             onClick={() => document.getElementById("content")?.scrollIntoView({ behavior: "smooth" })}
             style={{
               background: "rgba(255,255,255,0.15)",
-              backdropFilter: "blur(10px)",
+              backdropFilter: "blur(1px)",
               border: "1.5px solid rgba(255,255,255,0.3)",
               color: "white",
               padding: "1.1rem 3rem",
