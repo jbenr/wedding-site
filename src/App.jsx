@@ -41,7 +41,6 @@ const colePhotos = globToArray(import.meta.glob("./assets/cole/*", { eager: true
 const henryPhotos = globToArray(import.meta.glob("./assets/henry/*", { eager: true }));
 const oliPhotos = globToArray(import.meta.glob("./assets/oli/*", { eager: true }));
 const wyattPhotos = globToArray(import.meta.glob("./assets/wyatt/*", { eager: true }));
-const laurenPhotos = globToArray(import.meta.glob("./assets/lauren/*", { eager: true }));
 
 // Bridesmaid photo buckets
 const sarahPhotos = globToArray(import.meta.glob("./assets/brides_sarah/*", { eager: true }));
@@ -62,10 +61,10 @@ const COLORS = {
   highlight: "#DEB887" // Burlywood accent
 };
 
-const CARD_HEIGHT = 320;
-const MOBILE_CARD_HEIGHT = 260;
+const CARD_HEIGHT = 340;
+const MOBILE_CARD_HEIGHT = 280;
 const DESKTOP_PHOTO_WIDTH = 260;
-const MOBILE_PHOTO_WIDTH = 120;
+const MOBILE_PHOTO_WIDTH = 140;
 
 const StatCell = ({ label, value, color }) => (
   <div
@@ -171,11 +170,11 @@ END:VCALENDAR`;
       onClick={() => setTab(id)}
       style={{
         flex: 1,
-        padding: "0.875rem 1rem",
+        padding: "0.75rem 0.5rem",
         border: "none",
         background: tab === id ? COLORS.primary : "transparent",
         color: tab === id ? "#FFFFFF" : COLORS.mediumText,
-        fontSize: "0.9rem",
+        fontSize: "clamp(0.8rem, 2vw, 0.9rem)",
         fontWeight: tab === id ? 600 : 500,
         borderRadius: 12,
         cursor: "pointer",
@@ -183,12 +182,13 @@ END:VCALENDAR`;
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: "0.5rem",
-        letterSpacing: "0.3px"
+        gap: "0.4rem",
+        letterSpacing: "0.3px",
+        minWidth: 0
       }}
     >
       {icon}
-      {label}
+      <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
     </button>
   );
 
@@ -363,7 +363,7 @@ END:VCALENDAR`;
           position: "sticky",
           top: 0,
           background: `rgba(250, 248, 245, 0.98)`,
-          backdropFilter: "blur(12px)",
+          backdropFilter: "blur(1px)",
           borderBottom: `1px solid ${COLORS.border}`,
           zIndex: 100,
           padding: "1rem",
@@ -383,17 +383,17 @@ END:VCALENDAR`;
             border: `1px solid ${COLORS.border}`
           }}
         >
-          <TabButton id="main" label="Main" />
+          <TabButton id="main" label="Main" icon={<FaHeart />} />
           <TabButton id="rsvp" label="RSVP" />
           <TabButton id="info" label="Info" />
           <TabButton id="party" label="Wedding Party" />
-          <TabButton id="registry" label="Registry" />
-          <TabButton id="guestbook" label="Guest Book" />
+          <TabButton id="registry" label="Registry" icon={<FaGift />} />
+          <TabButton id="guestbook" label="Guest Book" icon={<FaCamera />} />
         </div>
       </div>
 
       {/* CONTENT TABS */}
-      <section style={{ padding: "3rem 1rem", minHeight: "70vh" }}>
+      <section style={{ padding: "clamp(1.5rem, 5vw, 3rem) 0", minHeight: "70vh" }}>
         {tab === "main" && (
           <MainTab
             photoBuckets={mainPhotoBuckets}
@@ -439,12 +439,12 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
     );
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto" }}>
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 1rem" }}>
       <h2
         style={{
           textAlign: "center",
-          fontSize: "clamp(2.5rem, 6vw, 3.2rem)",
-          marginBottom: "2.5rem",
+          fontSize: "clamp(2rem, 6vw, 3.2rem)",
+          marginBottom: "2rem",
           fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontWeight: 400,
           color: COLORS.darkText,
@@ -456,8 +456,8 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-          gap: "1.2rem",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(250px, 100%), 1fr))",
+          gap: "clamp(0.8rem, 2vw, 1.2rem)",
           marginBottom: "3rem"
         }}
       >
@@ -506,9 +506,9 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       <div
         style={{
           background: COLORS.cardBg,
-          padding: "3rem 2.5rem",
+          padding: "clamp(2rem, 5vw, 3rem) clamp(1.5rem, 4vw, 2.5rem)",
           borderRadius: 20,
-          marginBottom: "3rem",
+          marginBottom: "2.5rem",
           boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
           border: `1px solid ${COLORS.border}`
         }}
@@ -522,12 +522,9 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
             marginBottom: "1.8rem"
           }}
         >
-          Emily and Ben met on a crisp Halloween night in Atlanta - she as Padmé,
-          he as Anakin - two characters whose destinies were always intertwined. Since then,
-          they’ve traded lightsabers for subways, building a life together on the Upper East Side
-          of New York. Through every city, challenge, and adventure, their connection has only
-          deepened, proving that sometimes the universe really does send the right person at the
-          right time.
+          What started as a chance meeting turned into countless adventures, inside jokes, and a love that grows deeper
+          every day. We've laughed through the chaos, supported each other through challenges, and built a life filled
+          with joy.
         </p>
         <p style={{ fontSize: "1.2rem", lineHeight: 1.9, color: COLORS.mediumText, textAlign: "center" }}>
           Now, we're ready to celebrate this next chapter with the people who mean the most to us. We can't wait to
@@ -644,7 +641,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
 
 function RSVPTab() {
   return (
-    <div style={{ maxWidth: 700, margin: "0 auto" }}>
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 1rem" }}>
       <h2
         style={{
           textAlign: "center",
@@ -713,7 +710,7 @@ function RSVPTab() {
 
 function InfoTab() {
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto" }}>
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 1rem" }}>
       <h2
         style={{
           textAlign: "center",
@@ -795,9 +792,11 @@ function InfoTab() {
           Venue
         </h3>
         <p style={{ textAlign: "center", fontSize: "1.15rem", color: COLORS.mediumText, lineHeight: 1.8 }}>
-          <strong style={{ color: COLORS.darkText }}>241 Rosemont Farm Way</strong>
-          <br/>
-          <strong style={{ color: COLORS.darkText }}>Charlottesville, VA 22903</strong>
+          <strong style={{ color: COLORS.darkText }}>The Garden Estate</strong>
+          <br />
+          123 Vineyard Lane
+          <br />
+          Charlottesville, VA 22902
         </p>
       </div>
       <div
@@ -826,43 +825,14 @@ function InfoTab() {
           <p style={{ marginBottom: "1.2rem" }}>
             <strong style={{ color: COLORS.darkText }}>Hotel Blocks:</strong>
           </p>
-
           <ul style={{ paddingLeft: "1.8rem", marginBottom: "2rem" }}>
-            <li style={{ marginBottom: "0.5rem" }}>
-              <a
-                href="https://www.reservationcounter.com/hotels/show/5fa6aba/boars-head-resort-charlottesville-virginia/?cid=sem::TPRC::AW::Reservation_Counter_US_Northeast_Virginia_Western_Virginia::::boar%27s%20head%20resort::e&creative=612108614140&device=c&AdPos=&utm_source=google&utm_medium=cpc&utm_term=boar%27s%20head%20resort&utm_campaign=Reservation_Counter_US_Northeast_Virginia_Western_Virginia&iv_=__iv_p_1_a_981240653_g_76689024709_w_kwd-18532732713_h_9004331_ii__d_c_v__n_g_c_612108614140_k_boar%27s%20head%20resort_m_e_l__t__e__r__vi__&gad_source=1&gad_campaignid=981240653&gbraid=0AAAAAD1Ss5yyV4_PVTbKwgrH6Hdg-syrG&gclid=CjwKCAiA3fnJBhAgEiwAyqmY5RJw47LeSbPJsThwuzag9KEWDbiCKm6CpkYn2i-yRB4M77x2_o5ZlBoCfcIQAvD_BwE"   // ← INSERT HOTEL URL
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: COLORS.darkText,
-                  textDecoration: "underline",
-                  opacity: 0.9
-                }}
-              >
-                Boars Head Resort
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="https://www.hilton.com/en/hotels/chogcgu-graduate-charlottesville/"    // ← INSERT HOTEL URL
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: COLORS.darkText,
-                  textDecoration: "underline",
-                  opacity: 0.9
-                }}
-              >
-                The Graduate
-              </a>
-            </li>
+            <li style={{ marginBottom: "0.5rem" }}>The Charlottesville Inn - Book by Sept 1, 2026</li>
+            <li>Downtown Suites - Book by Sept 1, 2026</li>
           </ul>
-
           <p>
             <strong style={{ color: COLORS.darkText }}>Getting There:</strong>
             <br />
-            Charlottesville-Albemarle Airport (CHO) is 20 minutes from downtown. Rideshare and rental cars are readily
+            Charlottesville-Albemarle Airport (CHO) is 15 minutes from downtown. Rideshare and rental cars are readily
             available.
           </p>
         </div>
@@ -894,10 +864,11 @@ function RegistryTab() {
   const registries = [
     { name: "Amazon", url: "https://amazon.com/wedding/your-registry", color: COLORS.primary, icon: "🛍️" },
     { name: "Target", url: "https://target.com/gift-registry", color: COLORS.secondary, icon: "🎯" },
+    { name: "Zola", url: "https://zola.com/registry", color: COLORS.accent, icon: "💝" },
     { name: "Honeymoon Fund", url: "#", color: COLORS.highlight, icon: "✈️" }
   ];
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto" }}>
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 1rem" }}>
       <h2
         style={{
           textAlign: "center",
@@ -1017,7 +988,7 @@ function GuestBookTab({ entries, setEntries }) {
   };
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto" }}>
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 1rem" }}>
       <h2
         style={{
           textAlign: "center",
@@ -1361,21 +1332,21 @@ function WeddingPartyTab() {
 
   const bridesmaids = [
     {
-      name: "Lauren Turnbull",
-      relation: "Friend",
-      photos: laurenPhotos,
-      role: "Bridesmaid",
+      name: "Sarah Johnson",
+      relation: "Sister",
+      photos: sarahPhotos,
+      role: "Maid of Honor",
       relationshipStatus: "Taken",
-      currentCity: "Nashville, TN",
-      college: "Univsersity of Tennessee | Vanderbilt University | Belmont School of Medicine",
-      favoriteDrink: "Pinot Grigio",
-      danceFloorSong: "Valerie by Amy Winehouse",
-      funFact: "Emily and Lauren met in their first class freshman year of college."
+      currentCity: "Boston, MA",
+      college: "Boston College",
+      favoriteDrink: "Aperol Spritz",
+      danceFloorSong: "Dancing Queen - ABBA",
+      funFact: "Emily and Sarah once got lost in Venice for 3 hours and ended up finding the best gelato shop in Italy."
     }
   ];
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto" }}>
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 1rem" }}>
       <h2
         style={{
           textAlign: "center",
@@ -1500,7 +1471,7 @@ const GroomCard = React.memo(({ person }) => {
             >
               {!photos[photoIndex] && "👤"}
             </motion.div>
-            <div style={{ flex: 1, padding: "1.8rem", overflow: "hidden" }}>
+            <div style={{ flex: 1, padding: isMobile ? "1.2rem" : "1.8rem", overflow: "hidden" }}>
               <h3 style={{ fontSize: "1.6rem", marginBottom: "0.3rem", color: COLORS.darkText, letterSpacing: "0.3px" }}>
                 {person.name}
               </h3>
@@ -1535,7 +1506,7 @@ const GroomCard = React.memo(({ person }) => {
               borderRadius: 20,
               boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
               borderTop: `6px solid ${color}`,
-              padding: "1.8rem",
+              padding: isMobile ? "1.2rem" : "1.8rem",
               height: cardHeight,
               display: "flex",
               flexDirection: "column",
@@ -1679,7 +1650,7 @@ const BridesmaidCard = React.memo(({ person }) => {
             >
               {!photos[photoIndex] && "👤"}
             </motion.div>
-            <div style={{ flex: 1, padding: "1.8rem" }}>
+            <div style={{ flex: 1, padding: isMobile ? "1.2rem" : "1.8rem" }}>
               <h3 style={{ fontSize: "1.6rem", marginBottom: "0.3rem", color: COLORS.darkText, letterSpacing: "0.3px" }}>
                 {person.name}
               </h3>
@@ -1717,7 +1688,7 @@ const BridesmaidCard = React.memo(({ person }) => {
               height: cardHeight,
               boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
               borderTop: `6px solid ${color}`,
-              padding: "1.8rem",
+              padding: isMobile ? "1.2rem" : "1.8rem",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
