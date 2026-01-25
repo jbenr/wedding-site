@@ -1015,18 +1015,19 @@ function GuestBookTab({ entries, setEntries, isMobile }) {
 }
 
 /* ============================================
-   WEDDING PARTY TAB - LADIES FIRST
+   WEDDING PARTY TAB - FULLY PROPORTIONAL SCALING
+   Everything scales together based on container/window width
    ============================================ */
 
 function WeddingPartyTab({ isMobile }) {
   const groomsmen = [
-    { frontName: "Harry Reichert", backName: "Harry", relation: "Brother", photos: harryPhotos, role: "Best Man", maxBench: "175 lbs", fortyYard: "4.95s", handicap: "19.0", relationshipStatus: "Taken", currentCity: "Williamsburg, NY", college: "Northwestern University", collegeLogo: nu, footballTeam: "Cleveland Browns", footballLogo: brown, comment: "Let's hope Harry shows up on time to the ceremony." },
-    { frontName: "Charlie Reichert", backName: "Chuck", relation: "Brother", photos: chuckPhotos, role: "Groomsman", maxBench: "135 lbs", fortyYard: "5.4s", handicap: "13.5", relationshipStatus: "Taken", currentCity: "Chicago, IL", college: "University of Wisconsin", collegeLogo: w, footballTeam: "Chicago Bears", footballLogo: bears, comment: "Known for his inconsistency off the tee. Keep your eyes peeled when Chuck hits the dance floor." },
-    { frontName: "Jack Reichert", backName: "Jacko", relation: "Brother", photos: jackoPhotos, role: "Groomsman", maxBench: "185 lbs", fortyYard: "5.8s", handicap: "20.0", relationshipStatus: "Single", currentCity: "Washington DC", college: "University of Virginia", collegeLogo: uva, footballTeam: "The Hokies", footballLogo: vt, comment: "The most controversial character in the lineup. Look for Jacko on stage for the late night." },
-    { frontName: "Cole Dickinson", backName: "Cole D", relation: "Friend", photos: colePhotos, role: "Groomsman", maxBench: "285 lbs", fortyYard: "4.9s", handicap: "9.5", relationshipStatus: "Married", currentCity: "Charleston, SC", college: "University of South Carolina", collegeLogo: sc, footballTeam: "Washington Football Team", footballLogo: skins, comment: "It's too Cole for my Dickinson." },
+    { frontName: "Harry", backName: "Harry", relation: "Brother", photos: harryPhotos, role: "Best Man", maxBench: "175 lbs", fortyYard: "4.95s", handicap: "19.0", relationshipStatus: "Taken", currentCity: "Williamsburg, NY", college: "Northwestern University", collegeLogo: nu, footballTeam: "Cleveland Browns", footballLogo: brown, comment: "Let's hope Harry shows up on time to the ceremony." },
+    { frontName: "Chuck", backName: "Chuck", relation: "Brother", photos: chuckPhotos, role: "Groomsman", maxBench: "135 lbs", fortyYard: "5.4s", handicap: "13.5", relationshipStatus: "Taken", currentCity: "Chicago, IL", college: "University of Wisconsin", collegeLogo: w, footballTeam: "Chicago Bears", footballLogo: bears, comment: "Known for his inconsistency off the tee. Keep your eyes peeled when Chuck hits the dance floor." },
+    { frontName: "Jacko", backName: "Jacko", relation: "Brother", photos: jackoPhotos, role: "Groomsman", maxBench: "185 lbs", fortyYard: "5.8s", handicap: "20.0", relationshipStatus: "Single", currentCity: "Washington DC", college: "University of Virginia", collegeLogo: uva, footballTeam: "The Hokies", footballLogo: vt, comment: "The most controversial character in the lineup. Look for Jacko on stage for the late night." },
+    { frontName: "Cole Dickinson", backName: "Cole", relation: "Friend", photos: colePhotos, role: "Groomsman", maxBench: "285 lbs", fortyYard: "4.9s", handicap: "9.5", relationshipStatus: "Married", currentCity: "Charleston, SC", college: "University of South Carolina", collegeLogo: sc, footballTeam: "Washington Football Team", footballLogo: skins, comment: "It's too Cole for my Dickinson." },
     { frontName: "Henry Kreienbaum", backName: "Henry", relation: "Friend", photos: henryPhotos, role: "Groomsman", maxBench: "265 lbs", fortyYard: "5.3s", handicap: "15.0", relationshipStatus: "Taken", currentCity: "Atlanta, GA", college: "James Madison University", collegeLogo: dukes, footballTeam: "Washington Commanders", footballLogo: skins, comment: "Don't ask this guy about Nascar." },
-    { frontName: "Oliver Herndon", backName: "Oliver", relation: "Friend", photos: oliPhotos, role: "Groomsman", maxBench: "255 lbs", fortyYard: "4.6s", handicap: "22.0", relationshipStatus: "Taken", currentCity: "New York, NY", college: "Washington & Lee University", collegeLogo: wl, footballTeam: "Washington Redskins", footballLogo: skins, comment: "Can I get a roll tide." },
-    { frontName: "Wyatt Collins", backName: "Wyatt", relation: "Brother-in-law", photos: wyattPhotos, role: "Groomsman", maxBench: "225 lbs", fortyYard: "5.5s", handicap: "8.0", relationshipStatus: "Single", currentCity: "Knoxville, TN", college: "University of Tennessee", collegeLogo: ut, footballTeam: "The Vols", footballLogo: ut, comment: "Fill in description." }
+    { frontName: "Oliver", backName: "Oliver", relation: "Friend", photos: oliPhotos, role: "Groomsman", maxBench: "255 lbs", fortyYard: "4.6s", handicap: "22.0", relationshipStatus: "Taken", currentCity: "New York, NY", college: "Washington & Lee University", collegeLogo: wl, footballTeam: "Washington Redskins", footballLogo: skins, comment: "Can I get a roll tide." },
+    { frontName: "Wyatt", backName: "Wyatt", relation: "Brother-in-law", photos: wyattPhotos, role: "Groomsman", maxBench: "225 lbs", fortyYard: "5.5s", handicap: "8.0", relationshipStatus: "Single", currentCity: "Knoxville, TN", college: "University of Tennessee", collegeLogo: ut, footballTeam: "The Vols", footballLogo: ut, comment: "Fill in description." }
   ];
 
   const bridesmaids = [
@@ -1064,9 +1065,9 @@ function WeddingPartyTab({ isMobile }) {
         <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: COLORS.brideAccent, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
           Ladies
         </h3>
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "clamp(0.8rem, 2vw, 1.2rem)" }}>
           {bridesmaids.map((p) => (
-            <BridesmaidCard key={p.frontName} person={p} isMobile={isMobile} />
+            <BridesmaidCard key={p.frontName} person={p} />
           ))}
         </div>
       </div>
@@ -1076,9 +1077,9 @@ function WeddingPartyTab({ isMobile }) {
         <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: COLORS.groomAccent, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
           Lads
         </h3>
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "clamp(0.8rem, 2vw, 1.2rem)" }}>
           {groomsmen.map((p) => (
-            <GroomCard key={p.frontName} person={p} isMobile={isMobile} />
+            <GroomCard key={p.frontName} person={p} />
           ))}
         </div>
       </div>
@@ -1087,31 +1088,30 @@ function WeddingPartyTab({ isMobile }) {
 }
 
 /* ============================================
-   GROOM CARD - PHOTO ALWAYS ON LEFT, SCALES PROPORTIONALLY
+   GROOM CARD - FULLY PROPORTIONAL
    ============================================ */
 
-const GroomCard = React.memo(({ person, isMobile }) => {
+const GroomCard = React.memo(({ person }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const color = COLORS.groomAccent;
   const photos = (person.photos || []).filter(Boolean);
 
-  // Card height scales with screen, photo maintains 4:5 aspect ratio
-  // Photo width = cardHeight * 0.8 (for 4:5 ratio)
-  const cardHeight = isMobile ? 300 : 340;
-  const photoWidth = cardHeight * 0.8; // 4:5 aspect ratio
-
   const nextPhoto = (e) => {
     e.stopPropagation();
     if (photos.length <= 1) return;
     setPhotoIndex((i) => (i + 1) % photos.length);
   };
 
+  // All sizing uses clamp(min, preferred, max) so everything scales together
+  // Photo is 30% of card width, info section is 70%
+
   return (
     <div
       style={{
         width: "100%",
-        height: cardHeight,
+        // Card height scales with viewport, min 260px, max 360px
+        height: "clamp(260px, 38vw, 360px)",
         perspective: 1200,
         cursor: "pointer"
       }}
@@ -1136,7 +1136,7 @@ const GroomCard = React.memo(({ person, isMobile }) => {
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             background: COLORS.cardBg,
-            borderRadius: 14,
+            borderRadius: "clamp(10px, 1.5vw, 14px)",
             boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
             borderTop: `4px solid ${color}`,
             border: `1px solid ${COLORS.border}`,
@@ -1145,194 +1145,28 @@ const GroomCard = React.memo(({ person, isMobile }) => {
             flexDirection: "row"
           }}
         >
-          {/* Photo - always on left, maintains 4:5 aspect ratio */}
+          {/* Photo - 30% of card width, maintains aspect via height: 100% */}
           <div
             onClick={nextPhoto}
             style={{
-              width: photoWidth,
-              minWidth: photoWidth,
+              width: "30%",
               height: "100%",
               flexShrink: 0,
               background: photos[photoIndex] ? `url(${photos[photoIndex]}) center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "2.5rem",
+              fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
               color: "white"
             }}
           >
             {!photos[photoIndex] && "?"}
           </div>
 
-          {/* Info section */}
+          {/* Info section - 70% of card */}
           <div style={{
             flex: 1,
-            padding: isMobile ? "0.8rem" : "1.2rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            overflow: "hidden",
-            minWidth: 0 // allows text to truncate if needed
-          }}>
-            <h3 style={{
-              fontSize: isMobile ? "1.1rem" : "1.4rem",
-              marginBottom: "0.2rem",
-              color: COLORS.darkText,
-              fontFamily: "'Cormorant Garamond', serif",
-              fontWeight: 500,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis"
-            }}>
-              {person.frontName}
-            </h3>
-            <p style={{ color, fontWeight: 600, marginBottom: "0.2rem", fontSize: isMobile ? "0.8rem" : "0.95rem" }}>{person.role}</p>
-            <p style={{ fontSize: isMobile ? "0.75rem" : "0.9rem", color: COLORS.mediumText, marginBottom: "0.6rem" }}>{person.relation}</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.3rem" }}>
-              <div>
-                <div style={{ fontSize: "0.6rem", color: COLORS.lightText, textTransform: "uppercase" }}>Status</div>
-                <div style={{ fontSize: isMobile ? "0.75rem" : "0.85rem", fontWeight: 600, color: COLORS.darkText }}>{person.relationshipStatus}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: "0.6rem", color: COLORS.lightText, textTransform: "uppercase" }}>City</div>
-                <div style={{ fontSize: isMobile ? "0.75rem" : "0.85rem", fontWeight: 600, color: COLORS.darkText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{person.currentCity}</div>
-              </div>
-            </div>
-            <p style={{ marginTop: "auto", paddingTop: "0.4rem", fontSize: "0.7rem", color: COLORS.lightText, fontStyle: "italic" }}>Tap for stats</p>
-          </div>
-        </div>
-
-        {/* BACK FACE */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            transform: "rotateY(180deg)",
-            background: COLORS.cardBg,
-            borderRadius: 14,
-            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
-            borderTop: `4px solid ${color}`,
-            border: `1px solid ${COLORS.border}`,
-            padding: isMobile ? "0.8rem" : "1.2rem",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden"
-          }}
-        >
-          <h3 style={{ textAlign: "center", marginBottom: isMobile ? "0.5rem" : "0.8rem", fontSize: isMobile ? "1.1rem" : "1.3rem", color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, flexShrink: 0 }}>{person.backName}</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: isMobile ? "0.3rem" : "0.5rem", marginBottom: isMobile ? "0.5rem" : "0.8rem", flexShrink: 0 }}>
-            <StatCell label="Max Bench" value={person.maxBench} color={color} />
-            <StatCell label="40-Yard" value={person.fortyYard} color={color} />
-            <StatCell label="Handicap" value={person.handicap} color={color} />
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? "0.25rem" : "0.4rem", marginBottom: isMobile ? "0.5rem" : "0.8rem", flexShrink: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, flexWrap: "wrap" }}>
-              <span style={{ fontSize: "0.65rem", color: COLORS.lightText }}>College:</span>
-              {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: isMobile ? 16 : 20, height: isMobile ? 16 : 20, objectFit: "contain" }} />}
-              <span style={{ fontSize: isMobile ? "0.75rem" : "0.9rem", fontWeight: 600, color: COLORS.darkText }}>{person.college}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, flexWrap: "wrap" }}>
-              <span style={{ fontSize: "0.65rem", color: COLORS.lightText }}>Team:</span>
-              {person.footballLogo && <img src={person.footballLogo} alt="" style={{ width: isMobile ? 16 : 20, height: isMobile ? 16 : 20, objectFit: "contain" }} />}
-              <span style={{ fontSize: isMobile ? "0.75rem" : "0.9rem", fontWeight: 600, color: COLORS.darkText }}>{person.footballTeam}</span>
-            </div>
-          </div>
-          <div style={{ flex: 1, minHeight: 0, padding: isMobile ? "0.5rem" : "0.8rem", background: COLORS.cream, borderRadius: 10, fontSize: isMobile ? "0.75rem" : "0.85rem", color: COLORS.mediumText, fontStyle: "italic", lineHeight: 1.5, border: `1px solid ${COLORS.border}`, overflow: "auto" }}>
-            {person.comment}
-          </div>
-          <p style={{ textAlign: "center", marginTop: "0.3rem", fontSize: "0.65rem", color: COLORS.lightText, flexShrink: 0 }}>Tap to flip back</p>
-        </div>
-      </div>
-    </div>
-  );
-});
-
-/* ============================================
-   BRIDESMAID CARD - PHOTO ALWAYS ON LEFT, SCALES PROPORTIONALLY
-   ============================================ */
-
-const BridesmaidCard = React.memo(({ person, isMobile }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [photoIndex, setPhotoIndex] = useState(0);
-  const color = COLORS.brideAccent;
-  const photos = (person.photos || []).filter(Boolean);
-
-  // Card height scales with screen, photo maintains 4:5 aspect ratio
-  const cardHeight = isMobile ? 300 : 340;
-  const photoWidth = cardHeight * 0.8; // 4:5 aspect ratio
-
-  const nextPhoto = (e) => {
-    e.stopPropagation();
-    if (photos.length <= 1) return;
-    setPhotoIndex((i) => (i + 1) % photos.length);
-  };
-
-  return (
-    <div
-      style={{
-        width: "100%",
-        height: cardHeight,
-        perspective: 1200,
-        cursor: "pointer"
-      }}
-      onClick={() => setIsFlipped(!isFlipped)}
-    >
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          height: "100%",
-          transformStyle: "preserve-3d",
-          transition: "transform 0.6s ease",
-          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
-        }}
-      >
-        {/* FRONT FACE */}
-        <div
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            background: COLORS.cardBg,
-            borderRadius: 14,
-            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
-            borderTop: `4px solid ${color}`,
-            border: `1px solid ${COLORS.border}`,
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "row"
-          }}
-        >
-          {/* Photo - always on left, maintains 4:5 aspect ratio */}
-          <div
-            onClick={nextPhoto}
-            style={{
-              width: photoWidth,
-              minWidth: photoWidth,
-              height: "100%",
-              flexShrink: 0,
-              background: photos[photoIndex] ? `url(${photos[photoIndex]}) center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "2.5rem",
-              color: "white"
-            }}
-          >
-            {!photos[photoIndex] && "?"}
-          </div>
-
-          {/* Info section */}
-          <div style={{
-            flex: 1,
-            padding: isMobile ? "0.8rem" : "1.2rem",
+            padding: "clamp(0.6rem, 1.5vw, 1.2rem)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -1340,26 +1174,41 @@ const BridesmaidCard = React.memo(({ person, isMobile }) => {
             minWidth: 0
           }}>
             <h3 style={{
-              fontSize: isMobile ? "1.1rem" : "1.4rem",
-              marginBottom: "0.2rem",
+              fontSize: "clamp(0.95rem, 2.2vw, 1.4rem)",
+              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
               color: COLORS.darkText,
               fontFamily: "'Cormorant Garamond', serif",
               fontWeight: 500,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis"
+              lineHeight: 1.2
             }}>
               {person.frontName}
             </h3>
-            <p style={{ color, fontWeight: 600, marginBottom: "0.2rem", fontSize: isMobile ? "0.8rem" : "0.95rem" }}>{person.role}</p>
-            <p style={{ fontSize: isMobile ? "0.75rem" : "0.9rem", color: COLORS.mediumText, marginBottom: "0.6rem" }}>{person.relation}</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.3rem" }}>
+            <p style={{
+              color,
+              fontWeight: 600,
+              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
+              fontSize: "clamp(0.7rem, 1.4vw, 0.95rem)"
+            }}>
+              {person.role}
+            </p>
+            <p style={{
+              fontSize: "clamp(0.65rem, 1.2vw, 0.9rem)",
+              color: COLORS.mediumText,
+              marginBottom: "clamp(0.4rem, 1vw, 0.8rem)"
+            }}>
+              {person.relation}
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(0.2rem, 0.5vw, 0.4rem)" }}>
               <div>
-                <div style={{ fontSize: "0.6rem", color: COLORS.lightText, textTransform: "uppercase" }}>City</div>
-                <div style={{ fontSize: isMobile ? "0.75rem" : "0.85rem", fontWeight: 600, color: COLORS.darkText }}>{person.currentCity}</div>
+                <div style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText, textTransform: "uppercase" }}>Status</div>
+                <div style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.relationshipStatus}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText, textTransform: "uppercase" }}>City</div>
+                <div style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.currentCity}</div>
               </div>
             </div>
-            <p style={{ marginTop: "auto", paddingTop: "0.4rem", fontSize: "0.7rem", color: COLORS.lightText, fontStyle: "italic" }}>Tap for more</p>
+            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.55rem, 1vw, 0.7rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for stats</p>
           </div>
         </div>
 
@@ -1375,37 +1224,296 @@ const BridesmaidCard = React.memo(({ person, isMobile }) => {
             WebkitBackfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
             background: COLORS.cardBg,
-            borderRadius: 14,
+            borderRadius: "clamp(10px, 1.5vw, 14px)",
             boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
             borderTop: `4px solid ${color}`,
             border: `1px solid ${COLORS.border}`,
-            padding: isMobile ? "0.8rem" : "1.2rem",
+            padding: "clamp(0.6rem, 1.5vw, 1.2rem)",
             display: "flex",
             flexDirection: "column",
             overflow: "hidden"
           }}
         >
-          <h3 style={{ textAlign: "center", marginBottom: isMobile ? "0.5rem" : "0.8rem", fontSize: isMobile ? "1.1rem" : "1.3rem", color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, flexShrink: 0 }}>{person.backName}</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? "0.4rem" : "0.6rem", marginBottom: isMobile ? "0.5rem" : "0.8rem", flexShrink: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, flexWrap: "wrap" }}>
-              <span style={{ fontSize: "0.65rem", color: COLORS.lightText }}>College:</span>
-              <span style={{ fontSize: isMobile ? "0.75rem" : "0.9rem", fontWeight: 600, color: COLORS.darkText, textAlign: "center" }}>{person.college}</span>
+          <h3 style={{
+            textAlign: "center",
+            marginBottom: "clamp(0.4rem, 1vw, 0.8rem)",
+            fontSize: "clamp(0.95rem, 2vw, 1.3rem)",
+            color: COLORS.darkText,
+            fontFamily: "'Cormorant Garamond', serif",
+            fontWeight: 500,
+            flexShrink: 0
+          }}>
+            {person.backName}
+          </h3>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "clamp(0.2rem, 0.6vw, 0.5rem)",
+            marginBottom: "clamp(0.4rem, 1vw, 0.8rem)",
+            flexShrink: 0
+          }}>
+            <StatCellScaled label="Max Bench" value={person.maxBench} color={color} />
+            <StatCellScaled label="40-Yard" value={person.fortyYard} color={color} />
+            <StatCellScaled label="Handicap" value={person.handicap} color={color} />
+          </div>
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "clamp(0.15rem, 0.4vw, 0.3rem)",
+            marginBottom: "clamp(0.4rem, 1vw, 0.8rem)",
+            flexShrink: 0
+          }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(3px, 0.5vw, 5px)", flexWrap: "wrap" }}>
+              <span style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText }}>College:</span>
+              {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: "clamp(14px, 2vw, 20px)", height: "clamp(14px, 2vw, 20px)", objectFit: "contain" }} />}
+              <span style={{ fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.college}</span>
             </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, flexWrap: "wrap" }}>
-              <span style={{ fontSize: "0.65rem", color: COLORS.lightText }}>Favorite Drink:</span>
-              <span style={{ fontSize: isMobile ? "0.75rem" : "0.9rem", fontWeight: 600, color }}>{person.favoriteDrink || "TBD"}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, flexWrap: "wrap" }}>
-              <span style={{ fontSize: "0.65rem", color: COLORS.lightText }}>Dance Floor Anthem:</span>
-              <span style={{ fontSize: isMobile ? "0.75rem" : "0.9rem", fontWeight: 600, color: COLORS.darkText, textAlign: "center" }}>{person.danceFloorSong || "TBD"}</span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(3px, 0.5vw, 5px)", flexWrap: "wrap" }}>
+              <span style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText }}>Team:</span>
+              {person.footballLogo && <img src={person.footballLogo} alt="" style={{ width: "clamp(14px, 2vw, 20px)", height: "clamp(14px, 2vw, 20px)", objectFit: "contain" }} />}
+              <span style={{ fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.footballTeam}</span>
             </div>
           </div>
-          <div style={{ flex: 1, minHeight: 0, padding: isMobile ? "0.5rem" : "0.8rem", background: COLORS.cream, borderRadius: 10, fontSize: isMobile ? "0.75rem" : "0.85rem", color: COLORS.mediumText, fontStyle: "italic", lineHeight: 1.5, border: `1px solid ${COLORS.border}`, overflow: "auto" }}>
-            <strong>Fun Fact:</strong> {person.funFact || person.comment}
+          <div style={{
+            flex: 1,
+            minHeight: 0,
+            padding: "clamp(0.4rem, 1vw, 0.8rem)",
+            background: COLORS.cream,
+            borderRadius: "clamp(6px, 1vw, 10px)",
+            fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)",
+            color: COLORS.mediumText,
+            fontStyle: "italic",
+            lineHeight: 1.5,
+            border: `1px solid ${COLORS.border}`,
+            overflow: "auto"
+          }}>
+            {person.comment}
           </div>
-          <p style={{ textAlign: "center", marginTop: "0.3rem", fontSize: "0.65rem", color: COLORS.lightText, flexShrink: 0 }}>Tap to flip back</p>
+          <p style={{ textAlign: "center", marginTop: "clamp(0.2rem, 0.4vw, 0.3rem)", fontSize: "clamp(0.5rem, 0.8vw, 0.65rem)", color: COLORS.lightText, flexShrink: 0 }}>Tap to flip back</p>
         </div>
       </div>
     </div>
   );
 });
+
+/* ============================================
+   BRIDESMAID CARD - FULLY PROPORTIONAL
+   ============================================ */
+
+const BridesmaidCard = React.memo(({ person }) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const color = COLORS.brideAccent;
+  const photos = (person.photos || []).filter(Boolean);
+
+  const nextPhoto = (e) => {
+    e.stopPropagation();
+    if (photos.length <= 1) return;
+    setPhotoIndex((i) => (i + 1) % photos.length);
+  };
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "clamp(260px, 38vw, 360px)",
+        perspective: 1200,
+        cursor: "pointer"
+      }}
+      onClick={() => setIsFlipped(!isFlipped)}
+    >
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "100%",
+          transformStyle: "preserve-3d",
+          transition: "transform 0.6s ease",
+          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
+        }}
+      >
+        {/* FRONT FACE */}
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            background: COLORS.cardBg,
+            borderRadius: "clamp(10px, 1.5vw, 14px)",
+            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
+            borderTop: `4px solid ${color}`,
+            border: `1px solid ${COLORS.border}`,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "row"
+          }}
+        >
+          {/* Photo - 30% of card width */}
+          <div
+            onClick={nextPhoto}
+            style={{
+              width: "30%",
+              height: "100%",
+              flexShrink: 0,
+              background: photos[photoIndex] ? `url(${photos[photoIndex]}) center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+              color: "white"
+            }}
+          >
+            {!photos[photoIndex] && "?"}
+          </div>
+
+          {/* Info section */}
+          <div style={{
+            flex: 1,
+            padding: "clamp(0.6rem, 1.5vw, 1.2rem)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            overflow: "hidden",
+            minWidth: 0
+          }}>
+            <h3 style={{
+              fontSize: "clamp(0.95rem, 2.2vw, 1.4rem)",
+              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
+              color: COLORS.darkText,
+              fontFamily: "'Cormorant Garamond', serif",
+              fontWeight: 500,
+              lineHeight: 1.2
+            }}>
+              {person.frontName}
+            </h3>
+            <p style={{
+              color,
+              fontWeight: 600,
+              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
+              fontSize: "clamp(0.7rem, 1.4vw, 0.95rem)"
+            }}>
+              {person.role}
+            </p>
+            <p style={{
+              fontSize: "clamp(0.65rem, 1.2vw, 0.9rem)",
+              color: COLORS.mediumText,
+              marginBottom: "clamp(0.4rem, 1vw, 0.8rem)"
+            }}>
+              {person.relation}
+            </p>
+            <div>
+              <div style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText, textTransform: "uppercase" }}>City</div>
+              <div style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.currentCity}</div>
+            </div>
+            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.55rem, 1vw, 0.7rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for more</p>
+          </div>
+        </div>
+
+        {/* BACK FACE */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+            background: COLORS.cardBg,
+            borderRadius: "clamp(10px, 1.5vw, 14px)",
+            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
+            borderTop: `4px solid ${color}`,
+            border: `1px solid ${COLORS.border}`,
+            padding: "clamp(0.6rem, 1.5vw, 1.2rem)",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden"
+          }}
+        >
+          <h3 style={{
+            textAlign: "center",
+            marginBottom: "clamp(0.4rem, 1vw, 0.8rem)",
+            fontSize: "clamp(0.95rem, 2vw, 1.3rem)",
+            color: COLORS.darkText,
+            fontFamily: "'Cormorant Garamond', serif",
+            fontWeight: 500,
+            flexShrink: 0
+          }}>
+            {person.backName}
+          </h3>
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "clamp(0.25rem, 0.6vw, 0.5rem)",
+            marginBottom: "clamp(0.4rem, 1vw, 0.8rem)",
+            flexShrink: 0
+          }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(3px, 0.5vw, 5px)", flexWrap: "wrap" }}>
+              <span style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText }}>College:</span>
+              <span style={{ fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText, textAlign: "center" }}>{person.college}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(3px, 0.5vw, 5px)", flexWrap: "wrap" }}>
+              <span style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText }}>Favorite Drink:</span>
+              <span style={{ fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)", fontWeight: 600, color }}>{person.favoriteDrink || "TBD"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(3px, 0.5vw, 5px)", flexWrap: "wrap" }}>
+              <span style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText }}>Dance Floor Anthem:</span>
+              <span style={{ fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText, textAlign: "center" }}>{person.danceFloorSong || "TBD"}</span>
+            </div>
+          </div>
+          <div style={{
+            flex: 1,
+            minHeight: 0,
+            padding: "clamp(0.4rem, 1vw, 0.8rem)",
+            background: COLORS.cream,
+            borderRadius: "clamp(6px, 1vw, 10px)",
+            fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)",
+            color: COLORS.mediumText,
+            fontStyle: "italic",
+            lineHeight: 1.5,
+            border: `1px solid ${COLORS.border}`,
+            overflow: "auto"
+          }}>
+            <strong>Fun Fact:</strong> {person.funFact || person.comment}
+          </div>
+          <p style={{ textAlign: "center", marginTop: "clamp(0.2rem, 0.4vw, 0.3rem)", fontSize: "clamp(0.5rem, 0.8vw, 0.65rem)", color: COLORS.lightText, flexShrink: 0 }}>Tap to flip back</p>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+/* ============================================
+   SCALED STAT CELL FOR BACK OF GROOM CARDS
+   ============================================ */
+
+const StatCellScaled = ({ label, value, color }) => (
+  <div
+    style={{
+      textAlign: "center",
+      background: COLORS.cream,
+      padding: "clamp(0.3rem, 0.8vw, 0.6rem) clamp(0.2rem, 0.5vw, 0.4rem)",
+      borderRadius: "clamp(6px, 1vw, 10px)",
+      border: `1px solid ${COLORS.border}`
+    }}
+  >
+    <div style={{
+      fontSize: "clamp(0.45rem, 0.8vw, 0.65rem)",
+      color: COLORS.lightText,
+      marginBottom: "clamp(0.1rem, 0.2vw, 0.2rem)",
+      textTransform: "uppercase"
+    }}>
+      {label}
+    </div>
+    <div style={{
+      fontSize: "clamp(0.65rem, 1.2vw, 1rem)",
+      fontWeight: 600,
+      color
+    }}>
+      {value}
+    </div>
+  </div>
+);
