@@ -778,6 +778,13 @@ function RSVPTab({ isMobile }) {
    ============================================ */
 
 function InfoTab({ isMobile }) {
+  const cardStyle = { background: COLORS.cardBg, padding: isMobile ? "1.5rem" : "2rem", borderRadius: 14, marginBottom: "1.5rem", boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}` };
+  const sectionTitle = (text) => (
+    <h3 style={{ fontSize: "1.4rem", marginBottom: "1.2rem", textAlign: "center", color: COLORS.darkText, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
+      {text}
+    </h3>
+  );
+
   return (
     <>
       <h2 style={{ textAlign: "center", fontSize: isMobile ? "2rem" : "2.8rem", marginBottom: "0.5rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, color: COLORS.darkText }}>
@@ -787,45 +794,90 @@ function InfoTab({ isMobile }) {
         Everything you need to know
       </p>
 
-      {/* Schedule */}
-      <div style={{ background: COLORS.cardBg, padding: isMobile ? "1.5rem" : "2rem", borderRadius: 14, marginBottom: "1.5rem", boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}` }}>
-        <h3 style={{ fontSize: "1.4rem", marginBottom: "1.2rem", textAlign: "center", color: COLORS.darkText, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
-          Schedule
-        </h3>
-        <div style={{ maxWidth: 400, margin: "0 auto" }}>
-          {[
-            ["4:00 PM", "Ceremony"],
-            ["5:00 PM", "Cocktail Hour"],
-            ["6:00 PM", "Reception & Dinner"],
-            ["10:00 PM", "Send-off"]
-          ].map(([time, ev], i) => (
-            <div key={time} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.9rem 0", borderBottom: i < 3 ? `1px solid ${COLORS.border}` : "none" }}>
-              <span style={{ fontWeight: 600, color: COLORS.primary, fontSize: "0.95rem" }}>{time}</span>
-              <span style={{ fontSize: "0.95rem", color: COLORS.mediumText }}>{ev}</span>
+      {/* Weekend Schedule */}
+      <div style={cardStyle}>
+        {sectionTitle("Weekend Schedule")}
+
+        {/* Friday */}
+        <div style={{ marginBottom: "1.5rem" }}>
+          <h4 style={{ fontSize: "1.1rem", fontWeight: 600, color: COLORS.primary, marginBottom: "0.6rem", textAlign: "center", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            Friday, October 23
+          </h4>
+          <div style={{ maxWidth: 450, margin: "0 auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.7rem 0" }}>
+              <span style={{ fontWeight: 600, color: COLORS.primary, fontSize: "0.95rem" }}>Evening</span>
+              <span style={{ fontSize: "0.95rem", color: COLORS.mediumText }}>Welcome Party</span>
             </div>
-          ))}
+            <p style={{ fontSize: "0.85rem", color: COLORS.lightText, textAlign: "center", fontStyle: "italic" }}>
+              Time & location details coming soon
+            </p>
+            <p style={{ fontSize: "0.85rem", color: COLORS.mediumText, textAlign: "center", marginTop: "0.3rem" }}>
+              Attire: Casual
+            </p>
+          </div>
+        </div>
+
+        <div style={{ borderTop: `1px solid ${COLORS.border}`, marginBottom: "1.5rem" }} />
+
+        {/* Saturday */}
+        <div style={{ marginBottom: "1.5rem" }}>
+          <h4 style={{ fontSize: "1.1rem", fontWeight: 600, color: COLORS.primary, marginBottom: "0.6rem", textAlign: "center", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            Saturday, October 24
+          </h4>
+          <div style={{ maxWidth: 450, margin: "0 auto" }}>
+            {[
+              { time: "4:00 PM", event: "Wedding Ceremony", detail: "241 Rosemont Farm Way, Charlottesville, VA 22903", attire: "Cocktail Attire" },
+              { time: "5:00 PM", event: "Cocktails", detail: "241 Rosemont Farm Way, Charlottesville, VA 22903", attire: null },
+              { time: "6:00 PM", event: "Reception & Dinner", detail: "Please note: the reception will be outdoors in a field on grass — plan footwear accordingly!", attire: null },
+              { time: "TBD", event: "After Party", detail: "Details coming soon", attire: null }
+            ].map((item, i) => (
+              <div key={i} style={{ padding: "0.7rem 0", borderBottom: i < 3 ? `1px solid ${COLORS.border}` : "none" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontWeight: 600, color: COLORS.primary, fontSize: "0.95rem" }}>{item.time}</span>
+                  <span style={{ fontSize: "0.95rem", color: COLORS.mediumText }}>{item.event}</span>
+                </div>
+                {item.detail && (
+                  <p style={{ fontSize: "0.8rem", color: COLORS.lightText, marginTop: "0.3rem", textAlign: "right" }}>
+                    {item.detail}
+                  </p>
+                )}
+                {item.attire && (
+                  <p style={{ fontSize: "0.8rem", color: COLORS.mediumText, marginTop: "0.2rem", textAlign: "right" }}>
+                    Attire: {item.attire}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Venue */}
-      <div style={{ background: COLORS.cardBg, padding: isMobile ? "1.5rem" : "2rem", borderRadius: 14, marginBottom: "1.5rem", boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}` }}>
-        <h3 style={{ fontSize: "1.4rem", marginBottom: "0.8rem", textAlign: "center", color: COLORS.darkText, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
-          Venue
-        </h3>
-        <p style={{ textAlign: "center", fontSize: "1.05rem", color: COLORS.mediumText, lineHeight: 1.8 }}>
-          <strong style={{ color: COLORS.darkText }}>241 Rosemont Farm Way</strong>
-          <br />
-          <strong style={{ color: COLORS.darkText }}>Charlottesville, VA 22903</strong>
+      {/* Shuttle Information */}
+      <div style={cardStyle}>
+        {sectionTitle("Shuttle Information")}
+        <p style={{ textAlign: "center", fontSize: "1.1rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif" }}>
+          Coming Soon
         </p>
       </div>
 
-      {/* Travel */}
-      <div style={{ background: COLORS.cardBg, padding: isMobile ? "1.5rem" : "2rem", borderRadius: 14, marginBottom: "1.5rem", boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}` }}>
-        <h3 style={{ fontSize: "1.4rem", marginBottom: "1.2rem", textAlign: "center", color: COLORS.darkText, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
-          Travel & Stay
-        </h3>
+      {/* Travel & Hotels */}
+      <div style={cardStyle}>
+        {sectionTitle("Travel & Stay")}
         <div style={{ lineHeight: 1.8, color: COLORS.mediumText, fontSize: "0.95rem" }}>
-          <p style={{ marginBottom: "0.8rem" }}><strong style={{ color: COLORS.darkText }}>Hotel Recommendations:</strong></p>
+          <p style={{ marginBottom: "0.8rem" }}><strong style={{ color: COLORS.darkText }}>Hotels with Room Blocks:</strong></p>
+          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.2rem" }}>
+            <li style={{ marginBottom: "0.4rem" }}>
+              <strong>The Draftsman</strong> — Courtesy block available (10 rooms). More details to follow.
+            </li>
+            <li>
+              <strong>English Inn</strong> — Rooms available, details coming soon.
+            </li>
+          </ul>
+
+          <p style={{ marginBottom: "0.8rem" }}><strong style={{ color: COLORS.darkText }}>Other Hotel Options:</strong></p>
+          <p style={{ fontSize: "0.85rem", color: COLORS.lightText, marginBottom: "0.8rem", fontStyle: "italic" }}>
+            Please note: we do not have a wedding block at these hotels. Book directly at general rates.
+          </p>
           <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.2rem" }}>
             <li style={{ marginBottom: "0.4rem" }}>
               <a href="https://www.reservationcounter.com/hotels/show/5fa6aba/boars-head-resort-charlottesville-virginia/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.primary, textDecoration: "underline" }}>
@@ -838,6 +890,7 @@ function InfoTab({ isMobile }) {
               </a>
             </li>
           </ul>
+
           <p>
             <strong style={{ color: COLORS.darkText }}>Getting There:</strong><br />
             Charlottesville-Albemarle Airport (CHO) is 20 minutes from downtown.
@@ -852,7 +905,7 @@ function InfoTab({ isMobile }) {
         </h3>
         <p style={{ fontSize: "1.1rem", lineHeight: 1.7 }}>
           Cocktail Attire<br />
-          <span style={{ fontSize: "0.9rem", opacity: 0.9 }}>(The ceremony will be outdoors on grass)</span>
+          <span style={{ fontSize: "0.9rem", opacity: 0.9 }}>The ceremony will be outdoors and the reception will be in a field on grass — please plan footwear accordingly!</span>
         </p>
       </div>
     </>
