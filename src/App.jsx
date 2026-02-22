@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Analytics } from "@vercel/analytics/react";
@@ -51,21 +51,21 @@ const maddiePhotos = globToArray(import.meta.glob("./assets/maddie/*", { eager: 
 // Toggle RSVP form visibility (set to true when invites are sent)
 const RSVP_ENABLED = false;
 
-// COLORS
+// COLORS — matched to save-the-date (forest green + gold foil on cream)
 const COLORS = {
-  bg: "#FDFBF8",
+  bg: "#FAF8F3",
   cardBg: "#FFFFFF",
-  primary: "#7D5A4F",
-  secondary: "#A67B5B",
-  accent: "#C9A77C",
-  darkText: "#2C2420",
-  mediumText: "#5D4E47",
-  lightText: "#9A8B84",
-  border: "#E5DDD6",
-  groomAccent: "#6B5B4F",
-  brideAccent: "#9B6B5A",
-  highlight: "#D4B896",
-  cream: "#F5F0EA",
+  primary: "#3B4D3B",
+  secondary: "#5A7055",
+  accent: "#C5A55A",
+  darkText: "#2A3A2A",
+  mediumText: "#4A5D4A",
+  lightText: "#8A9A8A",
+  border: "#D8DDD5",
+  groomAccent: "#3B4D3B",
+  brideAccent: "#5A7055",
+  highlight: "#C5A55A",
+  cream: "#F2F0E8",
   tennesseeOrange: "#FF8200",
   tennesseeWhite: "#FFFFFF",
   indianaCrimson: "#990000",
@@ -160,7 +160,6 @@ const IndianaCandyStripe = () => (
 export default function App() {
   const [tab, setTab] = useState("main");
   const [buttonCount, setButtonCount] = useState(0);
-  const [guestBookEntries, setGuestBookEntries] = useState([]);
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showPatterns, setShowPatterns] = useState(false);
   const isMobile = useIsMobile();
@@ -204,8 +203,6 @@ export default function App() {
   useEffect(() => {
     const savedCount = localStorage.getItem("weddingButtonCount");
     if (savedCount) setButtonCount(parseInt(savedCount, 10));
-    const savedGuestBook = localStorage.getItem("guestBookEntries");
-    if (savedGuestBook) setGuestBookEntries(JSON.parse(savedGuestBook));
   }, []);
 
   const triggerConfetti = () => {
@@ -298,8 +295,6 @@ END:VCALENDAR`;
         return <WeddingPartyTab isMobile={isMobile} />;
       case "registry":
         return <RegistryTab isMobile={isMobile} />;
-      case "guestbook":
-        return <GuestBookTab entries={guestBookEntries} setEntries={setGuestBookEntries} isMobile={isMobile} />;
       default:
         return null;
     }
@@ -553,7 +548,6 @@ END:VCALENDAR`;
               <TabButton id="info" label="Details" />
               <TabButton id="party" label="Wedding Party" />
               <TabButton id="registry" label="Registry" />
-              <TabButton id="guestbook" label="Guest Book" />
             </div>
           </div>
         </div>
@@ -940,6 +934,11 @@ function InfoTab({ isMobile }) {
           <p style={{ marginBottom: "0.8rem" }}><strong style={{ color: COLORS.darkText }}>Hotels with Room Blocks:</strong></p>
           <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.2rem" }}>
             <li style={{ marginBottom: "0.4rem" }}>
+              <a href="https://www.reservationcounter.com/hotels/show/5fa6aba/boars-head-resort-charlottesville-virginia/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.primary, textDecoration: "underline" }}>
+                <strong>Boars Head Resort</strong>
+              </a> — More details to follow.
+            </li>
+            <li style={{ marginBottom: "0.4rem" }}>
               <strong>The Draftsman</strong> — Courtesy block available (10 rooms). More details to follow.
             </li>
             <li>
@@ -952,11 +951,6 @@ function InfoTab({ isMobile }) {
             Please note: we do not have a wedding block at these hotels. Book directly at general rates.
           </p>
           <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.2rem" }}>
-            <li style={{ marginBottom: "0.4rem" }}>
-              <a href="https://www.reservationcounter.com/hotels/show/5fa6aba/boars-head-resort-charlottesville-virginia/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.primary, textDecoration: "underline" }}>
-                Boars Head Resort
-              </a>
-            </li>
             <li>
               <a href="https://www.hilton.com/en/hotels/chogcgu-graduate-charlottesville/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.primary, textDecoration: "underline" }}>
                 The Graduate
@@ -991,9 +985,7 @@ function InfoTab({ isMobile }) {
 
 function RegistryTab({ isMobile }) {
   const registries = [
-    { name: "Amazon", url: "https://amazon.com/wedding/your-registry", icon: "A" },
-    { name: "Target", url: "https://target.com/gift-registry", icon: "T" },
-    { name: "Honeymoon Fund", url: "#", icon: "H" }
+    { name: "Crate & Barrel", url: "https://www.crateandbarrel.com/gift-registry/emily-collins/r7479049", icon: "C" }
   ];
 
   return (
@@ -1005,7 +997,7 @@ function RegistryTab({ isMobile }) {
         Your presence is the greatest gift
       </p>
 
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: "1.2rem", marginBottom: "2rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", gap: "1.2rem", marginBottom: "2rem" }}>
         {registries.map((r) => (
           <a
             key={r.name}
@@ -1058,105 +1050,6 @@ function RegistryTab({ isMobile }) {
   );
 }
 
-/* ============================================
-   GUEST BOOK TAB
-   ============================================ */
-
-function GuestBookTab({ entries, setEntries, isMobile }) {
-  const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
-  const [photoPreview, setPhotoPreview] = useState(null);
-  const fileInputRef = useRef(null);
-
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => setPhotoPreview(reader.result);
-    reader.readAsDataURL(file);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name || !message) return;
-    const newEntry = { id: Date.now(), name, message, photo: photoPreview, timestamp: new Date().toISOString() };
-    const updated = [newEntry, ...entries];
-    setEntries(updated);
-    localStorage.setItem("guestBookEntries", JSON.stringify(updated));
-    setName("");
-    setMessage("");
-    setPhotoPreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: [COLORS.primary, COLORS.secondary, COLORS.accent, COLORS.highlight] });
-  };
-
-  const inputStyle = {
-    width: "100%",
-    padding: "0.9rem",
-    border: `1px solid ${COLORS.border}`,
-    borderRadius: 8,
-    fontSize: "0.95rem",
-    color: COLORS.darkText,
-    background: COLORS.cream,
-    boxSizing: "border-box"
-  };
-
-  return (
-    <>
-      <h2 style={{ textAlign: "center", fontSize: isMobile ? "2rem" : "2.8rem", marginBottom: "0.5rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, color: COLORS.darkText }}>
-        Guest Book
-      </h2>
-      <p style={{ textAlign: "center", fontSize: "1rem", marginBottom: "2.5rem", color: COLORS.mediumText }}>
-        Leave us a message and snap a selfie!
-      </p>
-
-      <div style={{ background: COLORS.cardBg, padding: isMobile ? "1.5rem" : "2rem", borderRadius: 14, marginBottom: "2.5rem", boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}` }}>
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: "1.2rem" }}>
-            <label style={{ display: "block", marginBottom: "0.4rem", fontWeight: 500, color: COLORS.darkText, fontSize: "0.9rem" }}>Your Name</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name..." required style={inputStyle} />
-          </div>
-          <div style={{ marginBottom: "1.2rem" }}>
-            <label style={{ display: "block", marginBottom: "0.4rem", fontWeight: 500, color: COLORS.darkText, fontSize: "0.9rem" }}>Your Message</label>
-            <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Share your well wishes..." required rows={4} style={{ ...inputStyle, resize: "vertical" }} />
-          </div>
-          <div style={{ marginBottom: "1.2rem" }}>
-            <label style={{ display: "block", marginBottom: "0.4rem", fontWeight: 500, color: COLORS.darkText, fontSize: "0.9rem" }}>Add a Selfie (Optional)</label>
-            <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoChange} style={{ ...inputStyle, border: `1px dashed ${COLORS.border}`, cursor: "pointer", padding: "0.7rem" }} />
-            {photoPreview && (
-              <div style={{ marginTop: "0.8rem", textAlign: "center" }}>
-                <img src={photoPreview} alt="Preview" style={{ maxWidth: 150, maxHeight: 150, borderRadius: 10, objectFit: "cover", border: `1px solid ${COLORS.border}` }} />
-              </div>
-            )}
-          </div>
-          <button type="submit" style={{ width: "100%", background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`, color: "white", border: "none", padding: "0.9rem", fontSize: "0.95rem", fontWeight: 500, borderRadius: 8, cursor: "pointer" }}>
-            Sign Guest Book
-          </button>
-        </form>
-      </div>
-
-      <h3 style={{ fontSize: "1.3rem", marginBottom: "1.5rem", textAlign: "center", color: COLORS.darkText, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
-        Messages from Our Guests ({entries.length})
-      </h3>
-
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", gap: "1.2rem" }}>
-        {entries.map((entry) => (
-          <div key={entry.id} style={{ background: COLORS.cardBg, padding: "1.2rem", borderRadius: 12, boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}`, transform: `rotate(${Math.random() * 2 - 1}deg)` }}>
-            {entry.photo && <img src={entry.photo} alt={entry.name} style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 8, marginBottom: "0.8rem" }} />}
-            <p style={{ fontWeight: 600, marginBottom: "0.4rem", color: COLORS.darkText, fontSize: "0.95rem" }}>{entry.name}</p>
-            <p style={{ fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.6, fontStyle: "italic" }}>"{entry.message}"</p>
-          </div>
-        ))}
-      </div>
-
-      {entries.length === 0 && (
-        <p style={{ textAlign: "center", color: COLORS.lightText, fontSize: "1rem", marginTop: "1.5rem", fontStyle: "italic" }}>
-          Be the first to sign the guest book!
-        </p>
-      )}
-    </>
-  );
-}
 
 /* ============================================
    WEDDING PARTY TAB - FULLY PROPORTIONAL SCALING
