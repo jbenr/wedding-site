@@ -48,6 +48,9 @@ const lilyPhotos = globToArray(import.meta.glob("./assets/lily/*", { eager: true
 const mariaPhotos = globToArray(import.meta.glob("./assets/maria/*", { eager: true }));
 const maddiePhotos = globToArray(import.meta.glob("./assets/maddie/*", { eager: true }));
 
+// Toggle RSVP form visibility (set to true when invites are sent)
+const RSVP_ENABLED = false;
+
 // COLORS
 const COLORS = {
   bg: "#FDFBF8",
@@ -716,6 +719,21 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
    ============================================ */
 
 function RSVPTab({ isMobile }) {
+  if (!RSVP_ENABLED) {
+    return (
+      <>
+        <h2 style={{ textAlign: "center", fontSize: isMobile ? "2rem" : "2.8rem", marginBottom: "0.5rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, color: COLORS.darkText }}>
+          RSVP
+        </h2>
+        <div style={{ background: COLORS.cardBg, padding: isMobile ? "2rem" : "3rem", borderRadius: 14, textAlign: "center", boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}`, marginTop: "2rem" }}>
+          <p style={{ fontSize: "1.3rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}>
+            Coming Soon
+          </p>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <h2 style={{ textAlign: "center", fontSize: isMobile ? "2rem" : "2.8rem", marginBottom: "0.5rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, color: COLORS.darkText }}>
