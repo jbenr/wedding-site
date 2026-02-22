@@ -1016,7 +1016,7 @@ function GuestBookTab({ entries, setEntries, isMobile }) {
 
 /* ============================================
    WEDDING PARTY TAB - FULLY PROPORTIONAL SCALING
-   Everything scales together based on container/window width
+   Photo maintains 4:5 aspect ratio at all sizes
    ============================================ */
 
 function WeddingPartyTab({ isMobile }) {
@@ -1031,7 +1031,7 @@ function WeddingPartyTab({ isMobile }) {
   ];
 
   const bridesmaids = [
-    { frontName: "Addison Collins", backName: "Addie", relation: "Cousin", photos: addisonPhotos, role: "Maid of Honor", currentCity: "Atlanta, GA",
+    { frontName: "Addison Collins", backName: "Addison", relation: "Cousin", photos: addisonPhotos, role: "Maid of Honor", currentCity: "Atlanta, GA",
         college: "Wake Forest University", favoriteDrink: "Gin & Tonic", danceFloorSong: "Don't Stop Me Now by Queen",
         funFact: "Emily and Addison made a pact that they would be each others MOHs when they were 12" },
     { frontName: "Lauren Turnbull", backName: "Lauren", relation: "Friend", photos: laurenPhotos, role: "Bridesmaid", currentCity: "Nashville, TN",
@@ -1046,7 +1046,7 @@ function WeddingPartyTab({ isMobile }) {
     { frontName: "Maria Urias Thompson", backName: "Maria", relation: "Friend", photos: mariaPhotos, role: "Bridesmaid", currentCity: "Nashville, TN",
         college: "University of Tennessee | Vanderbilt", favoriteDrink: "Aperol Spritz", danceFloorSong: "Believe by Cher",
         funFact: "Emily and Maria met in third grade and became true friends in high school when they worked at the YMCA together" },
-    { frontName: "Lillian Parker", backName: "Lilly", relation: "Friend", photos: lilyPhotos, role: "Bridesmaid", currentCity: "Chapel Hill, NC",
+    { frontName: "Lilly Parker", backName: "Lilly", relation: "Friend", photos: lilyPhotos, role: "Bridesmaid", currentCity: "Chapel Hill, NC",
         college: "Wake Forest University | University of North Carolina", favoriteDrink: "Mojito", danceFloorSong: "UCLA",
         funFact: "Emily and I were roommates in ATL, taught at the same school, and were foster moms to 4 animals together (one being a 15 year old cat named Baby Girl)!" }
   ];
@@ -1088,7 +1088,7 @@ function WeddingPartyTab({ isMobile }) {
 }
 
 /* ============================================
-   GROOM CARD - FULLY PROPORTIONAL
+   GROOM CARD - PHOTO MAINTAINS 4:5 ASPECT RATIO
    ============================================ */
 
 const GroomCard = React.memo(({ person }) => {
@@ -1103,15 +1103,10 @@ const GroomCard = React.memo(({ person }) => {
     setPhotoIndex((i) => (i + 1) % photos.length);
   };
 
-  // All sizing uses clamp(min, preferred, max) so everything scales together
-  // Photo is 30% of card width, info section is 70%
-
   return (
     <div
       style={{
         width: "100%",
-        // Card height scales with viewport, min 260px, max 360px
-        height: "clamp(260px, 38vw, 360px)",
         perspective: 1200,
         cursor: "pointer"
       }}
@@ -1121,7 +1116,6 @@ const GroomCard = React.memo(({ person }) => {
         style={{
           position: "relative",
           width: "100%",
-          height: "100%",
           transformStyle: "preserve-3d",
           transition: "transform 0.6s ease",
           transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
@@ -1130,9 +1124,7 @@ const GroomCard = React.memo(({ person }) => {
         {/* FRONT FACE */}
         <div
           style={{
-            position: "absolute",
             width: "100%",
-            height: "100%",
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             background: COLORS.cardBg,
@@ -1145,12 +1137,12 @@ const GroomCard = React.memo(({ person }) => {
             flexDirection: "row"
           }}
         >
-          {/* Photo - 30% of card width, maintains aspect via height: 100% */}
+          {/* Photo container - uses aspect-ratio to maintain 4:5 */}
           <div
             onClick={nextPhoto}
             style={{
-              width: "30%",
-              height: "100%",
+              width: "clamp(140px, 28%, 260px)",
+              aspectRatio: "4 / 5",
               flexShrink: 0,
               background: photos[photoIndex] ? `url(${photos[photoIndex]}) center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
               display: "flex",
@@ -1163,7 +1155,7 @@ const GroomCard = React.memo(({ person }) => {
             {!photos[photoIndex] && "?"}
           </div>
 
-          {/* Info section - 70% of card */}
+          {/* Info section */}
           <div style={{
             flex: 1,
             padding: "clamp(0.6rem, 1.5vw, 1.2rem)",
@@ -1212,7 +1204,7 @@ const GroomCard = React.memo(({ person }) => {
           </div>
         </div>
 
-        {/* BACK FACE */}
+        {/* BACK FACE - matches front height automatically via absolute positioning trick */}
         <div
           style={{
             position: "absolute",
@@ -1297,7 +1289,7 @@ const GroomCard = React.memo(({ person }) => {
 });
 
 /* ============================================
-   BRIDESMAID CARD - FULLY PROPORTIONAL
+   BRIDESMAID CARD - PHOTO MAINTAINS 4:5 ASPECT RATIO
    ============================================ */
 
 const BridesmaidCard = React.memo(({ person }) => {
@@ -1316,7 +1308,6 @@ const BridesmaidCard = React.memo(({ person }) => {
     <div
       style={{
         width: "100%",
-        height: "clamp(260px, 38vw, 360px)",
         perspective: 1200,
         cursor: "pointer"
       }}
@@ -1326,7 +1317,6 @@ const BridesmaidCard = React.memo(({ person }) => {
         style={{
           position: "relative",
           width: "100%",
-          height: "100%",
           transformStyle: "preserve-3d",
           transition: "transform 0.6s ease",
           transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
@@ -1335,9 +1325,7 @@ const BridesmaidCard = React.memo(({ person }) => {
         {/* FRONT FACE */}
         <div
           style={{
-            position: "absolute",
             width: "100%",
-            height: "100%",
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             background: COLORS.cardBg,
@@ -1350,12 +1338,12 @@ const BridesmaidCard = React.memo(({ person }) => {
             flexDirection: "row"
           }}
         >
-          {/* Photo - 30% of card width */}
+          {/* Photo container - uses aspect-ratio to maintain 4:5 */}
           <div
             onClick={nextPhoto}
             style={{
-              width: "30%",
-              height: "100%",
+              width: "clamp(140px, 28%, 260px)",
+              aspectRatio: "4 / 5",
               flexShrink: 0,
               background: photos[photoIndex] ? `url(${photos[photoIndex]}) center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
               display: "flex",
