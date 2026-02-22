@@ -237,11 +237,11 @@ export default function App() {
 VERSION:2.0
 PRODID:-//Ben & Emily Wedding//EN
 BEGIN:VEVENT
-DTSTART:20261024T160000
-DTEND:20261024T220000
+DTSTART:20261024T170000
+DTEND:20261024T230000
 SUMMARY:Ben & Emily's Wedding
-DESCRIPTION:Join us for our special day in Charlottesville, VA!
-LOCATION:241 Rosemont Farm Way, Charlottesville, VA 22903
+DESCRIPTION:Ceremony at Christ Episcopal Church, 120 W. High Street. Reception at 241 Rosemont Farm Way.
+LOCATION:120 W. High Street, Charlottesville, VA 22902
 URL:${window.location.href}
 STATUS:CONFIRMED
 END:VEVENT
@@ -794,60 +794,133 @@ function InfoTab({ isMobile }) {
         Everything you need to know
       </p>
 
-      {/* Weekend Schedule */}
+      {/* Friday */}
       <div style={cardStyle}>
-        {sectionTitle("Weekend Schedule")}
-
-        {/* Friday */}
-        <div style={{ marginBottom: "1.5rem" }}>
-          <h4 style={{ fontSize: "1.1rem", fontWeight: 600, color: COLORS.primary, marginBottom: "0.6rem", textAlign: "center", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+        <div style={{ textAlign: "center", marginBottom: "1.2rem" }}>
+          <h3 style={{ fontSize: "1.5rem", fontWeight: 400, color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif", marginBottom: "0.2rem" }}>
             Friday, October 23
-          </h4>
-          <div style={{ maxWidth: 450, margin: "0 auto" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.7rem 0" }}>
-              <span style={{ fontWeight: 600, color: COLORS.primary, fontSize: "0.95rem" }}>Evening</span>
-              <span style={{ fontSize: "0.95rem", color: COLORS.mediumText }}>Welcome Party</span>
-            </div>
-            <p style={{ fontSize: "0.85rem", color: COLORS.lightText, textAlign: "center", fontStyle: "italic" }}>
-              Time & location details coming soon
-            </p>
-            <p style={{ fontSize: "0.85rem", color: COLORS.mediumText, textAlign: "center", marginTop: "0.3rem" }}>
-              Attire: Casual
-            </p>
-          </div>
+          </h3>
+          <div style={{ width: 40, height: 2, background: COLORS.accent, margin: "0 auto" }} />
         </div>
 
-        <div style={{ borderTop: `1px solid ${COLORS.border}`, marginBottom: "1.5rem" }} />
-
-        {/* Saturday */}
-        <div style={{ marginBottom: "1.5rem" }}>
-          <h4 style={{ fontSize: "1.1rem", fontWeight: 600, color: COLORS.primary, marginBottom: "0.6rem", textAlign: "center", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-            Saturday, October 24
+        <div style={{
+          background: COLORS.cream,
+          borderRadius: 12,
+          padding: isMobile ? "1.2rem" : "1.5rem",
+          border: `1px solid ${COLORS.border}`,
+          textAlign: "center"
+        }}>
+          <p style={{ fontSize: "0.8rem", color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "0.3rem" }}>9:00 PM</p>
+          <h4 style={{ fontSize: "1.2rem", fontWeight: 500, color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif", marginBottom: "0.5rem" }}>
+            Welcome Party
           </h4>
-          <div style={{ maxWidth: 450, margin: "0 auto" }}>
-            {[
-              { time: "4:00 PM", event: "Wedding Ceremony", detail: "241 Rosemont Farm Way, Charlottesville, VA 22903", attire: "Cocktail Attire" },
-              { time: "5:00 PM", event: "Cocktails", detail: "241 Rosemont Farm Way, Charlottesville, VA 22903", attire: null },
-              { time: "6:00 PM", event: "Reception & Dinner", detail: "Please note: the reception will be outdoors in a field on grass — plan footwear accordingly!", attire: null },
-              { time: "TBD", event: "After Party", detail: "Details coming soon", attire: null }
-            ].map((item, i) => (
-              <div key={i} style={{ padding: "0.7rem 0", borderBottom: i < 3 ? `1px solid ${COLORS.border}` : "none" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontWeight: 600, color: COLORS.primary, fontSize: "0.95rem" }}>{item.time}</span>
-                  <span style={{ fontSize: "0.95rem", color: COLORS.mediumText }}>{item.event}</span>
-                </div>
-                {item.detail && (
-                  <p style={{ fontSize: "0.8rem", color: COLORS.lightText, marginTop: "0.3rem", textAlign: "right" }}>
-                    {item.detail}
-                  </p>
-                )}
-                {item.attire && (
-                  <p style={{ fontSize: "0.8rem", color: COLORS.mediumText, marginTop: "0.2rem", textAlign: "right" }}>
-                    Attire: {item.attire}
-                  </p>
-                )}
-              </div>
-            ))}
+          <a
+            href="https://www.farmingtoncc.com/blue-ridge-room-guest"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: "0.9rem", color: COLORS.primary, textDecoration: "underline" }}
+          >
+            The Blue Ridge Room at Farmington Country Club
+          </a>
+          <p style={{ fontSize: "0.85rem", color: COLORS.lightText, marginTop: "0.2rem" }}>
+            1625 Country Club Circle, Charlottesville, VA 22901
+          </p>
+          <div style={{ marginTop: "0.8rem", display: "inline-block", background: COLORS.cardBg, padding: "0.3rem 1rem", borderRadius: 20, border: `1px solid ${COLORS.border}`, fontSize: "0.8rem", color: COLORS.mediumText }}>
+            Cocktail Attire
+          </div>
+        </div>
+      </div>
+
+      {/* Saturday */}
+      <div style={cardStyle}>
+        <div style={{ textAlign: "center", marginBottom: "1.2rem" }}>
+          <h3 style={{ fontSize: "1.5rem", fontWeight: 400, color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif", marginBottom: "0.2rem" }}>
+            Saturday, October 24
+          </h3>
+          <div style={{ width: 40, height: 2, background: COLORS.accent, margin: "0 auto" }} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {/* Ceremony */}
+          <div style={{
+            background: COLORS.cream,
+            borderRadius: 12,
+            padding: isMobile ? "1.2rem" : "1.5rem",
+            border: `1px solid ${COLORS.border}`,
+            textAlign: "center"
+          }}>
+            <p style={{ fontSize: "0.8rem", color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "0.3rem" }}>5:00 PM</p>
+            <h4 style={{ fontSize: "1.2rem", fontWeight: 500, color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif", marginBottom: "0.5rem" }}>
+              Wedding Ceremony
+            </h4>
+            <a
+              href="https://www.christchurchcville.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ fontSize: "0.9rem", color: COLORS.primary, textDecoration: "underline" }}
+            >
+              Christ Episcopal Church
+            </a>
+            <p style={{ fontSize: "0.85rem", color: COLORS.lightText, marginTop: "0.2rem" }}>
+              120 W. High Street, Charlottesville, VA 22902
+            </p>
+            <div style={{ marginTop: "0.8rem", display: "inline-block", background: COLORS.cardBg, padding: "0.3rem 1rem", borderRadius: 20, border: `1px solid ${COLORS.border}`, fontSize: "0.8rem", color: COLORS.mediumText }}>
+              Black Tie Optional
+            </div>
+          </div>
+
+          {/* Cocktail Hour */}
+          <div style={{
+            background: COLORS.cream,
+            borderRadius: 12,
+            padding: isMobile ? "1.2rem" : "1.5rem",
+            border: `1px solid ${COLORS.border}`,
+            textAlign: "center"
+          }}>
+            <p style={{ fontSize: "0.8rem", color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "0.3rem" }}>6:30 PM — 7:30 PM</p>
+            <h4 style={{ fontSize: "1.2rem", fontWeight: 500, color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif", marginBottom: "0.5rem" }}>
+              Cocktail Hour
+            </h4>
+            <p style={{ fontSize: "0.85rem", color: COLORS.lightText }}>
+              241 Rosemont Farm Way, Charlottesville, VA 22903
+            </p>
+          </div>
+
+          {/* Reception */}
+          <div style={{
+            background: COLORS.cream,
+            borderRadius: 12,
+            padding: isMobile ? "1.2rem" : "1.5rem",
+            border: `1px solid ${COLORS.border}`,
+            textAlign: "center"
+          }}>
+            <p style={{ fontSize: "0.8rem", color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "0.3rem" }}>7:30 PM</p>
+            <h4 style={{ fontSize: "1.2rem", fontWeight: 500, color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif", marginBottom: "0.5rem" }}>
+              Reception & Dinner
+            </h4>
+            <p style={{ fontSize: "0.85rem", color: COLORS.lightText }}>
+              241 Rosemont Farm Way, Charlottesville, VA 22903
+            </p>
+            <p style={{ fontSize: "0.8rem", color: COLORS.secondary, marginTop: "0.5rem", fontStyle: "italic" }}>
+              The reception will be outdoors in a field on grass — please plan footwear accordingly!
+            </p>
+          </div>
+
+          {/* Late Night */}
+          <div style={{
+            background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`,
+            borderRadius: 12,
+            padding: isMobile ? "1.2rem" : "1.5rem",
+            textAlign: "center",
+            color: "white"
+          }}>
+            <p style={{ fontSize: "0.8rem", opacity: 0.8, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "0.3rem" }}>11:00 PM</p>
+            <h4 style={{ fontSize: "1.2rem", fontWeight: 500, fontFamily: "'Cormorant Garamond', serif", marginBottom: "0.3rem" }}>
+              Late Night
+            </h4>
+            <p style={{ fontSize: "0.9rem", opacity: 0.9 }}>
+              Featuring DJ Jacko
+            </p>
           </div>
         </div>
       </div>
@@ -904,8 +977,8 @@ function InfoTab({ isMobile }) {
           Dress Code
         </h3>
         <p style={{ fontSize: "1.1rem", lineHeight: 1.7 }}>
-          Cocktail Attire<br />
-          <span style={{ fontSize: "0.9rem", opacity: 0.9 }}>The ceremony will be outdoors and the reception will be in a field on grass — please plan footwear accordingly!</span>
+          Black Tie Optional<br />
+          <span style={{ fontSize: "0.9rem", opacity: 0.9 }}>The reception will be outdoors in a field on grass — please plan footwear accordingly!</span>
         </p>
       </div>
     </>
