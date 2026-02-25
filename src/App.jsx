@@ -3,7 +3,6 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import confetti from "canvas-confetti";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import { FaCalendar } from "react-icons/fa";
 
 import heroImage from "./assets/hero.jpg";
 import { clickCountRef, onValue, runTransaction } from "./firebase";
@@ -332,7 +331,15 @@ END:VCALENDAR`;
     <>
       {/* GLOBAL STYLES */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Lora:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lora:wght@400;500;600&display=swap');
+
+        .press-button {
+          transition: transform 0.08s ease, box-shadow 0.08s ease;
+        }
+        .press-button:active {
+          transform: translateY(2px);
+          box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;
+        }
         
         *, *::before, *::after {
           box-sizing: border-box;
@@ -620,6 +627,30 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
 
   return (
     <>
+      {/* Page Title */}
+      <h2 style={{
+        textAlign: "center",
+        fontSize: "min(10vw, 3.5rem)",
+        fontFamily: "'Cormorant Garamond', Georgia, serif",
+        fontWeight: 300,
+        fontStyle: "italic",
+        color: COLORS.darkText,
+        marginBottom: "0.3rem",
+        letterSpacing: "0.02em"
+      }}>
+        Ben & Emily
+      </h2>
+      <p style={{
+        textAlign: "center",
+        fontSize: "min(3vw, 0.8rem)",
+        color: COLORS.lightText,
+        textTransform: "uppercase",
+        letterSpacing: "0.2em",
+        marginBottom: "2rem"
+      }}>
+        October 24, 2026 &nbsp;&middot;&nbsp; Charlottesville, VA
+      </p>
+
       {/* Photo Grid */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: "1.2rem", marginBottom: "2.5rem" }}>
         {photoBuckets.map((bucket, i) => {
@@ -656,68 +687,59 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       </div>
 
       {/* Story Text */}
-      <div style={{ background: COLORS.cardBg, padding: isMobile ? "1.5rem" : "2.5rem", borderRadius: 14, marginBottom: "2rem", boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}` }}>
-        <p style={{ fontSize: isMobile ? "1rem" : "1.1rem", lineHeight: 1.9, color: COLORS.mediumText, textAlign: "center", marginBottom: "1.2rem" }}>
+      <div style={{ padding: isMobile ? "1rem 0.5rem" : "1.5rem 2rem", marginBottom: "2rem" }}>
+        <p style={{ fontSize: isMobile ? "0.85rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "0.8rem" }}>
           Emily and Ben met on a crisp Halloween night in Atlanta — she as Padme, he as Anakin — two characters whose destinies were always intertwined. Since then, they've moved to New York City to build a life together on the Upper East Side.
         </p>
-        <p style={{ fontSize: isMobile ? "1rem" : "1.1rem", lineHeight: 1.9, color: COLORS.mediumText, textAlign: "center" }}>
+        <p style={{ fontSize: isMobile ? "0.85rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center" }}>
           Through every move, challenge, and adventure, their connection has only deepened. Now, we're ready to celebrate this next chapter with the people who mean the most to us!
         </p>
       </div>
 
       {/* Save the Date */}
-      <div style={{ background: COLORS.cardBg, padding: isMobile ? "1.5rem" : "2.5rem", borderRadius: 14, marginBottom: "2rem", textAlign: "center", borderTop: `4px solid ${COLORS.accent}`, boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}` }}>
-        <FaCalendar style={{ fontSize: "2.2rem", color: COLORS.primary, marginBottom: "0.8rem" }} />
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "0.6rem", color: COLORS.darkText, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
-          Save the Date
-        </h3>
-        <p style={{ marginBottom: "1.2rem", color: COLORS.mediumText, fontSize: "0.95rem" }}>
-          Add our wedding to your calendar
-        </p>
+      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
         <button
+          className="press-button"
           onClick={downloadCalendarEvent}
           style={{
             background: COLORS.accent,
             color: "#FFFFFF",
             border: "none",
-            padding: "0.85rem 2rem",
-            fontSize: "0.9rem",
+            padding: "0.75rem 1.8rem",
+            fontSize: "0.85rem",
             fontWeight: 500,
             borderRadius: 50,
             cursor: "pointer",
-            transition: "all 0.3s ease"
+            boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
+            letterSpacing: "0.05em"
           }}
         >
-          Download Calendar Event
+          Add to Calendar
         </button>
       </div>
 
       {/* Excitement Button */}
-      <div style={{ textAlign: "center", padding: isMobile ? "1.5rem" : "2.5rem", background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`, borderRadius: 14, color: COLORS.darkText, border: `1px solid ${COLORS.border}` }}>
-        <h3 style={{ fontSize: "1.4rem", marginBottom: "0.8rem", fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
-          How excited are you?
-        </h3>
-        <p style={{ marginBottom: "1.2rem", color: COLORS.mediumText, fontSize: "0.95rem" }}>Click to show your excitement!</p>
-        <motion.button
+      <div style={{ textAlign: "center", padding: isMobile ? "1.5rem" : "2rem" }}>
+        <button
+          className="press-button"
           onClick={handleButtonClick}
-          whileTap={{ scale: 0.92, boxShadow: "0 1px 5px rgba(0,0,0,0.1)" }}
-          transition={{ type: "spring", stiffness: 400, damping: 15 }}
           style={{
             background: COLORS.accent,
             color: "#FFFFFF",
             border: "none",
-            padding: "0.9rem 2rem",
-            fontSize: "1.05rem",
-            fontWeight: 600,
+            padding: "0.75rem 1.8rem",
+            fontSize: "0.95rem",
+            fontWeight: 500,
             borderRadius: 50,
             cursor: "pointer",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-            marginBottom: "1rem"
+            boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
+            marginBottom: "0.6rem",
+            letterSpacing: "0.05em"
           }}
         >
           Can't Wait!
-        </motion.button>
-        <div style={{ fontSize: "1.1rem", fontWeight: 400, color: COLORS.mediumText }}>Total clicks: {buttonCount.toLocaleString()}</div>
+        </button>
+        <div style={{ fontSize: "0.8rem", color: COLORS.lightText }}>{buttonCount.toLocaleString()} clicks</div>
       </div>
     </>
   );
