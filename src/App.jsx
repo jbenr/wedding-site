@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import { FaCalendar } from "react-icons/fa";
 
 import heroImage from "./assets/hero.jpg";
+import { clickCountRef, onValue, runTransaction } from "./firebase";
 
 // Import team logos
 import bears from "./assets/bears.png";
@@ -51,12 +52,12 @@ const maddiePhotos = globToArray(import.meta.glob("./assets/maddie/*", { eager: 
 // Toggle RSVP form visibility (set to true when invites are sent)
 const RSVP_ENABLED = false;
 
-// COLORS — warm neutral + gold (pairs well with school patterns)
+// COLORS — cream + gold (pairs well with school patterns)
 const COLORS = {
   bg: "#FAF8F3",
   cardBg: "#FFFFFF",
-  primary: "#4A4543",
-  secondary: "#7A6F68",
+  primary: "#E8DDD0",
+  secondary: "#D4C5B2",
   accent: "#C5A55A",
   darkText: "#2C2825",
   mediumText: "#6B6360",
@@ -93,27 +94,20 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-// Schedule timeline row
-const ScheduleRow = ({ time, event, detail, attire, isLast, isMobile }) => (
-  <div style={{ display: "flex", gap: isMobile ? "1rem" : "1.5rem", position: "relative", paddingBottom: isLast ? 0 : "1.5rem" }}>
-    {/* Time column */}
-    <div style={{ width: isMobile ? 70 : 90, flexShrink: 0, textAlign: "right", paddingTop: "0.1rem" }}>
-      <span style={{ fontSize: isMobile ? "0.85rem" : "0.95rem", fontWeight: 600, color: COLORS.primary }}>{time}</span>
+// Simple schedule row — clean two-column layout
+const ScheduleRow = ({ time, event, detail, isLast, isMobile }) => (
+  <div style={{
+    display: "flex",
+    alignItems: "baseline",
+    padding: "0.8rem 0",
+    borderBottom: isLast ? "none" : `1px solid ${COLORS.border}`
+  }}>
+    <div style={{ width: isMobile ? 80 : 100, flexShrink: 0, fontSize: isMobile ? "0.85rem" : "0.95rem", color: COLORS.lightText }}>
+      {time}
     </div>
-    {/* Dot + line */}
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, width: 12 }}>
-      <div style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.accent, flexShrink: 0, marginTop: "0.35rem" }} />
-      {!isLast && <div style={{ width: 1, flex: 1, background: COLORS.border, marginTop: 4 }} />}
-    </div>
-    {/* Event details */}
-    <div style={{ flex: 1, paddingBottom: isLast ? 0 : "0.5rem" }}>
-      <p style={{ fontSize: isMobile ? "0.95rem" : "1.05rem", fontWeight: 500, color: COLORS.darkText, marginBottom: "0.2rem" }}>{event}</p>
-      {detail && <p style={{ fontSize: "0.8rem", color: COLORS.lightText, lineHeight: 1.6 }}>{detail}</p>}
-      {attire && (
-        <div style={{ marginTop: "0.4rem", display: "inline-block", background: COLORS.cream, padding: "0.2rem 0.7rem", borderRadius: 20, border: `1px solid ${COLORS.border}`, fontSize: "0.75rem", color: COLORS.mediumText }}>
-          {attire}
-        </div>
-      )}
+    <div style={{ flex: 1 }}>
+      <span style={{ fontSize: isMobile ? "0.9rem" : "1rem", fontWeight: 500, color: COLORS.darkText }}>{event}</span>
+      {detail && <span style={{ fontSize: "0.8rem", color: COLORS.lightText, marginLeft: "0.5rem" }}>— {detail}</span>}
     </div>
   </div>
 );
@@ -224,10 +218,13 @@ export default function App() {
   }, []);
 
 
-  // Load saved data
+  // Sync click count with Firebase (real-time across all devices)
   useEffect(() => {
-    const savedCount = localStorage.getItem("weddingButtonCount");
-    if (savedCount) setButtonCount(parseInt(savedCount, 10));
+    const unsubscribe = onValue(clickCountRef, (snapshot) => {
+      const val = snapshot.val();
+      if (val !== null) setButtonCount(val);
+    });
+    return () => unsubscribe();
   }, []);
 
   const triggerConfetti = () => {
@@ -238,7 +235,7 @@ export default function App() {
         ...defaults,
         ...opts,
         particleCount: Math.floor(count * ratio),
-        colors: [COLORS.primary, COLORS.secondary, COLORS.accent, COLORS.highlight]
+        colors: [COLORS.accent, COLORS.highlight, COLORS.primary, COLORS.secondary]
       });
     fire(0.25, { spread: 26, startVelocity: 55 });
     fire(0.2, { spread: 60 });
@@ -248,9 +245,7 @@ export default function App() {
   };
 
   const handleButtonClick = () => {
-    const n = buttonCount + 1;
-    setButtonCount(n);
-    localStorage.setItem("weddingButtonCount", n.toString());
+    runTransaction(clickCountRef, (current) => (current || 0) + 1);
     triggerConfetti();
   };
 
@@ -286,7 +281,7 @@ END:VCALENDAR`;
         padding: isMobile ? "0.6rem 0.7rem" : "0.7rem 1.2rem",
         border: "none",
         background: tab === id ? COLORS.primary : "transparent",
-        color: tab === id ? "#FFFFFF" : COLORS.mediumText,
+        color: tab === id ? COLORS.darkText : COLORS.mediumText,
         fontSize: isMobile ? "0.75rem" : "0.9rem",
         fontWeight: tab === id ? 500 : 400,
         borderRadius: 8,
@@ -595,8 +590,8 @@ END:VCALENDAR`;
             width: "100%",
             textAlign: "center",
             padding: "4rem 1.5rem",
-            background: COLORS.darkText,
-            color: COLORS.cream
+            background: COLORS.primary,
+            color: COLORS.darkText
           }}
         >
           <p style={{ fontSize: "1.2rem", marginBottom: "0.75rem", fontWeight: 300, fontFamily: "'Cormorant Garamond', serif" }}>
@@ -625,13 +620,6 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
 
   return (
     <>
-      <h2 style={{ textAlign: "center", fontSize: isMobile ? "2rem" : "2.8rem", marginBottom: "0.5rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, color: COLORS.darkText }}>
-        Our Story
-      </h2>
-      <p style={{ textAlign: "center", fontSize: "1rem", marginBottom: "2.5rem", color: COLORS.mediumText }}>
-        A love story that began on Halloween
-      </p>
-
       {/* Photo Grid */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: "1.2rem", marginBottom: "2.5rem" }}>
         {photoBuckets.map((bucket, i) => {
@@ -689,7 +677,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
         <button
           onClick={downloadCalendarEvent}
           style={{
-            background: COLORS.primary,
+            background: COLORS.accent,
             color: "#FFFFFF",
             border: "none",
             padding: "0.85rem 2rem",
@@ -705,29 +693,31 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       </div>
 
       {/* Excitement Button */}
-      <div style={{ textAlign: "center", padding: isMobile ? "1.5rem" : "2.5rem", background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`, borderRadius: 14, color: "white" }}>
+      <div style={{ textAlign: "center", padding: isMobile ? "1.5rem" : "2.5rem", background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`, borderRadius: 14, color: COLORS.darkText, border: `1px solid ${COLORS.border}` }}>
         <h3 style={{ fontSize: "1.4rem", marginBottom: "0.8rem", fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
           How excited are you?
         </h3>
-        <p style={{ marginBottom: "1.2rem", opacity: 0.9, fontSize: "0.95rem" }}>Click to show your excitement!</p>
-        <button
+        <p style={{ marginBottom: "1.2rem", color: COLORS.mediumText, fontSize: "0.95rem" }}>Click to show your excitement!</p>
+        <motion.button
           onClick={handleButtonClick}
+          whileTap={{ scale: 0.92, boxShadow: "0 1px 5px rgba(0,0,0,0.1)" }}
+          transition={{ type: "spring", stiffness: 400, damping: 15 }}
           style={{
-            background: "white",
-            color: COLORS.primary,
+            background: COLORS.accent,
+            color: "#FFFFFF",
             border: "none",
             padding: "0.9rem 2rem",
             fontSize: "1.05rem",
             fontWeight: 600,
             borderRadius: 50,
             cursor: "pointer",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.15)",
+            boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
             marginBottom: "1rem"
           }}
         >
           Can't Wait!
-        </button>
-        <div style={{ fontSize: "1.1rem", fontWeight: 400 }}>Total clicks: {buttonCount.toLocaleString()}</div>
+        </motion.button>
+        <div style={{ fontSize: "1.1rem", fontWeight: 400, color: COLORS.mediumText }}>Total clicks: {buttonCount.toLocaleString()}</div>
       </div>
     </>
   );
@@ -772,7 +762,7 @@ function RSVPTab({ isMobile }) {
           rel="noopener noreferrer"
           style={{
             display: "inline-block",
-            background: COLORS.darkText,
+            background: COLORS.accent,
             color: "white",
             padding: "0.9rem 2.5rem",
             fontSize: "0.95rem",
@@ -828,89 +818,40 @@ function InfoTab({ isMobile }) {
         </h3>
         <div style={{ width: 50, height: 1, background: COLORS.accent, margin: "0 auto 2rem" }} />
 
-        {/* Friday Header */}
-        <h4 style={{
-          fontSize: "0.8rem",
-          fontWeight: 600,
-          color: COLORS.accent,
-          textTransform: "uppercase",
-          letterSpacing: "0.2em",
-          textAlign: "center",
-          marginBottom: "1.5rem"
-        }}>
-          Friday, October 23
-        </h4>
+        <div style={{ maxWidth: 480, margin: "0 auto" }}>
+          {/* Friday */}
+          <h4 style={{
+            fontSize: "0.8rem",
+            fontWeight: 600,
+            color: COLORS.accent,
+            textTransform: "uppercase",
+            letterSpacing: "0.2em",
+            marginBottom: "0.5rem"
+          }}>
+            Friday, October 23
+          </h4>
 
-        {/* Friday Timeline */}
-        <div style={{ maxWidth: 500, margin: "0 auto 2.5rem" }}>
-          <ScheduleRow
-            time="9:00 PM"
-            event="Welcome Party"
-            detail={<>
-              <a href="https://www.farmingtoncc.com/blue-ridge-room-guest" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.primary, textDecoration: "underline" }}>
-                The Blue Ridge Room at Farmington Country Club
-              </a>
-              <br />1625 Country Club Circle, Charlottesville, VA 22901
-            </>}
-            attire="Cocktail Attire"
-            isLast
-            isMobile={isMobile}
-          />
+          <ScheduleRow time="9:00 PM" event="Welcome Party" detail="Farmington Country Club" isLast isMobile={isMobile} />
+
+          <div style={{ margin: "1.5rem 0", height: 1, background: COLORS.border }} />
+
+          {/* Saturday */}
+          <h4 style={{
+            fontSize: "0.8rem",
+            fontWeight: 600,
+            color: COLORS.accent,
+            textTransform: "uppercase",
+            letterSpacing: "0.2em",
+            marginBottom: "0.5rem"
+          }}>
+            Saturday, October 24
+          </h4>
+
+          <ScheduleRow time="5:00 PM" event="Ceremony" detail="Christ Episcopal Church" isMobile={isMobile} />
+          <ScheduleRow time="6:30 PM" event="Cocktail Hour" isMobile={isMobile} />
+          <ScheduleRow time="7:30 PM" event="Reception & Dinner" isMobile={isMobile} />
+          <ScheduleRow time="11:00 PM" event="Late Night" isLast isMobile={isMobile} />
         </div>
-
-        <div style={{ width: "100%", height: 1, background: COLORS.border, marginBottom: "2rem" }} />
-
-        {/* Saturday Header */}
-        <h4 style={{
-          fontSize: "0.8rem",
-          fontWeight: 600,
-          color: COLORS.accent,
-          textTransform: "uppercase",
-          letterSpacing: "0.2em",
-          textAlign: "center",
-          marginBottom: "1.5rem"
-        }}>
-          Saturday, October 24
-        </h4>
-
-        {/* Saturday Timeline */}
-        <div style={{ maxWidth: 500, margin: "0 auto" }}>
-          <ScheduleRow
-            time="5:00 PM"
-            event="Wedding Ceremony"
-            detail={<>
-              <a href="https://www.christchurchcville.org/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.primary, textDecoration: "underline" }}>
-                Christ Episcopal Church
-              </a>
-              <br />120 W. High Street, Charlottesville, VA 22902
-            </>}
-            attire="Black Tie Optional"
-            isMobile={isMobile}
-          />
-          <ScheduleRow
-            time="6:30 PM"
-            event="Cocktail Hour"
-            detail="241 Rosemont Farm Way, Charlottesville, VA 22903"
-            isMobile={isMobile}
-          />
-          <ScheduleRow
-            time="7:30 PM"
-            event="Reception & Dinner"
-            detail="Outdoors in a field on grass — please plan footwear accordingly!"
-            isMobile={isMobile}
-          />
-          <ScheduleRow
-            time="11:00 PM"
-            event="Late Night"
-            detail="Featuring DJ Jacko"
-            isLast
-            isMobile={isMobile}
-          />
-        </div>
-
-        <p style={{ textAlign: "center", marginTop: "2rem", fontSize: "0.85rem", color: COLORS.lightText, fontStyle: "italic" }}>
-          Thank you for sharing this joy with us!
-        </p>
       </div>
 
       {/* Shuttle Information */}
@@ -1017,13 +958,13 @@ function InfoTab({ isMobile }) {
       </div>
 
       {/* Dress Code */}
-      <div style={{ background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`, padding: isMobile ? "1.5rem" : "2rem", borderRadius: 14, color: "white", textAlign: "center" }}>
-        <h3 style={{ fontSize: "1.4rem", marginBottom: "0.6rem", fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
+      <div style={{ background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`, padding: isMobile ? "1.5rem" : "2rem", borderRadius: 14, textAlign: "center", border: `1px solid ${COLORS.border}` }}>
+        <h3 style={{ fontSize: "1.4rem", marginBottom: "0.6rem", fontWeight: 400, fontFamily: "'Cormorant Garamond', serif", color: COLORS.darkText }}>
           Dress Code
         </h3>
-        <p style={{ fontSize: "1.1rem", lineHeight: 1.7 }}>
+        <p style={{ fontSize: "1.1rem", lineHeight: 1.7, color: COLORS.darkText }}>
           Black Tie Optional<br />
-          <span style={{ fontSize: "0.9rem", opacity: 0.9 }}>The reception will be outdoors in a field on grass — please plan footwear accordingly!</span>
+          <span style={{ fontSize: "0.9rem", color: COLORS.mediumText }}>The reception will be outdoors in a field on grass — please plan footwear accordingly!</span>
         </p>
       </div>
     </>
