@@ -334,11 +334,14 @@ END:VCALENDAR`;
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lora:wght@400;500;600&display=swap');
 
         .press-button {
-          transition: transform 0.08s ease, box-shadow 0.08s ease;
+          position: relative;
+          transition: transform 0.06s ease, box-shadow 0.06s ease, letter-spacing 0.06s ease;
+          box-shadow: 0 4px 0 rgba(0,0,0,0.15), 0 6px 12px rgba(0,0,0,0.08) !important;
         }
         .press-button:active {
-          transform: translateY(2px);
-          box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;
+          transform: translateY(3px) scaleY(0.95) scaleX(1.02) !important;
+          box-shadow: 0 0px 0 rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.05) !important;
+          letter-spacing: -0.02em;
         }
         
         *, *::before, *::after {
@@ -596,16 +599,16 @@ END:VCALENDAR`;
           style={{
             width: "100%",
             textAlign: "center",
-            padding: "4rem 1.5rem",
+            padding: "3rem 1.5rem",
             background: COLORS.primary,
             color: COLORS.darkText
           }}
         >
-          <p style={{ fontSize: "1.2rem", marginBottom: "0.75rem", fontWeight: 300, fontFamily: "'Cormorant Garamond', serif" }}>
+          <p style={{ fontSize: "1.1rem", marginBottom: "0.5rem", fontWeight: 300, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
             We can't wait to celebrate with you
           </p>
-          <p style={{ fontSize: "0.85rem", opacity: 0.6, marginTop: "1.5rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>
-            Ben & Emily | October 24, 2026
+          <p style={{ fontSize: "0.7rem", opacity: 0.5, marginTop: "1rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+            Ben & Emily &middot; October 24, 2026
           </p>
         </footer>
       </div>
@@ -696,8 +699,11 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
         </p>
       </div>
 
-      {/* Save the Date */}
-      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+      {/* Save the Date + Excitement */}
+      <div style={{ textAlign: "center", padding: isMobile ? "1.5rem 1rem" : "2rem", borderTop: `1px solid ${COLORS.border}`, marginTop: "1rem" }}>
+        <p style={{ fontSize: "0.85rem", color: COLORS.lightText, marginBottom: "1rem", letterSpacing: "0.05em" }}>
+          Save the date — add it to your calendar so you don't forget!
+        </p>
         <button
           className="press-button"
           onClick={downloadCalendarEvent}
@@ -705,21 +711,23 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
             background: COLORS.accent,
             color: "#FFFFFF",
             border: "none",
-            padding: "0.75rem 1.8rem",
+            padding: "0.7rem 1.6rem",
             fontSize: "0.85rem",
             fontWeight: 500,
             borderRadius: 50,
             cursor: "pointer",
-            boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
-            letterSpacing: "0.05em"
+            letterSpacing: "0.05em",
+            marginBottom: "2rem"
           }}
         >
           Add to Calendar
         </button>
-      </div>
 
-      {/* Excitement Button */}
-      <div style={{ textAlign: "center", padding: isMobile ? "1.5rem" : "2rem" }}>
+        <div style={{ width: 40, height: 1, background: COLORS.border, margin: "0 auto 2rem" }} />
+
+        <p style={{ fontSize: "0.85rem", color: COLORS.lightText, marginBottom: "0.8rem" }}>
+          Show us how excited you are!
+        </p>
         <button
           className="press-button"
           onClick={handleButtonClick}
@@ -727,19 +735,18 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
             background: COLORS.accent,
             color: "#FFFFFF",
             border: "none",
-            padding: "0.75rem 1.8rem",
-            fontSize: "0.95rem",
+            padding: "0.7rem 1.6rem",
+            fontSize: "0.85rem",
             fontWeight: 500,
             borderRadius: 50,
             cursor: "pointer",
-            boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
-            marginBottom: "0.6rem",
+            marginBottom: "0.5rem",
             letterSpacing: "0.05em"
           }}
         >
           Can't Wait!
         </button>
-        <div style={{ fontSize: "0.8rem", color: COLORS.lightText }}>{buttonCount.toLocaleString()} clicks</div>
+        <div style={{ fontSize: "0.75rem", color: COLORS.lightText }}>{buttonCount.toLocaleString()} clicks</div>
       </div>
     </>
   );
@@ -925,58 +932,18 @@ function InfoTab({ isMobile }) {
       {/* Things to Do */}
       <div style={cardStyle}>
         {sectionTitle("Things to Do in Charlottesville")}
-        <p style={{ textAlign: "center", fontSize: "0.95rem", color: COLORS.mediumText, marginBottom: "1.5rem" }}>
-          Make a weekend of it! Here are some of our favorite spots.
+        <p style={{ fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
+          <strong style={{ color: COLORS.darkText }}>Dining</strong> — Don't miss Riverside for lunch by the water, Bodo's Bagels for the best bagels in town, and C&O Restaurant for a Charlottesville classic.
         </p>
-
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "1rem" }}>
-          {/* Dining */}
-          <div style={{ background: COLORS.cream, borderRadius: 12, padding: "1.2rem", border: `1px solid ${COLORS.border}` }}>
-            <h4 style={{ fontSize: "1rem", fontWeight: 600, color: COLORS.darkText, marginBottom: "0.6rem" }}>Dining</h4>
-            <ul style={{ paddingLeft: "1.2rem", fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9 }}>
-              <li>The Ivy Inn</li>
-              <li>Fleurie</li>
-              <li>The Alley Light</li>
-              <li>Brasserie Saison</li>
-              <li>MarieBette Cafe & Bakery</li>
-              <li>Public Fish & Oyster</li>
-            </ul>
-          </div>
-
-          {/* Drinks */}
-          <div style={{ background: COLORS.cream, borderRadius: 12, padding: "1.2rem", border: `1px solid ${COLORS.border}` }}>
-            <h4 style={{ fontSize: "1rem", fontWeight: 600, color: COLORS.darkText, marginBottom: "0.6rem" }}>Drinks & Wine</h4>
-            <ul style={{ paddingLeft: "1.2rem", fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9 }}>
-              <li>King Family Vineyards</li>
-              <li>Pippin Hill Farm & Vineyards</li>
-              <li>Early Mountain Vineyards</li>
-              <li>The Whiskey Jar</li>
-              <li>Three Notch'd Brewing</li>
-            </ul>
-          </div>
-
-          {/* Shopping */}
-          <div style={{ background: COLORS.cream, borderRadius: 12, padding: "1.2rem", border: `1px solid ${COLORS.border}` }}>
-            <h4 style={{ fontSize: "1rem", fontWeight: 600, color: COLORS.darkText, marginBottom: "0.6rem" }}>Shopping</h4>
-            <ul style={{ paddingLeft: "1.2rem", fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9 }}>
-              <li>Downtown Mall (pedestrian mall)</li>
-              <li>Barracks Road Shopping Center</li>
-              <li>Darling Boutique</li>
-              <li>Caspari</li>
-            </ul>
-          </div>
-
-          {/* Sightseeing */}
-          <div style={{ background: COLORS.cream, borderRadius: 12, padding: "1.2rem", border: `1px solid ${COLORS.border}` }}>
-            <h4 style={{ fontSize: "1rem", fontWeight: 600, color: COLORS.darkText, marginBottom: "0.6rem" }}>Things to See</h4>
-            <ul style={{ paddingLeft: "1.2rem", fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9 }}>
-              <li>UVA Campus & The Rotunda</li>
-              <li>Monticello</li>
-              <li>Carter Mountain Orchard</li>
-              <li>Shenandoah National Park</li>
-            </ul>
-          </div>
-        </div>
+        <p style={{ fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
+          <strong style={{ color: COLORS.darkText }}>Drinks & Wine</strong> — Charlottesville is wine country! King Family Vineyards, Pippin Hill Farm & Vineyards, and Early Mountain Vineyards are all beautiful. Check out <a href="https://raggedbranch.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Ragged Branch Distillery</a> for Virginia bourbon, and <a href="https://www.prn.beer/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Pro Re Nata Brewery</a> for craft beer. In town, The Whiskey Jar and Coup Deville's are great for a casual drink.
+        </p>
+        <p style={{ fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
+          <strong style={{ color: COLORS.darkText }}>Shopping</strong> — Stroll the Downtown Mall, a charming pedestrian mall with boutiques and restaurants. Be sure to stop by <a href="https://quattrotizi.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Quattro Tizi</a> at the Dairy Market for men's and women's clothing.
+        </p>
+        <p style={{ fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9 }}>
+          <strong style={{ color: COLORS.darkText }}>Things to See</strong> — Walk the UVA Campus & The Rotunda, visit Monticello, pick apples at Carter Mountain Orchard, or take a day trip to Shenandoah National Park.
+        </p>
       </div>
 
       {/* Dress Code */}
@@ -1195,208 +1162,7 @@ const GroomCard = React.memo(({ person }) => {
               width: "clamp(140px, 28%, 260px)",
               aspectRatio: "4 / 5",
               flexShrink: 0,
-              background: photos[photoIndex] ? `url(${photos[photoIndex]}) center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
-              color: "white"
-            }}
-          >
-            {!photos[photoIndex] && "?"}
-          </div>
-
-          {/* Info section */}
-          <div style={{
-            flex: 1,
-            padding: "clamp(0.6rem, 1.5vw, 1.2rem)",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            overflow: "hidden",
-            minWidth: 0
-          }}>
-            <h3 style={{
-              fontSize: "clamp(0.95rem, 2.2vw, 1.4rem)",
-              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
-              color: COLORS.darkText,
-              fontFamily: "'Cormorant Garamond', serif",
-              fontWeight: 500,
-              lineHeight: 1.2
-            }}>
-              {person.frontName}
-            </h3>
-            <p style={{
-              color,
-              fontWeight: 600,
-              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
-              fontSize: "clamp(0.7rem, 1.4vw, 0.95rem)"
-            }}>
-              {person.role}
-            </p>
-            <p style={{
-              fontSize: "clamp(0.65rem, 1.2vw, 0.9rem)",
-              color: COLORS.mediumText,
-              marginBottom: "clamp(0.4rem, 1vw, 0.8rem)"
-            }}>
-              {person.relation}
-            </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(0.2rem, 0.5vw, 0.4rem)" }}>
-              <div>
-                <div style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText, textTransform: "uppercase" }}>Status</div>
-                <div style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.relationshipStatus}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText, textTransform: "uppercase" }}>City</div>
-                <div style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.currentCity}</div>
-              </div>
-            </div>
-            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.55rem, 1vw, 0.7rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for stats</p>
-          </div>
-        </div>
-
-        {/* BACK FACE - matches front height automatically via absolute positioning trick */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            transform: "rotateY(180deg)",
-            background: COLORS.cardBg,
-            borderRadius: "clamp(10px, 1.5vw, 14px)",
-            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
-            borderTop: `4px solid ${color}`,
-            border: `1px solid ${COLORS.border}`,
-            padding: "clamp(0.6rem, 1.5vw, 1.2rem)",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden"
-          }}
-        >
-          <h3 style={{
-            textAlign: "center",
-            marginBottom: "clamp(0.4rem, 1vw, 0.8rem)",
-            fontSize: "clamp(0.95rem, 2vw, 1.3rem)",
-            color: COLORS.darkText,
-            fontFamily: "'Cormorant Garamond', serif",
-            fontWeight: 500,
-            flexShrink: 0
-          }}>
-            {person.backName}
-          </h3>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "clamp(0.2rem, 0.6vw, 0.5rem)",
-            marginBottom: "clamp(0.4rem, 1vw, 0.8rem)",
-            flexShrink: 0
-          }}>
-            <StatCellScaled label="Max Bench" value={person.maxBench} color={color} />
-            <StatCellScaled label="40-Yard" value={person.fortyYard} color={color} />
-            <StatCellScaled label="Handicap" value={person.handicap} color={color} />
-          </div>
-          <div style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "clamp(0.15rem, 0.4vw, 0.3rem)",
-            marginBottom: "clamp(0.4rem, 1vw, 0.8rem)",
-            flexShrink: 0
-          }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(3px, 0.5vw, 5px)", flexWrap: "wrap" }}>
-              <span style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText }}>College:</span>
-              {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: "clamp(14px, 2vw, 20px)", height: "clamp(14px, 2vw, 20px)", objectFit: "contain" }} />}
-              <span style={{ fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.college}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(3px, 0.5vw, 5px)", flexWrap: "wrap" }}>
-              <span style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText }}>Team:</span>
-              {person.footballLogo && <img src={person.footballLogo} alt="" style={{ width: "clamp(14px, 2vw, 20px)", height: "clamp(14px, 2vw, 20px)", objectFit: "contain" }} />}
-              <span style={{ fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.footballTeam}</span>
-            </div>
-          </div>
-          <div style={{
-            flex: 1,
-            minHeight: 0,
-            padding: "clamp(0.4rem, 1vw, 0.8rem)",
-            background: COLORS.cream,
-            borderRadius: "clamp(6px, 1vw, 10px)",
-            fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)",
-            color: COLORS.mediumText,
-            fontStyle: "italic",
-            lineHeight: 1.5,
-            border: `1px solid ${COLORS.border}`,
-            overflow: "auto"
-          }}>
-            {person.comment}
-          </div>
-          <p style={{ textAlign: "center", marginTop: "clamp(0.2rem, 0.4vw, 0.3rem)", fontSize: "clamp(0.5rem, 0.8vw, 0.65rem)", color: COLORS.lightText, flexShrink: 0 }}>Tap to flip back</p>
-        </div>
-      </div>
-    </div>
-  );
-});
-
-/* ============================================
-   BRIDESMAID CARD - PHOTO MAINTAINS 4:5 ASPECT RATIO
-   ============================================ */
-
-const BridesmaidCard = React.memo(({ person }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [photoIndex, setPhotoIndex] = useState(0);
-  const color = COLORS.brideAccent;
-  const photos = (person.photos || []).filter(Boolean);
-
-  const nextPhoto = (e) => {
-    e.stopPropagation();
-    if (photos.length <= 1) return;
-    setPhotoIndex((i) => (i + 1) % photos.length);
-  };
-
-  return (
-    <div
-      style={{
-        width: "100%",
-        perspective: 1200,
-        cursor: "pointer"
-      }}
-      onClick={() => setIsFlipped(!isFlipped)}
-    >
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          transformStyle: "preserve-3d",
-          transition: "transform 0.6s ease",
-          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
-        }}
-      >
-        {/* FRONT FACE */}
-        <div
-          style={{
-            width: "100%",
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            background: COLORS.cardBg,
-            borderRadius: "clamp(10px, 1.5vw, 14px)",
-            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
-            borderTop: `4px solid ${color}`,
-            border: `1px solid ${COLORS.border}`,
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "row"
-          }}
-        >
-          {/* Photo container - uses aspect-ratio to maintain 4:5 */}
-          <div
-            onClick={nextPhoto}
-            style={{
-              width: "clamp(140px, 28%, 260px)",
-              aspectRatio: "4 / 5",
-              flexShrink: 0,
-              background: photos[photoIndex] ? `url(${photos[photoIndex]}) center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
+              background: photos[photoIndex] ? `url(${photos[photoIndex]}) center center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -1464,61 +1230,71 @@ const BridesmaidCard = React.memo(({ person }) => {
             background: COLORS.cardBg,
             borderRadius: "clamp(10px, 1.5vw, 14px)",
             boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
-            borderTop: `4px solid ${color}`,
             border: `1px solid ${COLORS.border}`,
-            padding: "clamp(0.6rem, 1.5vw, 1.2rem)",
+            padding: "clamp(0.8rem, 1.8vw, 1.4rem)",
             display: "flex",
             flexDirection: "column",
+            justifyContent: "center",
             overflow: "hidden"
           }}
         >
           <h3 style={{
             textAlign: "center",
-            marginBottom: "clamp(0.4rem, 1vw, 0.8rem)",
-            fontSize: "clamp(0.95rem, 2vw, 1.3rem)",
+            marginBottom: "clamp(0.6rem, 1.2vw, 1rem)",
+            fontSize: "clamp(1rem, 2.2vw, 1.4rem)",
             color: COLORS.darkText,
             fontFamily: "'Cormorant Garamond', serif",
-            fontWeight: 500,
-            flexShrink: 0
+            fontWeight: 400,
+            fontStyle: "italic"
           }}>
             {person.backName}
           </h3>
           <div style={{
             display: "flex",
-            flexDirection: "column",
-            gap: "clamp(0.25rem, 0.6vw, 0.5rem)",
-            marginBottom: "clamp(0.4rem, 1vw, 0.8rem)",
-            flexShrink: 0
+            justifyContent: "center",
+            gap: "clamp(0.8rem, 2vw, 1.5rem)",
+            marginBottom: "clamp(0.6rem, 1.2vw, 1rem)",
+            fontSize: "clamp(0.6rem, 1.1vw, 0.8rem)"
           }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(3px, 0.5vw, 5px)", flexWrap: "wrap" }}>
-              <span style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText }}>College:</span>
-              <span style={{ fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText, textAlign: "center" }}>{person.college}</span>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.45rem, 0.8vw, 0.6rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Bench</div>
+              <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.maxBench}</div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(3px, 0.5vw, 5px)", flexWrap: "wrap" }}>
-              <span style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText }}>Favorite Drink:</span>
-              <span style={{ fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)", fontWeight: 600, color }}>{person.favoriteDrink || "TBD"}</span>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.45rem, 0.8vw, 0.6rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>40-Yard</div>
+              <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.fortyYard}</div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(3px, 0.5vw, 5px)", flexWrap: "wrap" }}>
-              <span style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText }}>Dance Floor Anthem:</span>
-              <span style={{ fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText, textAlign: "center" }}>{person.danceFloorSong || "TBD"}</span>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.45rem, 0.8vw, 0.6rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Handicap</div>
+              <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.handicap}</div>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.45rem, 0.8vw, 0.6rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Status</div>
+              <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.relationshipStatus}</div>
             </div>
           </div>
-          <div style={{
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(0.4rem, 0.8vw, 0.6rem)", fontSize: "clamp(0.55rem, 1vw, 0.75rem)", color: COLORS.mediumText, marginBottom: "clamp(0.4rem, 1vw, 0.8rem)" }}>
+            {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: 16, height: 16, objectFit: "contain" }} />}
+            <span>{person.college}</span>
+            <span style={{ color: COLORS.lightText }}>|</span>
+            {person.footballLogo && <img src={person.footballLogo} alt="" style={{ width: 16, height: 16, objectFit: "contain" }} />}
+            <span>{person.footballTeam}</span>
+          </div>
+          <p style={{
             flex: 1,
-            minHeight: 0,
-            padding: "clamp(0.4rem, 1vw, 0.8rem)",
-            background: COLORS.cream,
-            borderRadius: "clamp(6px, 1vw, 10px)",
+            textAlign: "center",
             fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)",
             color: COLORS.mediumText,
             fontStyle: "italic",
-            lineHeight: 1.5,
-            border: `1px solid ${COLORS.border}`,
+            lineHeight: 1.6,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             overflow: "auto"
           }}>
-            <strong>Fun Fact:</strong> {person.funFact || person.comment}
-          </div>
-          <p style={{ textAlign: "center", marginTop: "clamp(0.2rem, 0.4vw, 0.3rem)", fontSize: "clamp(0.5rem, 0.8vw, 0.65rem)", color: COLORS.lightText, flexShrink: 0 }}>Tap to flip back</p>
+            {person.comment}
+          </p>
+          <p style={{ textAlign: "center", marginTop: "clamp(0.3rem, 0.6vw, 0.4rem)", fontSize: "clamp(0.5rem, 0.8vw, 0.6rem)", color: COLORS.lightText }}>Tap to flip back</p>
         </div>
       </div>
     </div>
@@ -1526,33 +1302,172 @@ const BridesmaidCard = React.memo(({ person }) => {
 });
 
 /* ============================================
-   SCALED STAT CELL FOR BACK OF GROOM CARDS
+   BRIDESMAID CARD - PHOTO MAINTAINS 4:5 ASPECT RATIO
    ============================================ */
 
-const StatCellScaled = ({ label, value, color }) => (
-  <div
-    style={{
-      textAlign: "center",
-      background: COLORS.cream,
-      padding: "clamp(0.3rem, 0.8vw, 0.6rem) clamp(0.2rem, 0.5vw, 0.4rem)",
-      borderRadius: "clamp(6px, 1vw, 10px)",
-      border: `1px solid ${COLORS.border}`
-    }}
-  >
-    <div style={{
-      fontSize: "clamp(0.45rem, 0.8vw, 0.65rem)",
-      color: COLORS.lightText,
-      marginBottom: "clamp(0.1rem, 0.2vw, 0.2rem)",
-      textTransform: "uppercase"
-    }}>
-      {label}
+const BridesmaidCard = React.memo(({ person }) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const color = COLORS.brideAccent;
+  const photos = (person.photos || []).filter(Boolean);
+
+  const nextPhoto = (e) => {
+    e.stopPropagation();
+    if (photos.length <= 1) return;
+    setPhotoIndex((i) => (i + 1) % photos.length);
+  };
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        perspective: 1200,
+        cursor: "pointer"
+      }}
+      onClick={() => setIsFlipped(!isFlipped)}
+    >
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          transformStyle: "preserve-3d",
+          transition: "transform 0.6s ease",
+          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
+        }}
+      >
+        {/* FRONT FACE */}
+        <div
+          style={{
+            width: "100%",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            background: COLORS.cardBg,
+            borderRadius: "clamp(10px, 1.5vw, 14px)",
+            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
+            borderTop: `4px solid ${color}`,
+            border: `1px solid ${COLORS.border}`,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "row"
+          }}
+        >
+          {/* Photo container - uses aspect-ratio to maintain 4:5 */}
+          <div
+            onClick={nextPhoto}
+            style={{
+              width: "clamp(140px, 28%, 260px)",
+              aspectRatio: "4 / 5",
+              flexShrink: 0,
+              background: photos[photoIndex] ? `url(${photos[photoIndex]}) center center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+              color: "white"
+            }}
+          >
+            {!photos[photoIndex] && "?"}
+          </div>
+
+          {/* Info section */}
+          <div style={{
+            flex: 1,
+            padding: "clamp(0.6rem, 1.5vw, 1.2rem)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            overflow: "hidden",
+            minWidth: 0
+          }}>
+            <h3 style={{
+              fontSize: "clamp(0.95rem, 2.2vw, 1.4rem)",
+              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
+              color: COLORS.darkText,
+              fontFamily: "'Cormorant Garamond', serif",
+              fontWeight: 500,
+              lineHeight: 1.2
+            }}>
+              {person.frontName}
+            </h3>
+            <p style={{
+              color,
+              fontWeight: 600,
+              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
+              fontSize: "clamp(0.7rem, 1.4vw, 0.95rem)"
+            }}>
+              {person.role}
+            </p>
+            <p style={{
+              fontSize: "clamp(0.65rem, 1.2vw, 0.9rem)",
+              color: COLORS.mediumText,
+              marginBottom: "clamp(0.4rem, 1vw, 0.8rem)"
+            }}>
+              {person.relation}
+            </p>
+            <div>
+              <div style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText, textTransform: "uppercase" }}>City</div>
+              <div style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.currentCity}</div>
+            </div>
+            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.55rem, 1vw, 0.7rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for more</p>
+          </div>
+        </div>
+
+        {/* BACK FACE */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+            background: COLORS.cardBg,
+            borderRadius: "clamp(10px, 1.5vw, 14px)",
+            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
+            border: `1px solid ${COLORS.border}`,
+            padding: "clamp(0.8rem, 1.8vw, 1.4rem)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            overflow: "hidden"
+          }}
+        >
+          <h3 style={{
+            textAlign: "center",
+            marginBottom: "clamp(0.6rem, 1.2vw, 1rem)",
+            fontSize: "clamp(1rem, 2.2vw, 1.4rem)",
+            color: COLORS.darkText,
+            fontFamily: "'Cormorant Garamond', serif",
+            fontWeight: 400,
+            fontStyle: "italic"
+          }}>
+            {person.backName}
+          </h3>
+          <div style={{ textAlign: "center", fontSize: "clamp(0.55rem, 1vw, 0.75rem)", color: COLORS.mediumText, marginBottom: "clamp(0.4rem, 1vw, 0.8rem)", lineHeight: 1.8 }}>
+            <span style={{ color: COLORS.lightText }}>College:</span> {person.college}<br />
+            <span style={{ color: COLORS.lightText }}>Drink:</span> <span style={{ color }}>{person.favoriteDrink || "TBD"}</span><br />
+            <span style={{ color: COLORS.lightText }}>Anthem:</span> {person.danceFloorSong || "TBD"}
+          </div>
+          <p style={{
+            flex: 1,
+            textAlign: "center",
+            fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)",
+            color: COLORS.mediumText,
+            fontStyle: "italic",
+            lineHeight: 1.6,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "auto"
+          }}>
+            {person.funFact || person.comment}
+          </p>
+          <p style={{ textAlign: "center", marginTop: "clamp(0.3rem, 0.6vw, 0.4rem)", fontSize: "clamp(0.5rem, 0.8vw, 0.6rem)", color: COLORS.lightText }}>Tap to flip back</p>
+        </div>
+      </div>
     </div>
-    <div style={{
-      fontSize: "clamp(0.65rem, 1.2vw, 1rem)",
-      fontWeight: 600,
-      color
-    }}>
-      {value}
-    </div>
-  </div>
-);
+  );
+});
+
