@@ -692,10 +692,13 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       {/* Story Text */}
       <div style={{ padding: isMobile ? "1rem 0.5rem" : "1.5rem 2rem", marginBottom: "2rem" }}>
         <p style={{ fontSize: isMobile ? "0.85rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "0.8rem" }}>
-          Emily and Ben met on a crisp Halloween night in Atlanta — she as Padme, he as Anakin — two characters whose destinies were always intertwined. Since then, they've moved to New York City to build a life together on the Upper East Side.
+          Emily and Ben met on Halloween in Atlanta, with Emily dressed as Padme and Ben as Anakin. Since then, life has taken them from Atlanta to New York City, where they&apos;ve built a home together on the Upper East Side.
+        </p>
+        <p style={{ fontSize: isMobile ? "0.85rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "0.8rem" }}>
+          We&apos;re looking forward to celebrating this next chapter with you. Here you&apos;ll find all the details about our wedding weekend, travel information, and our registry.
         </p>
         <p style={{ fontSize: isMobile ? "0.85rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center" }}>
-          Through every move, challenge, and adventure, their connection has only deepened. Now, we're ready to celebrate this next chapter with the people who mean the most to us!
+          We can&apos;t wait to celebrate together!
         </p>
       </div>
 
@@ -966,7 +969,7 @@ function InfoTab({ isMobile }) {
 
 function RegistryTab({ isMobile }) {
   const registries = [
-    { name: "Crate & Barrel", url: "https://www.crateandbarrel.com/gift-registry/emily-collins/r7479049", icon: "C" }
+    { name: "Registry details", icon: "C" }
   ];
 
   return (
@@ -980,21 +983,16 @@ function RegistryTab({ isMobile }) {
 
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", gap: "1.2rem", marginBottom: "2rem" }}>
         {registries.map((r) => (
-          <a
+          <div
             key={r.name}
-            href={r.url}
-            target="_blank"
-            rel="noopener noreferrer"
             style={{
               display: "block",
               background: COLORS.cardBg,
               padding: "1.5rem 1rem",
               borderRadius: 14,
               textAlign: "center",
-              textDecoration: "none",
               color: COLORS.darkText,
               border: `1px solid ${COLORS.border}`,
-              transition: "all 0.3s ease",
               boxShadow: "0 2px 15px rgba(44,36,32,0.05)"
             }}
           >
@@ -1016,8 +1014,8 @@ function RegistryTab({ isMobile }) {
               {r.icon}
             </div>
             <h3 style={{ fontSize: "1.2rem", marginBottom: "0.4rem", fontWeight: 500, fontFamily: "'Cormorant Garamond', serif" }}>{r.name}</h3>
-            <p style={{ fontSize: "0.85rem", color: COLORS.lightText }}>Click to view</p>
-          </a>
+            <p style={{ fontSize: "0.85rem", color: COLORS.lightText }}>Coming soon</p>
+          </div>
         ))}
       </div>
 
@@ -1470,4 +1468,3 @@ const BridesmaidCard = React.memo(({ person }) => {
     </div>
   );
 });
-
