@@ -111,6 +111,41 @@ const ScheduleRow = ({ time, event, detail, isLast, isMobile }) => (
   </div>
 );
 
+const getTabTitleStyle = (isMobile) => ({
+  textAlign: "center",
+  fontSize: isMobile ? "2.2rem" : "3rem",
+  marginBottom: "0.5rem",
+  fontFamily: "'Cormorant Garamond', serif",
+  fontWeight: 400,
+  color: COLORS.darkText,
+  fontStyle: "italic"
+});
+
+const tabSubtitleStyle = {
+  textAlign: "center",
+  fontSize: "1rem",
+  marginBottom: "2.5rem",
+  color: COLORS.mediumText
+};
+
+const getSectionCardStyle = (isMobile) => ({
+  background: COLORS.cardBg,
+  padding: isMobile ? "1.5rem" : "2rem",
+  borderRadius: 14,
+  marginBottom: "1.5rem",
+  boxShadow: "0 2px 15px rgba(44,36,32,0.05)",
+  border: `1px solid ${COLORS.border}`
+});
+
+const sectionTitleStyle = {
+  fontSize: "1.4rem",
+  marginBottom: "1.2rem",
+  textAlign: "center",
+  color: COLORS.darkText,
+  fontWeight: 400,
+  fontFamily: "'Cormorant Garamond', serif"
+};
+
 // Stat cell component
 const StatCell = ({ label, value, color }) => (
   <div
@@ -763,28 +798,21 @@ function RSVPTab({ isMobile }) {
   if (!RSVP_ENABLED) {
     return (
       <>
-        <h2 style={{ textAlign: "center", fontSize: isMobile ? "2rem" : "2.8rem", marginBottom: "0.5rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, color: COLORS.darkText }}>
-          RSVP
-        </h2>
-        <div style={{ background: COLORS.cardBg, padding: isMobile ? "2rem" : "3rem", borderRadius: 14, textAlign: "center", boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}`, marginTop: "2rem" }}>
-          <p style={{ fontSize: "1.3rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}>
-            Coming Soon
-          </p>
-        </div>
+        <h2 style={getTabTitleStyle(isMobile)}>RSVP</h2>
+        <p style={tabSubtitleStyle}>Please let us know if you can join us</p>
+        <p style={{ textAlign: "center", fontSize: "1.15rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif" }}>
+          Coming soon
+        </p>
       </>
     );
   }
 
   return (
     <>
-      <h2 style={{ textAlign: "center", fontSize: isMobile ? "2rem" : "2.8rem", marginBottom: "0.5rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, color: COLORS.darkText }}>
-        RSVP
-      </h2>
-      <p style={{ textAlign: "center", fontSize: "1rem", marginBottom: "2.5rem", color: COLORS.mediumText }}>
-        Please let us know if you can join us
-      </p>
+      <h2 style={getTabTitleStyle(isMobile)}>RSVP</h2>
+      <p style={tabSubtitleStyle}>Please let us know if you can join us</p>
 
-      <div style={{ background: COLORS.cardBg, padding: isMobile ? "1.5rem" : "2.5rem", borderRadius: 14, textAlign: "center", boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}` }}>
+      <div style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem", textAlign: "center" }}>
         <p style={{ marginBottom: "1.5rem", fontSize: "1rem", color: COLORS.mediumText }}>
           Click below to open our RSVP form:
         </p>
@@ -819,21 +847,17 @@ function RSVPTab({ isMobile }) {
    ============================================ */
 
 function InfoTab({ isMobile }) {
-  const cardStyle = { background: COLORS.cardBg, padding: isMobile ? "1.5rem" : "2rem", borderRadius: 14, marginBottom: "1.5rem", boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}` };
+  const cardStyle = getSectionCardStyle(isMobile);
   const sectionTitle = (text) => (
-    <h3 style={{ fontSize: "1.4rem", marginBottom: "1.2rem", textAlign: "center", color: COLORS.darkText, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
+    <h3 style={sectionTitleStyle}>
       {text}
     </h3>
   );
 
   return (
     <>
-      <h2 style={{ textAlign: "center", fontSize: isMobile ? "2rem" : "2.8rem", marginBottom: "0.5rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, color: COLORS.darkText }}>
-        Wedding Details
-      </h2>
-      <p style={{ textAlign: "center", fontSize: "1rem", marginBottom: "2.5rem", color: COLORS.mediumText }}>
-        Everything you need to know
-      </p>
+      <h2 style={getTabTitleStyle(isMobile)}>Wedding Details</h2>
+      <p style={tabSubtitleStyle}>Everything you need to know</p>
 
       {/* Weekend Schedule */}
       <div style={cardStyle}>
@@ -950,8 +974,8 @@ function InfoTab({ isMobile }) {
       </div>
 
       {/* Dress Code */}
-      <div style={{ background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`, padding: isMobile ? "1.5rem" : "2rem", borderRadius: 14, textAlign: "center", border: `1px solid ${COLORS.border}` }}>
-        <h3 style={{ fontSize: "1.4rem", marginBottom: "0.6rem", fontWeight: 400, fontFamily: "'Cormorant Garamond', serif", color: COLORS.darkText }}>
+      <div style={{ ...getSectionCardStyle(isMobile), background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`, textAlign: "center" }}>
+        <h3 style={{ ...sectionTitleStyle, marginBottom: "0.6rem" }}>
           Dress Code
         </h3>
         <p style={{ fontSize: "1.1rem", lineHeight: 1.7, color: COLORS.darkText }}>
@@ -974,26 +998,20 @@ function RegistryTab({ isMobile }) {
 
   return (
     <>
-      <h2 style={{ textAlign: "center", fontSize: isMobile ? "2rem" : "2.8rem", marginBottom: "0.5rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, color: COLORS.darkText }}>
-        Registry
-      </h2>
-      <p style={{ textAlign: "center", fontSize: "1rem", marginBottom: "2.5rem", color: COLORS.mediumText }}>
-        Your presence is the greatest gift
-      </p>
+      <h2 style={getTabTitleStyle(isMobile)}>Registry</h2>
+      <p style={tabSubtitleStyle}>Your presence is the greatest gift</p>
 
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", gap: "1.2rem", marginBottom: "2rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : registries.length === 1 ? "minmax(0, 420px)" : "repeat(2, 1fr)", justifyContent: "center", gap: "1.2rem", marginBottom: "2rem" }}>
         {registries.map((r) => (
           <div
             key={r.name}
             style={{
               display: "block",
-              background: COLORS.cardBg,
+              ...getSectionCardStyle(isMobile),
               padding: "1.5rem 1rem",
-              borderRadius: 14,
               textAlign: "center",
               color: COLORS.darkText,
-              border: `1px solid ${COLORS.border}`,
-              boxShadow: "0 2px 15px rgba(44,36,32,0.05)"
+              marginBottom: 0
             }}
           >
             <div style={{ 
@@ -1019,7 +1037,7 @@ function RegistryTab({ isMobile }) {
         ))}
       </div>
 
-      <div style={{ background: COLORS.cardBg, padding: isMobile ? "1.5rem" : "2rem", borderRadius: 14, textAlign: "center", borderTop: `4px solid ${COLORS.accent}`, boxShadow: "0 2px 15px rgba(44,36,32,0.05)", border: `1px solid ${COLORS.border}` }}>
+      <div style={{ ...getSectionCardStyle(isMobile), textAlign: "center", borderTop: `4px solid ${COLORS.accent}` }}>
         <p style={{ fontSize: "1rem", color: COLORS.mediumText, lineHeight: 1.8 }}>
           <strong style={{ color: COLORS.primary, fontSize: "1.1rem" }}>A Note from Us</strong><br /><br />
           The most important gift is your presence on our special day. If you'd still like to give something, we'd be grateful for contributions toward our honeymoon adventure!
@@ -1069,12 +1087,8 @@ function WeddingPartyTab({ isMobile }) {
 
   return (
     <>
-      <h2 style={{ textAlign: "center", fontSize: isMobile ? "2rem" : "2.8rem", marginBottom: "0.5rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, color: COLORS.darkText }}>
-        Our Wedding Party
-      </h2>
-      <p style={{ textAlign: "center", fontSize: "1rem", marginBottom: "2.5rem", color: COLORS.mediumText }}>
-        Meet the amazing people standing by our side. Tap cards to see more.
-      </p>
+      <h2 style={getTabTitleStyle(isMobile)}>Our Wedding Party</h2>
+      <p style={tabSubtitleStyle}>Meet the amazing people standing by our side. Tap cards to see more.</p>
 
       {/* BRIDESMAIDS FIRST - "Ladies" */}
       <div style={{ marginBottom: "3rem" }}>
@@ -1182,8 +1196,8 @@ const GroomCard = React.memo(({ person }) => {
             minWidth: 0
           }}>
             <h3 style={{
-              fontSize: "clamp(0.95rem, 2.2vw, 1.4rem)",
-              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
+              fontSize: "clamp(1.1rem, 2.4vw, 1.6rem)",
+              marginBottom: "clamp(0.15rem, 0.35vw, 0.3rem)",
               color: COLORS.darkText,
               fontFamily: "'Cormorant Garamond', serif",
               fontWeight: 500,
@@ -1194,23 +1208,23 @@ const GroomCard = React.memo(({ person }) => {
             <p style={{
               color,
               fontWeight: 600,
-              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
-              fontSize: "clamp(0.7rem, 1.4vw, 0.95rem)"
+              marginBottom: "clamp(0.15rem, 0.35vw, 0.3rem)",
+              fontSize: "clamp(0.82rem, 1.55vw, 1.05rem)"
             }}>
               {person.role}
             </p>
             <p style={{
-              fontSize: "clamp(0.65rem, 1.2vw, 0.9rem)",
+              fontSize: "clamp(0.78rem, 1.35vw, 0.96rem)",
               color: COLORS.mediumText,
               marginBottom: "clamp(0.4rem, 1vw, 0.8rem)"
             }}>
               {person.relation}
             </p>
             <div>
-              <div style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText, textTransform: "uppercase" }}>City</div>
-              <div style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.currentCity}</div>
+              <div style={{ fontSize: "clamp(0.58rem, 0.95vw, 0.72rem)", color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.08em" }}>City</div>
+              <div style={{ fontSize: "clamp(0.8rem, 1.35vw, 0.96rem)", fontWeight: 600, color: COLORS.darkText, lineHeight: 1.4 }}>{person.currentCity}</div>
             </div>
-            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.55rem, 1vw, 0.7rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for more</p>
+            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.64rem, 1.05vw, 0.78rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for more</p>
           </div>
         </div>
 
@@ -1239,7 +1253,7 @@ const GroomCard = React.memo(({ person }) => {
           <h3 style={{
             textAlign: "center",
             marginBottom: "clamp(0.6rem, 1.2vw, 1rem)",
-            fontSize: "clamp(1rem, 2.2vw, 1.4rem)",
+            fontSize: "clamp(1.15rem, 2.35vw, 1.55rem)",
             color: COLORS.darkText,
             fontFamily: "'Cormorant Garamond', serif",
             fontWeight: 400,
@@ -1252,26 +1266,26 @@ const GroomCard = React.memo(({ person }) => {
             justifyContent: "center",
             gap: "clamp(0.8rem, 2vw, 1.5rem)",
             marginBottom: "clamp(0.6rem, 1.2vw, 1rem)",
-            fontSize: "clamp(0.6rem, 1.1vw, 0.8rem)"
+            fontSize: "clamp(0.72rem, 1.2vw, 0.92rem)"
           }}>
             <div style={{ textAlign: "center" }}>
-              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.45rem, 0.8vw, 0.6rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Bench</div>
+              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.52rem, 0.85vw, 0.68rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Bench</div>
               <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.maxBench}</div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.45rem, 0.8vw, 0.6rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>40-Yard</div>
+              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.52rem, 0.85vw, 0.68rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>40-Yard</div>
               <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.fortyYard}</div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.45rem, 0.8vw, 0.6rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Handicap</div>
+              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.52rem, 0.85vw, 0.68rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Handicap</div>
               <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.handicap}</div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.45rem, 0.8vw, 0.6rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Status</div>
+              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.52rem, 0.85vw, 0.68rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Status</div>
               <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.relationshipStatus}</div>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(0.4rem, 0.8vw, 0.6rem)", fontSize: "clamp(0.55rem, 1vw, 0.75rem)", color: COLORS.mediumText, marginBottom: "clamp(0.4rem, 1vw, 0.8rem)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(0.4rem, 0.8vw, 0.6rem)", fontSize: "clamp(0.68rem, 1.05vw, 0.82rem)", color: COLORS.mediumText, marginBottom: "clamp(0.4rem, 1vw, 0.8rem)" }}>
             {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: 16, height: 16, objectFit: "contain" }} />}
             <span>{person.college}</span>
             <span style={{ color: COLORS.lightText }}>|</span>
@@ -1281,7 +1295,7 @@ const GroomCard = React.memo(({ person }) => {
           <p style={{
             flex: 1,
             textAlign: "center",
-            fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)",
+            fontSize: "clamp(0.72rem, 1.15vw, 0.92rem)",
             color: COLORS.mediumText,
             fontStyle: "italic",
             lineHeight: 1.6,
@@ -1378,8 +1392,8 @@ const BridesmaidCard = React.memo(({ person }) => {
             minWidth: 0
           }}>
             <h3 style={{
-              fontSize: "clamp(0.95rem, 2.2vw, 1.4rem)",
-              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
+              fontSize: "clamp(1.1rem, 2.4vw, 1.6rem)",
+              marginBottom: "clamp(0.15rem, 0.35vw, 0.3rem)",
               color: COLORS.darkText,
               fontFamily: "'Cormorant Garamond', serif",
               fontWeight: 500,
@@ -1390,23 +1404,23 @@ const BridesmaidCard = React.memo(({ person }) => {
             <p style={{
               color,
               fontWeight: 600,
-              marginBottom: "clamp(0.1rem, 0.3vw, 0.2rem)",
-              fontSize: "clamp(0.7rem, 1.4vw, 0.95rem)"
+              marginBottom: "clamp(0.15rem, 0.35vw, 0.3rem)",
+              fontSize: "clamp(0.82rem, 1.55vw, 1.05rem)"
             }}>
               {person.role}
             </p>
             <p style={{
-              fontSize: "clamp(0.65rem, 1.2vw, 0.9rem)",
+              fontSize: "clamp(0.78rem, 1.35vw, 0.96rem)",
               color: COLORS.mediumText,
               marginBottom: "clamp(0.4rem, 1vw, 0.8rem)"
             }}>
               {person.relation}
             </p>
             <div>
-              <div style={{ fontSize: "clamp(0.5rem, 0.9vw, 0.65rem)", color: COLORS.lightText, textTransform: "uppercase" }}>City</div>
-              <div style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.85rem)", fontWeight: 600, color: COLORS.darkText }}>{person.currentCity}</div>
+              <div style={{ fontSize: "clamp(0.58rem, 0.95vw, 0.72rem)", color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.08em" }}>City</div>
+              <div style={{ fontSize: "clamp(0.8rem, 1.35vw, 0.96rem)", fontWeight: 600, color: COLORS.darkText, lineHeight: 1.4 }}>{person.currentCity}</div>
             </div>
-            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.55rem, 1vw, 0.7rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for more</p>
+            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.64rem, 1.05vw, 0.78rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for more</p>
           </div>
         </div>
 
@@ -1435,7 +1449,7 @@ const BridesmaidCard = React.memo(({ person }) => {
           <h3 style={{
             textAlign: "center",
             marginBottom: "clamp(0.6rem, 1.2vw, 1rem)",
-            fontSize: "clamp(1rem, 2.2vw, 1.4rem)",
+            fontSize: "clamp(1.15rem, 2.35vw, 1.55rem)",
             color: COLORS.darkText,
             fontFamily: "'Cormorant Garamond', serif",
             fontWeight: 400,
@@ -1443,7 +1457,7 @@ const BridesmaidCard = React.memo(({ person }) => {
           }}>
             {person.backName}
           </h3>
-          <div style={{ textAlign: "center", fontSize: "clamp(0.55rem, 1vw, 0.75rem)", color: COLORS.mediumText, marginBottom: "clamp(0.4rem, 1vw, 0.8rem)", lineHeight: 1.8 }}>
+          <div style={{ textAlign: "center", fontSize: "clamp(0.68rem, 1.05vw, 0.82rem)", color: COLORS.mediumText, marginBottom: "clamp(0.4rem, 1vw, 0.8rem)", lineHeight: 1.8 }}>
             <span style={{ color: COLORS.lightText }}>College:</span> {person.college}<br />
             <span style={{ color: COLORS.lightText }}>Drink:</span> <span style={{ color }}>{person.favoriteDrink || "TBD"}</span><br />
             <span style={{ color: COLORS.lightText }}>Anthem:</span> {person.danceFloorSong || "TBD"}
@@ -1451,7 +1465,7 @@ const BridesmaidCard = React.memo(({ person }) => {
           <p style={{
             flex: 1,
             textAlign: "center",
-            fontSize: "clamp(0.6rem, 1.1vw, 0.85rem)",
+            fontSize: "clamp(0.72rem, 1.15vw, 0.92rem)",
             color: COLORS.mediumText,
             fontStyle: "italic",
             lineHeight: 1.6,
