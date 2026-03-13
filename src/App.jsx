@@ -94,7 +94,6 @@ const CARD_HEIGHT_DESKTOP = 380;
 const CARD_HEIGHT_MOBILE = 400;
 const PHOTO_WIDTH_DESKTOP = 280;
 const PHOTO_WIDTH_MOBILE = 120;
-const PARTY_CARD_MIN_HEIGHT = "clamp(320px, 34vw, 360px)";
 
 // FIXED content width
 const CONTENT_WIDTH = 900;
@@ -2087,7 +2086,6 @@ const GroomCard = React.memo(({ person }) => {
         style={{
           position: "relative",
           width: "100%",
-          minHeight: PARTY_CARD_MIN_HEIGHT,
           transformStyle: "preserve-3d",
           transition: "transform 0.6s ease",
           transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
@@ -2097,7 +2095,6 @@ const GroomCard = React.memo(({ person }) => {
         <div
           style={{
             width: "100%",
-            minHeight: PARTY_CARD_MIN_HEIGHT,
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             background: COLORS.cardBg,
@@ -2285,7 +2282,6 @@ const BridesmaidCard = React.memo(({ person }) => {
         style={{
           position: "relative",
           width: "100%",
-          minHeight: PARTY_CARD_MIN_HEIGHT,
           transformStyle: "preserve-3d",
           transition: "transform 0.6s ease",
           transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
@@ -2295,7 +2291,6 @@ const BridesmaidCard = React.memo(({ person }) => {
         <div
           style={{
             width: "100%",
-            minHeight: PARTY_CARD_MIN_HEIGHT,
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             background: COLORS.cardBg,
