@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import heroImage from "./assets/hero.jpg";
-import { clickCountRef, onValue, runTransaction } from "./firebase";
+import { clickCountRef, hoosierCountRef, onValue, runTransaction } from "./firebase";
 
 // Import team logos
 import bears from "./assets/bears.png";
@@ -72,11 +72,29 @@ const COLORS = {
   indianaWhite: "#FFFFFF"
 };
 
+const IU_LOGO_IMAGE =
+  "https://commons.wikimedia.org/wiki/Special:FilePath/Indiana_Hoosiers_logo.svg";
+const CIGNETTI_IMAGE =
+  "https://commons.wikimedia.org/wiki/Special:FilePath/2026-0117_Curt_Cignetti.jpeg";
+const MENDOZA_IMAGE =
+  "https://commons.wikimedia.org/wiki/Special:FilePath/Fernando_Mendoza.jpg";
+const HOOSIERS_TROPHY_IMAGE =
+  "https://commons.wikimedia.org/wiki/Special:FilePath/2023-0109-CFPtitlegame-Stetson_Bennett_Trophy.jpg";
+
+const INDIANA_CANDY_STRIPE = `repeating-linear-gradient(
+  90deg,
+  ${COLORS.indianaCrimson},
+  ${COLORS.indianaCrimson} 20px,
+  ${COLORS.indianaWhite} 20px,
+  ${COLORS.indianaWhite} 40px
+)`;
+
 // FIXED CARD DIMENSIONS
 const CARD_HEIGHT_DESKTOP = 380;
 const CARD_HEIGHT_MOBILE = 400;
 const PHOTO_WIDTH_DESKTOP = 280;
 const PHOTO_WIDTH_MOBILE = 120;
+const PARTY_CARD_MIN_HEIGHT = "clamp(320px, 34vw, 360px)";
 
 // FIXED content width
 const CONTENT_WIDTH = 900;
@@ -146,6 +164,65 @@ const sectionTitleStyle = {
   fontFamily: "'Cormorant Garamond', serif"
 };
 
+const getTabPanelMotion = (reducedMotion) => ({
+  initial: reducedMotion ? { opacity: 1 } : { opacity: 0, y: 18 },
+  animate: reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 },
+  exit: reducedMotion ? { opacity: 1 } : { opacity: 0, y: -12, position: "absolute", inset: 0, width: "100%" },
+  transition: reducedMotion ? { duration: 0 } : { duration: 0.32, ease: [0.22, 1, 0.36, 1] }
+});
+
+const getStaggerContainerVariants = (reducedMotion) => ({
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: reducedMotion ? { duration: 0 } : { staggerChildren: 0.08, delayChildren: 0.04 }
+  }
+});
+
+const getStaggerItemVariants = (reducedMotion) => ({
+  hidden: reducedMotion ? { opacity: 1 } : { opacity: 0, y: 16 },
+  show: reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } }
+});
+
+function TabButton({ id, label, tab, setTab, isMobile, shouldReduceMotion }) {
+  return (
+    <motion.button
+      onClick={() => setTab(id)}
+      whileHover={shouldReduceMotion ? undefined : { y: -1 }}
+      whileTap={shouldReduceMotion ? undefined : { y: 1, scale: 0.99 }}
+      style={{
+        position: "relative",
+        padding: isMobile ? "0.6rem 0.7rem" : "0.7rem 1.2rem",
+        border: "none",
+        background: "transparent",
+        color: tab === id ? COLORS.darkText : COLORS.mediumText,
+        fontSize: isMobile ? "0.75rem" : "0.9rem",
+        fontWeight: tab === id ? 500 : 400,
+        borderRadius: 8,
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        whiteSpace: "nowrap",
+        overflow: "hidden"
+      }}
+    >
+      {tab === id && (
+        <motion.span
+          layoutId="active-tab-pill"
+          transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: 8,
+            background: COLORS.primary,
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)"
+          }}
+        />
+      )}
+      <span style={{ position: "relative", zIndex: 1 }}>{label}</span>
+    </motion.button>
+  );
+}
+
 // Stat cell component
 const StatCell = ({ label, value, color }) => (
   <div
@@ -199,23 +276,615 @@ const IndianaCandyStripe = () => (
       width: "calc((100vw - 900px) / 2)",
       zIndex: 0,
       opacity: 0.4,
-      backgroundImage: `repeating-linear-gradient(
-        90deg,
-        ${COLORS.indianaCrimson},
-        ${COLORS.indianaCrimson} 20px,
-        ${COLORS.indianaWhite} 20px,
-        ${COLORS.indianaWhite} 40px
-      )`
+      backgroundImage: INDIANA_CANDY_STRIPE
     }}
   />
 );
 
+const getPeelGeometry = (progress, isMobile, peelOffset = { x: 0, y: 0 }) => {
+  const handleSize = isMobile ? 70 : 84;
+  const restFoldX = isMobile ? 18 : 22;
+  const restFoldY = isMobile ? 16 : 20;
+  const restRevealX = restFoldX + (isMobile ? 8 : 10);
+  const restRevealY = restFoldY + (isMobile ? 7 : 9);
+  const maxCornerX = isMobile ? 120 : 170;
+  const maxCornerY = isMobile ? 100 : 145;
+  const cornerX = Math.min(peelOffset.x, maxCornerX);
+  const cornerY = Math.min(peelOffset.y, maxCornerY);
+  const activeCornerX = progress > 0 ? cornerX : 0;
+  const activeCornerY = progress > 0 ? cornerY : 0;
+  const foldX = Math.min(
+    isMobile ? 176 : 250,
+    restFoldX + activeCornerX * 1.08 + (progress > 0 ? (isMobile ? 18 : 22) : 0)
+  );
+  const foldY = Math.min(
+    isMobile ? 154 : 220,
+    restFoldY + activeCornerY * 1.06 + (progress > 0 ? (isMobile ? 16 : 20) : 0)
+  );
+
+  return {
+    handleSize,
+    revealClipPath:
+      progress <= 0
+        ? `polygon(100% calc(100% - ${restRevealY}px), 100% 100%, calc(100% - ${restRevealX}px) 100%)`
+        : `polygon(100% calc(100% - ${foldY}px), 100% 100%, calc(100% - ${foldX}px) 100%, calc(100% - ${activeCornerX}px) calc(100% - ${activeCornerY}px))`,
+    flapClipPath:
+      progress <= 0
+        ? `polygon(100% calc(100% - ${foldY}px), 100% 100%, calc(100% - ${foldX}px) 100%)`
+        : `polygon(100% calc(100% - ${foldY}px), calc(100% - ${activeCornerX}px) calc(100% - ${activeCornerY}px), calc(100% - ${foldX}px) 100%)`,
+    shadowClipPath:
+      progress <= 0
+        ? `polygon(100% calc(100% - ${foldY + 2}px), 100% 100%, calc(100% - ${foldX + 2}px) 100%)`
+        : `polygon(100% calc(100% - ${foldY + 2}px), calc(100% - ${Math.max(0, activeCornerX - 2)}px) calc(100% - ${Math.max(0, activeCornerY - 2)}px), calc(100% - ${foldX + 2}px) 100%)`
+  };
+};
+
+function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, reducedMotion, onPointerDown }) {
+  if (!isVisible) return null;
+
+  const { handleSize, revealClipPath, flapClipPath, shadowClipPath } = getPeelGeometry(progress, isMobile, peelOffset);
+  const revealVisible = isVisible;
+  const foldIntensity = Math.min(1, progress * 1.2);
+  const flapLift = reducedMotion ? 0 : Math.min(10, peelOffset.x * 0.022 + peelOffset.y * 0.02);
+  const flapTilt = reducedMotion ? 0 : Math.min(4.5, peelOffset.x * 0.014 + peelOffset.y * 0.012);
+  const paperOpacity = progress > 0 ? 0.98 : 0.94;
+  const revealOpacity = 0.4 + progress * 0.38;
+
+  return (
+    <motion.div
+      initial={reducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.85 }}
+      animate={reducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+      exit={reducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.9 }}
+      transition={reducedMotion ? { duration: 0 } : { duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        position: "absolute",
+        inset: 0,
+        zIndex: 10,
+        pointerEvents: "none"
+      }}
+    >
+      {revealVisible && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              clipPath: revealClipPath,
+              backgroundImage: INDIANA_CANDY_STRIPE,
+              backgroundPosition: isMobile ? "0 0" : "right top",
+              backgroundSize: "40px 100%",
+              opacity: revealOpacity
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              clipPath: revealClipPath,
+              background:
+                "linear-gradient(225deg, rgba(153, 0, 0, 0) 22%, rgba(153, 0, 0, 0.06) 58%, rgba(153, 0, 0, 0.15) 100%)"
+              ,
+              opacity: 0.7 + progress * 0.18
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              clipPath: revealClipPath,
+              background:
+                "linear-gradient(235deg, rgba(255,255,255,0) 42%, rgba(255,255,255,0.14) 72%, rgba(255,255,255,0.26) 100%)"
+              ,
+              opacity: 0.5 + progress * 0.25
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              clipPath: revealClipPath,
+              background:
+                "radial-gradient(circle at bottom right, rgba(255,255,255,0.28), rgba(255,255,255,0) 72%)",
+              opacity: 0.25 + progress * 0.45
+            }}
+          />
+        </>
+      )}
+      <div
+        style={{
+          position: "absolute",
+          right: 0,
+          bottom: 0,
+          width: handleSize,
+          height: handleSize,
+          pointerEvents: "auto",
+          cursor: isCommitting ? "default" : "grab",
+          touchAction: "none"
+        }}
+        onPointerDown={onPointerDown}
+      />
+      <motion.div
+        initial={reducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
+        animate={reducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+        exit={reducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
+        transition={reducedMotion ? { duration: 0 } : { duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none"
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            clipPath: shadowClipPath,
+            background: "linear-gradient(225deg, rgba(44,36,32,0), rgba(44,36,32,0.16))",
+            filter: "blur(8px)",
+            opacity: reducedMotion ? 0.14 : 0.12 + foldIntensity * 0.18,
+            transform: `translate(${-flapLift * 0.16}px, ${-flapLift * 0.16}px)`
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            clipPath: flapClipPath,
+            background: `linear-gradient(145deg, rgba(255,255,255,${paperOpacity}) 0%, rgba(250, 246, 241, ${paperOpacity}) 36%, rgba(238, 228, 217, ${paperOpacity}) 68%, rgba(214, 198, 182, ${paperOpacity}) 100%)`,
+            filter: "drop-shadow(-10px -10px 18px rgba(44,36,32,0.16))",
+            transformOrigin: "bottom right",
+            transform: reducedMotion
+              ? "none"
+              : `perspective(900px) rotateX(${foldIntensity * 9}deg) rotateY(${-foldIntensity * 6}deg) translate3d(${-flapLift * 0.22}px, ${-flapLift * 0.22}px, 0) rotate(${-flapTilt}deg)`
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              clipPath: flapClipPath,
+              backgroundImage: INDIANA_CANDY_STRIPE,
+              backgroundPosition: "right bottom",
+              backgroundSize: "40px 100%",
+              opacity: 0.08
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              clipPath: flapClipPath,
+              background:
+                "linear-gradient(225deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.18) 36%, rgba(153,0,0,0.06) 100%)"
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              clipPath: flapClipPath,
+              background:
+                "linear-gradient(315deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 62%, rgba(120, 36, 36, 0.16) 82%, rgba(94, 18, 18, 0.28) 100%)"
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              clipPath: flapClipPath,
+              background:
+                "linear-gradient(315deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 28%, rgba(44,36,32,0.14) 100%)",
+              mixBlendMode: "multiply"
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              clipPath: flapClipPath,
+              boxShadow: "inset 1px 1px 0 rgba(255,255,255,0.7), inset -1px -1px 0 rgba(160, 138, 122, 0.2)"
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              clipPath: flapClipPath,
+              background:
+                "linear-gradient(215deg, rgba(255,255,255,0) 52%, rgba(255,255,255,0.66) 70%, rgba(255,255,255,0.06) 100%)",
+              opacity: 0.45
+            }}
+          />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function HoosiersOverlay({ isVisible, isMobile, reducedMotion, hoosierCount, onClose, onGoHoosiers }) {
+  if (!isVisible) return null;
+
+  return (
+    <motion.div
+      initial={reducedMotion ? { opacity: 1 } : { opacity: 0 }}
+      animate={reducedMotion ? { opacity: 1 } : { opacity: 1 }}
+      exit={reducedMotion ? { opacity: 1 } : { opacity: 0 }}
+      transition={reducedMotion ? { duration: 0 } : { duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 170,
+        overflowY: "auto",
+        background: `linear-gradient(180deg, rgba(249, 245, 240, 0.82), rgba(255, 255, 255, 0.9)), ${INDIANA_CANDY_STRIPE}`,
+        backgroundSize: "100% 100%, 40px 100%"
+      }}
+    >
+      <motion.div
+        initial={reducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96, y: 28 }}
+        animate={reducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+        exit={reducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.98, y: 18 }}
+        transition={reducedMotion ? { duration: 0 } : { duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          minHeight: "100%",
+          padding: isMobile ? "5.5rem 1.25rem 2rem" : "6rem 2rem 3rem",
+          position: "relative"
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `radial-gradient(circle at top left, rgba(153, 0, 0, 0.16), transparent 32%), radial-gradient(circle at bottom right, rgba(153, 0, 0, 0.22), transparent 30%), linear-gradient(135deg, rgba(255,255,255,0.52), rgba(255,255,255,0.18))`,
+            pointerEvents: "none"
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backdropFilter: "blur(4px)",
+            background: "rgba(250, 246, 241, 0.28)",
+            pointerEvents: "none"
+          }}
+        />
+        <button
+          onClick={onClose}
+          style={{
+            position: "fixed",
+            top: isMobile ? 16 : 22,
+            right: isMobile ? 16 : 22,
+            zIndex: 2,
+            border: "1px solid rgba(153, 0, 0, 0.18)",
+            background: "rgba(255,255,255,0.85)",
+            color: COLORS.indianaCrimson,
+            padding: "0.7rem 1rem",
+            borderRadius: 999,
+            cursor: "pointer",
+            fontSize: "0.8rem",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            fontWeight: 600,
+            backdropFilter: "blur(10px)"
+          }}
+        >
+          Back to Wedding Site
+        </button>
+        <div
+          style={{
+            maxWidth: 1120,
+            margin: "0 auto",
+            position: "relative",
+            zIndex: 1,
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "minmax(0, 1.05fr) minmax(420px, 0.95fr)",
+            gap: isMobile ? "2rem" : "2.5rem",
+            alignItems: "center"
+          }}
+        >
+          <div>
+            <div
+              style={{
+                display: "inline-block",
+                marginBottom: "1rem",
+                padding: "0.4rem 0.7rem",
+                borderRadius: 999,
+                background: "rgba(153, 0, 0, 0.08)",
+                color: COLORS.indianaCrimson,
+                fontSize: "0.75rem",
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                fontWeight: 600
+              }}
+            >
+              National Champions
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+                marginBottom: "1.25rem"
+              }}
+            >
+              <div
+                style={{
+                  width: isMobile ? 74 : 96,
+                  height: isMobile ? 92 : 118,
+                  borderRadius: 18,
+                  background: "rgba(255,255,255,0.74)",
+                  border: "1px solid rgba(153, 0, 0, 0.14)",
+                  boxShadow: "0 16px 34px rgba(44,36,32,0.12)",
+                  display: "grid",
+                  placeItems: "center",
+                  flexShrink: 0
+                }}
+              >
+                <img
+                  src={IU_LOGO_IMAGE}
+                  alt="Indiana Hoosiers logo"
+                  style={{
+                    width: "64%",
+                    height: "64%",
+                    objectFit: "contain"
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  fontSize: isMobile ? "0.82rem" : "0.88rem",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: COLORS.indianaCrimson,
+                  fontWeight: 600
+                }}
+              >
+                Indiana Football
+              </div>
+            </div>
+            <h2
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: isMobile ? "3.5rem" : "6.2rem",
+                lineHeight: 0.92,
+                color: COLORS.indianaCrimson,
+                marginBottom: "1rem",
+                fontStyle: "italic",
+                fontWeight: 600
+              }}
+            >
+              Go Hoosiers
+            </h2>
+            <div
+              style={{
+                fontSize: isMobile ? "1rem" : "1.15rem",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: COLORS.indianaCrimson,
+                fontWeight: 700,
+                marginBottom: "1rem"
+              }}
+            >
+              National Champions
+            </div>
+            <p
+              style={{
+                fontSize: isMobile ? "1rem" : "1.15rem",
+                lineHeight: 1.8,
+                color: COLORS.darkText,
+                maxWidth: 520,
+                marginBottom: "1.5rem"
+              }}
+            >
+              The hidden page opens into a full Indiana celebration: candy stripes, the IU monogram, Curt Cignetti, Fernando Mendoza, and the championship trophy.
+            </p>
+            <button
+              className="press-button"
+              onClick={onGoHoosiers}
+              style={{
+                background: COLORS.indianaCrimson,
+                color: "#FFFFFF",
+                border: "none",
+                padding: isMobile ? "0.9rem 1.8rem" : "1rem 2.3rem",
+                fontSize: isMobile ? "0.95rem" : "1rem",
+                fontWeight: 600,
+                borderRadius: 999,
+                cursor: "pointer",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                marginBottom: "0.75rem"
+              }}
+            >
+              Go Hoosiers
+            </button>
+            <div style={{ fontSize: "0.9rem", color: COLORS.mediumText }}>
+              {hoosierCount.toLocaleString()} Hoosier cheers counted
+            </div>
+          </div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+              gridTemplateRows: isMobile ? "repeat(4, auto)" : "auto auto",
+              gap: "1rem"
+            }}
+          >
+            <div
+              style={{
+                gridColumn: isMobile ? "auto" : "1 / span 2",
+                background: "rgba(255,255,255,0.74)",
+                borderRadius: 26,
+                border: "1px solid rgba(153, 0, 0, 0.12)",
+                padding: isMobile ? "1.1rem" : "1.3rem",
+                boxShadow: "0 22px 46px rgba(44,36,32,0.12)"
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "1rem",
+                  marginBottom: "1rem"
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: "0.8rem",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: COLORS.indianaCrimson,
+                      fontWeight: 600,
+                      marginBottom: "0.35rem"
+                    }}
+                  >
+                    2026 Season
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: isMobile ? "2rem" : "2.5rem",
+                      fontStyle: "italic",
+                      color: COLORS.darkText
+                    }}
+                  >
+                    Indiana National Champions
+                  </div>
+                </div>
+                <img
+                  src={IU_LOGO_IMAGE}
+                  alt="Indiana Hoosiers logo"
+                  style={{
+                    width: isMobile ? 52 : 66,
+                    height: isMobile ? 64 : 82,
+                    objectFit: "contain",
+                    opacity: 0.95
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
+                  gap: "0.9rem"
+                }}
+              >
+                {[
+                  { src: CIGNETTI_IMAGE, label: "Curt Cignetti" },
+                  { src: MENDOZA_IMAGE, label: "Fernando Mendoza" },
+                  { src: HOOSIERS_TROPHY_IMAGE, label: "CFP Trophy" }
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    style={{
+                      background: "#fff",
+                      borderRadius: 18,
+                      overflow: "hidden",
+                      border: "1px solid rgba(153, 0, 0, 0.1)"
+                    }}
+                  >
+                    <img
+                      src={item.src}
+                      alt={item.label}
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        aspectRatio: "1 / 1",
+                        objectFit: "cover"
+                      }}
+                    />
+                    <div
+                      style={{
+                        padding: "0.85rem 0.9rem",
+                        fontSize: "0.82rem",
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: COLORS.indianaCrimson,
+                        fontWeight: 600,
+                        textAlign: "center"
+                      }}
+                    >
+                      {item.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div
+              style={{
+                background: "rgba(255,255,255,0.74)",
+                borderRadius: 22,
+                border: "1px solid rgba(153, 0, 0, 0.12)",
+                padding: isMobile ? "1rem" : "1.15rem",
+                boxShadow: "0 18px 36px rgba(44,36,32,0.1)"
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "0.78rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: COLORS.indianaCrimson,
+                  fontWeight: 600,
+                  marginBottom: "0.5rem"
+                }}
+              >
+                Stripe Status
+              </div>
+              <div style={{ color: COLORS.darkText, lineHeight: 1.7 }}>
+                Candy stripes all the way out. Full reveal, full crimson, full championship energy.
+              </div>
+            </div>
+            <div
+              style={{
+                background: "rgba(255,255,255,0.74)",
+                borderRadius: 22,
+                border: "1px solid rgba(153, 0, 0, 0.12)",
+                padding: isMobile ? "1rem" : "1.15rem",
+                boxShadow: "0 18px 36px rgba(44,36,32,0.1)"
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "0.78rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: COLORS.indianaCrimson,
+                  fontWeight: 600,
+                  marginBottom: "0.5rem"
+                }}
+              >
+                Bloomington
+              </div>
+              <div style={{ color: COLORS.darkText, lineHeight: 1.7 }}>
+                Cignetti on the sideline, Mendoza under center, the trophy on display, and the IU logo front and center.
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function App() {
   const [tab, setTab] = useState("main");
   const [buttonCount, setButtonCount] = useState(0);
+  const [hoosierCount, setHoosierCount] = useState(0);
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showPatterns, setShowPatterns] = useState(false);
+  const [showHoosierCorner, setShowHoosierCorner] = useState(false);
+  const [showHoosierPage, setShowHoosierPage] = useState(false);
+  const [peelProgress, setPeelProgress] = useState(0);
+  const [isPeelCommitting, setIsPeelCommitting] = useState(false);
+  const [peelOffset, setPeelOffset] = useState({ x: 0, y: 0 });
   const isMobile = useIsMobile();
+  const shouldReduceMotion = useReducedMotion();
+  const activeTabRef = useRef(null);
+  const peelStartPointRef = useRef(null);
+  const peelCommitTimerRef = useRef(null);
+  const [tabContentHeight, setTabContentHeight] = useState(null);
+  const tabHeightTransition = shouldReduceMotion ? { duration: 0 } : { duration: 0.58, ease: [0.16, 1, 0.3, 1] };
 
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 500], [0, 150]);
@@ -261,6 +930,49 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onValue(hoosierCountRef, (snapshot) => {
+      const val = snapshot.val();
+      if (val !== null) setHoosierCount(val);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (tab !== "main") {
+      setShowHoosierCorner(false);
+      setShowHoosierPage(false);
+      setPeelProgress(0);
+      setIsPeelCommitting(false);
+      setPeelOffset({ x: 0, y: 0 });
+    }
+  }, [tab]);
+
+  useEffect(() => () => {
+    if (peelCommitTimerRef.current) {
+      window.clearTimeout(peelCommitTimerRef.current);
+    }
+  }, []);
+
+  useLayoutEffect(() => {
+    const node = activeTabRef.current;
+    if (!node) return undefined;
+
+    const updateHeight = () => {
+      setTabContentHeight(node.getBoundingClientRect().height);
+    };
+
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateHeight();
+    });
+
+    resizeObserver.observe(node);
+
+    return () => resizeObserver.disconnect();
+  }, [tab, isMobile]);
+
   const triggerConfetti = () => {
     const count = 200;
     const defaults = { origin: { y: 0.7 }, zIndex: 9999 };
@@ -281,6 +993,89 @@ export default function App() {
   const handleButtonClick = () => {
     runTransaction(clickCountRef, (current) => (current || 0) + 1);
     triggerConfetti();
+  };
+
+  const handleRevealHoosierCorner = () => {
+    setShowHoosierCorner(true);
+    setPeelProgress(0);
+    setIsPeelCommitting(false);
+    setPeelOffset({ x: 0, y: 0 });
+  };
+
+  const handleOpenHoosierPage = () => {
+    setShowHoosierCorner(false);
+    setShowHoosierPage(true);
+    setPeelProgress(0);
+    setIsPeelCommitting(false);
+    setPeelOffset({ x: 0, y: 0 });
+  };
+
+  const handleCloseHoosierPage = () => {
+    setShowHoosierPage(false);
+    setShowHoosierCorner(false);
+    setPeelProgress(0);
+    setIsPeelCommitting(false);
+    setPeelOffset({ x: 0, y: 0 });
+  };
+
+  const handleGoHoosiers = () => {
+    runTransaction(hoosierCountRef, (current) => (current || 0) + 1);
+    confetti({
+      particleCount: 120,
+      spread: 90,
+      origin: { y: 0.72 },
+      colors: [COLORS.indianaCrimson, COLORS.indianaWhite, COLORS.primary],
+      zIndex: 9999
+    });
+  };
+
+  const handlePeelPointerDown = (event) => {
+    if (isPeelCommitting) return;
+    event.preventDefault();
+    peelStartPointRef.current = { x: event.clientX, y: event.clientY };
+    const maxPull = isMobile ? 150 : 210;
+
+    const handlePointerMove = (moveEvent) => {
+      if (!peelStartPointRef.current || isPeelCommitting) return;
+      const dx = Math.max(0, peelStartPointRef.current.x - moveEvent.clientX);
+      const dy = Math.max(0, peelStartPointRef.current.y - moveEvent.clientY);
+      const nextOffset = {
+        x: Math.min(dx, isMobile ? 120 : 170),
+        y: Math.min(dy, isMobile ? 100 : 145)
+      };
+      setPeelOffset(nextOffset);
+      setPeelProgress(Math.min(1, (dx + dy) / maxPull));
+    };
+
+    const handlePointerUp = (upEvent) => {
+      const dx = peelStartPointRef.current ? Math.max(0, peelStartPointRef.current.x - upEvent.clientX) : 0;
+      const dy = peelStartPointRef.current ? Math.max(0, peelStartPointRef.current.y - upEvent.clientY) : 0;
+      const nextProgress = Math.min(1, (dx + dy) / maxPull);
+
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerUp);
+      peelStartPointRef.current = null;
+
+      if (nextProgress > 0.72) {
+        setIsPeelCommitting(true);
+        setPeelProgress(1);
+        setPeelOffset({
+          x: isMobile ? 120 : 170,
+          y: isMobile ? 100 : 145
+        });
+        peelCommitTimerRef.current = window.setTimeout(() => {
+          handleOpenHoosierPage();
+        }, shouldReduceMotion ? 0 : 420);
+      } else {
+        setPeelProgress(0);
+        setPeelOffset({ x: 0, y: 0 });
+      }
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointercancel", handlePointerUp);
   };
 
   const downloadCalendarEvent = () => {
@@ -308,26 +1103,6 @@ END:VCALENDAR`;
     window.URL.revokeObjectURL(url);
   };
 
-  const TabButton = ({ id, label }) => (
-    <button
-      onClick={() => setTab(id)}
-      style={{
-        padding: isMobile ? "0.6rem 0.7rem" : "0.7rem 1.2rem",
-        border: "none",
-        background: tab === id ? COLORS.primary : "transparent",
-        color: tab === id ? COLORS.darkText : COLORS.mediumText,
-        fontSize: isMobile ? "0.75rem" : "0.9rem",
-        fontWeight: tab === id ? 500 : 400,
-        borderRadius: 8,
-        cursor: "pointer",
-        transition: "all 0.2s ease",
-        whiteSpace: "nowrap"
-      }}
-    >
-      {label}
-    </button>
-  );
-
   // Render tab content based on current tab
   const renderTabContent = () => {
     switch (tab) {
@@ -339,16 +1114,18 @@ END:VCALENDAR`;
             handleButtonClick={handleButtonClick}
             downloadCalendarEvent={downloadCalendarEvent}
             isMobile={isMobile}
+            reducedMotion={shouldReduceMotion}
+            onRevealHoosierCorner={handleRevealHoosierCorner}
           />
         );
       case "rsvp":
-        return <RSVPTab isMobile={isMobile} />;
+        return <RSVPTab isMobile={isMobile} reducedMotion={shouldReduceMotion} />;
       case "info":
-        return <InfoTab isMobile={isMobile} />;
+        return <InfoTab isMobile={isMobile} reducedMotion={shouldReduceMotion} />;
       case "party":
-        return <WeddingPartyTab isMobile={isMobile} />;
+        return <WeddingPartyTab isMobile={isMobile} reducedMotion={shouldReduceMotion} />;
       case "registry":
-        return <RegistryTab isMobile={isMobile} />;
+        return <RegistryTab isMobile={isMobile} reducedMotion={shouldReduceMotion} />;
       default:
         return null;
     }
@@ -361,6 +1138,7 @@ END:VCALENDAR`;
     marginRight: "auto",
     boxSizing: "border-box"
   };
+  const peelActive = tab === "main" && showHoosierCorner && !showHoosierPage;
 
   return (
     <>
@@ -577,75 +1355,133 @@ END:VCALENDAR`;
           </motion.div>
         </section>
 
-        {/* TAB BAR - Full width background, centered content */}
         <div
-          id="content"
           style={{
-            width: "100%",
-            position: "sticky",
-            top: 0,
-            background: `rgba(253, 251, 248, 0.97)`,
-            backdropFilter: "blur(1px)",
-            borderBottom: `1px solid ${COLORS.border}`,
-            zIndex: 100
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column"
           }}
         >
+          {/* TAB BAR - Full width background, centered content */}
           <div
+            id="content"
             style={{
-              ...centeredContentStyle,
-              padding: isMobile ? "0.75rem 1rem" : "1rem 2rem"
+              width: "100%",
+              position: "sticky",
+              top: 0,
+              background: `rgba(253, 251, 248, 0.97)`,
+              backdropFilter: "blur(1px)",
+              borderBottom: `1px solid ${COLORS.border}`,
+              zIndex: 100
             }}
           >
             <div
               style={{
-                display: "flex",
-                gap: "0.3rem",
-                background: COLORS.cream,
-                padding: "0.4rem",
-                borderRadius: 10,
-                justifyContent: "center",
-                flexWrap: "wrap",
-                border: `1px solid ${COLORS.border}`
+                ...centeredContentStyle,
+                padding: isMobile ? "0.75rem 1rem" : "1rem 2rem"
               }}
             >
-              <TabButton id="main" label="Home" />
-              <TabButton id="rsvp" label="RSVP" />
-              <TabButton id="info" label="Details" />
-              <TabButton id="party" label="Wedding Party" />
-              <TabButton id="registry" label="Registry" />
+              <div
+                style={{
+                  display: "flex",
+                  gap: "0.3rem",
+                  background: COLORS.cream,
+                  padding: "0.4rem",
+                  borderRadius: 10,
+                  justifyContent: "center",
+                  flexWrap: "wrap",
+                  border: `1px solid ${COLORS.border}`
+                }}
+              >
+                <TabButton id="main" label="Home" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
+                <TabButton id="rsvp" label="RSVP" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
+                <TabButton id="info" label="Details" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
+                <TabButton id="party" label="Wedding Party" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
+                <TabButton id="registry" label="Registry" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
+              </div>
             </div>
           </div>
+
+          {/* CONTENT AREA - CENTERED with margin auto */}
+          <motion.div
+            layout
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              ...centeredContentStyle,
+              flex: 1,
+              position: "relative",
+              padding: isMobile ? "2rem 1rem" : "3rem 2rem",
+              minHeight: "70vh",
+              background: COLORS.bg
+            }}
+          >
+            <motion.div
+              initial={false}
+              animate={shouldReduceMotion ? { height: "auto" } : { height: tabContentHeight || "auto" }}
+              transition={tabHeightTransition}
+              style={{
+                position: "relative",
+                overflow: "hidden",
+                background: COLORS.bg
+              }}
+            >
+              <AnimatePresence mode="sync" initial={false}>
+                <motion.div
+                  key={tab}
+                  ref={activeTabRef}
+                  {...getTabPanelMotion(shouldReduceMotion)}
+                  style={{ width: "100%" }}
+                >
+                  {renderTabContent()}
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+            <AnimatePresence>
+              {peelActive && (
+                <PeelOverlay
+                  isVisible={peelActive}
+                  progress={peelProgress}
+                  peelOffset={peelOffset}
+                  isCommitting={isPeelCommitting}
+                  isMobile={isMobile}
+                  reducedMotion={shouldReduceMotion}
+                  onPointerDown={handlePeelPointerDown}
+                />
+              )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* FOOTER - Full width background */}
+          <footer
+            style={{
+              width: "100%",
+              textAlign: "center",
+              padding: "3rem 1.5rem",
+              background: COLORS.primary,
+              color: COLORS.darkText
+            }}
+          >
+            <p style={{ fontSize: "1.1rem", marginBottom: "0.5rem", fontWeight: 300, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
+              We can't wait to celebrate with you
+            </p>
+            <p style={{ fontSize: "0.7rem", opacity: 0.5, marginTop: "1rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+              Ben & Emily &middot; October 24, 2026
+            </p>
+          </footer>
         </div>
 
-        {/* CONTENT AREA - CENTERED with margin auto */}
-        <div
-          style={{
-            ...centeredContentStyle,
-            padding: isMobile ? "2rem 1rem" : "3rem 2rem",
-            minHeight: "70vh",
-            background: COLORS.bg
-          }}
-        >
-          {renderTabContent()}
-        </div>
-
-        {/* FOOTER - Full width background */}
-        <footer
-          style={{
-            width: "100%",
-            textAlign: "center",
-            padding: "3rem 1.5rem",
-            background: COLORS.primary,
-            color: COLORS.darkText
-          }}
-        >
-          <p style={{ fontSize: "1.1rem", marginBottom: "0.5rem", fontWeight: 300, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
-            We can't wait to celebrate with you
-          </p>
-          <p style={{ fontSize: "0.7rem", opacity: 0.5, marginTop: "1rem", letterSpacing: "0.15em", textTransform: "uppercase" }}>
-            Ben & Emily &middot; October 24, 2026
-          </p>
-        </footer>
+        <AnimatePresence>
+          {tab === "main" && showHoosierPage && (
+            <HoosiersOverlay
+              isVisible={showHoosierPage}
+              isMobile={isMobile}
+              reducedMotion={shouldReduceMotion}
+              hoosierCount={hoosierCount}
+              onClose={handleCloseHoosierPage}
+              onGoHoosiers={handleGoHoosiers}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </>
   );
@@ -655,18 +1491,83 @@ END:VCALENDAR`;
    MAIN TAB
    ============================================ */
 
-function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalendarEvent, isMobile }) {
+function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalendarEvent, isMobile, reducedMotion, onRevealHoosierCorner }) {
   const [indices, setIndices] = useState(photoBuckets.map(() => 0));
+  const [holdProgress, setHoldProgress] = useState(0);
+  const containerVariants = getStaggerContainerVariants(reducedMotion);
+  const itemVariants = getStaggerItemVariants(reducedMotion);
+  const holdTimerRef = useRef(null);
+  const longPressTriggeredRef = useRef(false);
+  const holdStartRef = useRef(0);
+  const holdAnimationRef = useRef(null);
+
+  useEffect(() => () => {
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current);
+    }
+    if (holdAnimationRef.current) {
+      cancelAnimationFrame(holdAnimationRef.current);
+    }
+  }, []);
 
   const cycle = (slot) =>
     setIndices((prev) =>
       prev.map((v, i) => (i === slot && photoBuckets[slot].length > 0 ? (v + 1) % photoBuckets[slot].length : v))
     );
 
+  const clearCelebrateHold = () => {
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+    if (holdAnimationRef.current) {
+      cancelAnimationFrame(holdAnimationRef.current);
+      holdAnimationRef.current = null;
+    }
+  };
+
+  const updateHoldProgress = () => {
+    const elapsed = performance.now() - holdStartRef.current;
+    const nextProgress = Math.max(0, Math.min(1, (elapsed - 5000) / 5000));
+    setHoldProgress(nextProgress);
+
+    if (elapsed >= 10000) {
+      longPressTriggeredRef.current = true;
+      clearCelebrateHold();
+      setHoldProgress(0);
+      onRevealHoosierCorner();
+      return;
+    }
+
+    holdAnimationRef.current = requestAnimationFrame(updateHoldProgress);
+  };
+
+  const handleCelebratePointerDown = () => {
+    longPressTriggeredRef.current = false;
+    clearCelebrateHold();
+    holdStartRef.current = performance.now();
+    setHoldProgress(0);
+    holdAnimationRef.current = requestAnimationFrame(updateHoldProgress);
+  };
+
+  const handleCelebratePointerUp = () => {
+    clearCelebrateHold();
+    setHoldProgress(0);
+  };
+
+  const handleCelebrateTap = (event) => {
+    if (longPressTriggeredRef.current) {
+      event.preventDefault();
+      longPressTriggeredRef.current = false;
+      return;
+    }
+    handleButtonClick();
+  };
+
   return (
-    <>
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
       {/* Page Title */}
-      <h2 style={{
+      <motion.h2 variants={itemVariants} style={{
         textAlign: "center",
         fontSize: "min(10vw, 3.5rem)",
         fontFamily: "'Cormorant Garamond', Georgia, serif",
@@ -677,8 +1578,8 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
         letterSpacing: "0.02em"
       }}>
         Ben & Emily
-      </h2>
-      <p style={{
+      </motion.h2>
+      <motion.p variants={itemVariants} style={{
         textAlign: "center",
         fontSize: "min(3vw, 0.8rem)",
         color: COLORS.lightText,
@@ -687,10 +1588,10 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
         marginBottom: "2rem"
       }}>
         October 24, 2026 &nbsp;&middot;&nbsp; Charlottesville, VA
-      </p>
+      </motion.p>
 
       {/* Photo Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: "1.2rem", marginBottom: "2.5rem" }}>
+      <motion.div variants={itemVariants} style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: "1.2rem", marginBottom: "2.5rem" }}>
         {photoBuckets.map((bucket, i) => {
           const hasPhotos = bucket.length > 0;
           const src = hasPhotos ? bucket[indices[i] % bucket.length] : undefined;
@@ -722,10 +1623,10 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
             </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Story Text */}
-      <div style={{ padding: isMobile ? "1rem 0.5rem" : "1.5rem 2rem", marginBottom: "2rem" }}>
+      <motion.div variants={itemVariants} style={{ padding: isMobile ? "1rem 0.5rem" : "1.5rem 2rem", marginBottom: "2rem" }}>
         <p style={{ fontSize: isMobile ? "0.85rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "0.8rem" }}>
           Emily and Ben met on Halloween in Atlanta, with Emily dressed as Padme and Ben as Anakin. Since then, life has taken them from Atlanta to New York City, where they&apos;ve built a home together on the Upper East Side.
         </p>
@@ -735,10 +1636,10 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
         <p style={{ fontSize: isMobile ? "0.85rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center" }}>
           We can&apos;t wait to celebrate together!
         </p>
-      </div>
+      </motion.div>
 
       {/* Save the Date + Excitement */}
-      <div style={{ textAlign: "center", padding: isMobile ? "1.5rem 1rem" : "2rem", borderTop: `1px solid ${COLORS.border}`, marginTop: "1rem" }}>
+      <motion.div variants={itemVariants} style={{ textAlign: "center", padding: isMobile ? "1.5rem 1rem" : "2rem", borderTop: `1px solid ${COLORS.border}`, marginTop: "1rem", position: "relative", overflow: "visible" }}>
         <p style={{ fontSize: "0.85rem", color: COLORS.lightText, marginBottom: "1rem", letterSpacing: "0.05em" }}>
           Save the date — add it to your calendar so you don't forget!
         </p>
@@ -768,8 +1669,14 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
         </p>
         <button
           className="press-button"
-          onClick={handleButtonClick}
+          onClick={handleCelebrateTap}
+          onPointerDown={handleCelebratePointerDown}
+          onPointerUp={handleCelebratePointerUp}
+          onPointerLeave={handleCelebratePointerUp}
+          onPointerCancel={handleCelebratePointerUp}
           style={{
+            position: "relative",
+            overflow: "hidden",
             background: COLORS.accent,
             color: "#FFFFFF",
             border: "none",
@@ -782,11 +1689,22 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
             letterSpacing: "0.05em"
           }}
         >
+          <span
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: `${holdProgress * 100}%`,
+              background: "linear-gradient(90deg, rgba(153, 0, 0, 0.28), rgba(153, 0, 0, 0.55))",
+              transition: holdProgress === 0 ? "width 0.18s ease-out" : "none"
+            }}
+          />
+          <span style={{ position: "relative", zIndex: 1 }}>
           Can't Wait!
+          </span>
         </button>
         <div style={{ fontSize: "0.75rem", color: COLORS.lightText }}>{buttonCount.toLocaleString()} clicks</div>
-      </div>
-    </>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -794,25 +1712,28 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
    RSVP TAB
    ============================================ */
 
-function RSVPTab({ isMobile }) {
+function RSVPTab({ isMobile, reducedMotion }) {
+  const containerVariants = getStaggerContainerVariants(reducedMotion);
+  const itemVariants = getStaggerItemVariants(reducedMotion);
+
   if (!RSVP_ENABLED) {
     return (
-      <>
-        <h2 style={getTabTitleStyle(isMobile)}>RSVP</h2>
-        <p style={tabSubtitleStyle}>Please let us know if you can join us</p>
-        <p style={{ textAlign: "center", fontSize: "1.15rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif" }}>
+      <motion.div variants={containerVariants} initial="hidden" animate="show">
+        <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>RSVP</motion.h2>
+        <motion.p variants={itemVariants} style={tabSubtitleStyle}>Please let us know if you can join us</motion.p>
+        <motion.p variants={itemVariants} style={{ textAlign: "center", fontSize: "1.15rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif" }}>
           Coming soon
-        </p>
-      </>
+        </motion.p>
+      </motion.div>
     );
   }
 
   return (
-    <>
-      <h2 style={getTabTitleStyle(isMobile)}>RSVP</h2>
-      <p style={tabSubtitleStyle}>Please let us know if you can join us</p>
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
+      <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>RSVP</motion.h2>
+      <motion.p variants={itemVariants} style={tabSubtitleStyle}>Please let us know if you can join us</motion.p>
 
-      <div style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem", textAlign: "center" }}>
+      <motion.div variants={itemVariants} style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem", textAlign: "center" }}>
         <p style={{ marginBottom: "1.5rem", fontSize: "1rem", color: COLORS.mediumText }}>
           Click below to open our RSVP form:
         </p>
@@ -837,8 +1758,8 @@ function RSVPTab({ isMobile }) {
         <p style={{ marginTop: "1.5rem", fontSize: "0.9rem", color: COLORS.lightText }}>
           Please respond by September 1, 2026
         </p>
-      </div>
-    </>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -846,21 +1767,23 @@ function RSVPTab({ isMobile }) {
    INFO TAB
    ============================================ */
 
-function InfoTab({ isMobile }) {
+function InfoTab({ isMobile, reducedMotion }) {
   const cardStyle = getSectionCardStyle(isMobile);
   const sectionTitle = (text) => (
     <h3 style={sectionTitleStyle}>
       {text}
     </h3>
   );
+  const containerVariants = getStaggerContainerVariants(reducedMotion);
+  const itemVariants = getStaggerItemVariants(reducedMotion);
 
   return (
-    <>
-      <h2 style={getTabTitleStyle(isMobile)}>Wedding Details</h2>
-      <p style={tabSubtitleStyle}>Everything you need to know</p>
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
+      <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>Wedding Details</motion.h2>
+      <motion.p variants={itemVariants} style={tabSubtitleStyle}>Everything you need to know</motion.p>
 
       {/* Weekend Schedule */}
-      <div style={cardStyle}>
+      <motion.div variants={itemVariants} style={cardStyle}>
         <h3 style={{
           fontSize: isMobile ? "1.8rem" : "2.2rem",
           fontWeight: 300,
@@ -908,18 +1831,18 @@ function InfoTab({ isMobile }) {
           <ScheduleRow time="7:30 PM" event="Reception & Dinner" isMobile={isMobile} />
           <ScheduleRow time="11:00 PM" event="Late Night" isLast isMobile={isMobile} />
         </div>
-      </div>
+      </motion.div>
 
       {/* Shuttle Information */}
-      <div style={cardStyle}>
+      <motion.div variants={itemVariants} style={cardStyle}>
         {sectionTitle("Shuttle Information")}
         <p style={{ textAlign: "center", fontSize: "1.1rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif" }}>
           Coming Soon
         </p>
-      </div>
+      </motion.div>
 
       {/* Travel & Hotels */}
-      <div style={cardStyle}>
+      <motion.div variants={itemVariants} style={cardStyle}>
         {sectionTitle("Travel & Stay")}
         <div style={{ lineHeight: 1.8, color: COLORS.mediumText, fontSize: "0.95rem" }}>
           <p style={{ marginBottom: "0.8rem" }}><strong style={{ color: COLORS.darkText }}>Hotels with Room Blocks:</strong></p>
@@ -954,10 +1877,10 @@ function InfoTab({ isMobile }) {
             Charlottesville-Albemarle Airport (CHO) is 20 minutes from downtown.
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Things to Do */}
-      <div style={cardStyle}>
+      <motion.div variants={itemVariants} style={cardStyle}>
         {sectionTitle("Things to Do in Charlottesville")}
         <p style={{ fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
           <strong style={{ color: COLORS.darkText }}>Dining</strong> — Don't miss Riverside for lunch by the water, Bodo's Bagels for the best bagels in town, and C&O Restaurant for a Charlottesville classic.
@@ -971,19 +1894,19 @@ function InfoTab({ isMobile }) {
         <p style={{ fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9 }}>
           <strong style={{ color: COLORS.darkText }}>Things to See</strong> — Walk the UVA Campus & The Rotunda, visit Monticello, pick apples at Carter Mountain Orchard, or take a day trip to Shenandoah National Park.
         </p>
-      </div>
+      </motion.div>
 
       {/* Dress Code */}
-      <div style={{ ...getSectionCardStyle(isMobile), background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`, textAlign: "center" }}>
+      <motion.div variants={itemVariants} style={{ ...getSectionCardStyle(isMobile), background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`, textAlign: "center" }}>
         <h3 style={{ ...sectionTitleStyle, marginBottom: "0.6rem" }}>
           Dress Code
         </h3>
         <p style={{ fontSize: "1.1rem", lineHeight: 1.7, color: COLORS.darkText }}>
           Black Tie Optional<br />
-          <span style={{ fontSize: "0.9rem", color: COLORS.mediumText }}>The reception will be outdoors in a field on grass — please plan footwear accordingly!</span>
+          <span style={{ fontSize: "0.9rem", color: COLORS.mediumText }}>The reception will be under a tent with flooring, so guests do not need to plan for grass.</span>
         </p>
-      </div>
-    </>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -991,17 +1914,19 @@ function InfoTab({ isMobile }) {
    REGISTRY TAB
    ============================================ */
 
-function RegistryTab({ isMobile }) {
+function RegistryTab({ isMobile, reducedMotion }) {
   const registries = [
     { name: "Registry details", icon: "C" }
   ];
+  const containerVariants = getStaggerContainerVariants(reducedMotion);
+  const itemVariants = getStaggerItemVariants(reducedMotion);
 
   return (
-    <>
-      <h2 style={getTabTitleStyle(isMobile)}>Registry</h2>
-      <p style={tabSubtitleStyle}>Your presence is the greatest gift</p>
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
+      <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>Registry</motion.h2>
+      <motion.p variants={itemVariants} style={tabSubtitleStyle}>Your presence is the greatest gift</motion.p>
 
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : registries.length === 1 ? "minmax(0, 420px)" : "repeat(2, 1fr)", justifyContent: "center", gap: "1.2rem", marginBottom: "2rem" }}>
+      <motion.div variants={itemVariants} style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : registries.length === 1 ? "minmax(0, 420px)" : "repeat(2, 1fr)", justifyContent: "center", gap: "1.2rem", marginBottom: "2rem" }}>
         {registries.map((r) => (
           <div
             key={r.name}
@@ -1035,15 +1960,15 @@ function RegistryTab({ isMobile }) {
             <p style={{ fontSize: "0.85rem", color: COLORS.lightText }}>Coming soon</p>
           </div>
         ))}
-      </div>
+      </motion.div>
 
-      <div style={{ ...getSectionCardStyle(isMobile), textAlign: "center", borderTop: `4px solid ${COLORS.accent}` }}>
+      <motion.div variants={itemVariants} style={{ ...getSectionCardStyle(isMobile), textAlign: "center", borderTop: `4px solid ${COLORS.accent}` }}>
         <p style={{ fontSize: "1rem", color: COLORS.mediumText, lineHeight: 1.8 }}>
           <strong style={{ color: COLORS.primary, fontSize: "1.1rem" }}>A Note from Us</strong><br /><br />
           The most important gift is your presence on our special day. If you'd still like to give something, we'd be grateful for contributions toward our honeymoon adventure!
         </p>
-      </div>
-    </>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -1053,7 +1978,7 @@ function RegistryTab({ isMobile }) {
    Photo maintains 4:5 aspect ratio at all sizes
    ============================================ */
 
-function WeddingPartyTab({ isMobile }) {
+function WeddingPartyTab({ isMobile, reducedMotion }) {
   const groomsmen = [
     { frontName: "Harry", backName: "Harry", relation: "Brother", photos: harryPhotos, role: "Best Man", maxBench: "175 lbs", fortyYard: "4.95s", handicap: "19.0", relationshipStatus: "Taken", currentCity: "Williamsburg, NY", college: "Northwestern University", collegeLogo: nu, footballTeam: "Cleveland Browns", footballLogo: brown, comment: "Let's hope Harry shows up on time to the ceremony." },
     { frontName: "Chuck", backName: "Chuck", relation: "Brother", photos: chuckPhotos, role: "Groomsman", maxBench: "135 lbs", fortyYard: "5.4s", handicap: "13.5", relationshipStatus: "Taken", currentCity: "Chicago, IL", college: "University of Wisconsin", collegeLogo: w, footballTeam: "Chicago Bears", footballLogo: bears, comment: "Known for his inconsistency off the tee. Keep your eyes peeled when Chuck hits the dance floor." },
@@ -1084,36 +2009,52 @@ function WeddingPartyTab({ isMobile }) {
         college: "Wake Forest University | University of North Carolina", favoriteDrink: "Mojito", danceFloorSong: "UCLA",
         funFact: "Emily and I were roommates in ATL, taught at the same school, and were foster moms to 4 animals together (one being a 15 year old cat named Baby Girl)!" }
   ];
+  const containerVariants = getStaggerContainerVariants(reducedMotion);
+  const itemVariants = getStaggerItemVariants(reducedMotion);
 
   return (
-    <>
-      <h2 style={getTabTitleStyle(isMobile)}>Our Wedding Party</h2>
-      <p style={tabSubtitleStyle}>Meet the amazing people standing by our side. Tap cards to see more.</p>
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
+      <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>Our Wedding Party</motion.h2>
+      <motion.p variants={itemVariants} style={tabSubtitleStyle}>Meet the amazing people standing by our side. Tap cards to see more.</motion.p>
 
       {/* BRIDESMAIDS FIRST - "Ladies" */}
-      <div style={{ marginBottom: "3rem" }}>
+      <motion.div variants={itemVariants} style={{ marginBottom: "3rem" }}>
         <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: COLORS.brideAccent, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
           Ladies
         </h3>
         <div style={{ display: "flex", flexDirection: "column", gap: "clamp(0.8rem, 2vw, 1.2rem)" }}>
-          {bridesmaids.map((p) => (
-            <BridesmaidCard key={p.frontName} person={p} />
+          {bridesmaids.map((p, index) => (
+            <motion.div
+              key={p.frontName}
+              initial={reducedMotion ? false : { opacity: 0, y: 14 }}
+              animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              transition={reducedMotion ? { duration: 0 } : { delay: 0.03 * index, duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <BridesmaidCard person={p} />
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* GROOMSMEN SECOND - "Lads" */}
-      <div>
+      <motion.div variants={itemVariants}>
         <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: COLORS.groomAccent, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
           Lads
         </h3>
         <div style={{ display: "flex", flexDirection: "column", gap: "clamp(0.8rem, 2vw, 1.2rem)" }}>
-          {groomsmen.map((p) => (
-            <GroomCard key={p.frontName} person={p} />
+          {groomsmen.map((p, index) => (
+            <motion.div
+              key={p.frontName}
+              initial={reducedMotion ? false : { opacity: 0, y: 14 }}
+              animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              transition={reducedMotion ? { duration: 0 } : { delay: 0.04 * index, duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <GroomCard person={p} />
+            </motion.div>
           ))}
         </div>
-      </div>
-    </>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -1146,6 +2087,7 @@ const GroomCard = React.memo(({ person }) => {
         style={{
           position: "relative",
           width: "100%",
+          minHeight: PARTY_CARD_MIN_HEIGHT,
           transformStyle: "preserve-3d",
           transition: "transform 0.6s ease",
           transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
@@ -1155,6 +2097,7 @@ const GroomCard = React.memo(({ person }) => {
         <div
           style={{
             width: "100%",
+            minHeight: PARTY_CARD_MIN_HEIGHT,
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             background: COLORS.cardBg,
@@ -1174,6 +2117,7 @@ const GroomCard = React.memo(({ person }) => {
               width: "clamp(140px, 28%, 260px)",
               aspectRatio: "4 / 5",
               flexShrink: 0,
+              alignSelf: "stretch",
               background: photos[photoIndex] ? `url(${photos[photoIndex]}) center center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
               display: "flex",
               alignItems: "center",
@@ -1243,16 +2187,16 @@ const GroomCard = React.memo(({ person }) => {
             borderRadius: "clamp(10px, 1.5vw, 14px)",
             boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
             border: `1px solid ${COLORS.border}`,
-            padding: "clamp(0.8rem, 1.8vw, 1.4rem)",
+            padding: "clamp(0.8rem, 1.5vw, 1.15rem)",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
+            justifyContent: "flex-start",
             overflow: "hidden"
           }}
         >
           <h3 style={{
             textAlign: "center",
-            marginBottom: "clamp(0.6rem, 1.2vw, 1rem)",
+            marginBottom: "clamp(0.45rem, 0.9vw, 0.7rem)",
             fontSize: "clamp(1.15rem, 2.35vw, 1.55rem)",
             color: COLORS.darkText,
             fontFamily: "'Cormorant Garamond', serif",
@@ -1262,10 +2206,10 @@ const GroomCard = React.memo(({ person }) => {
             {person.backName}
           </h3>
           <div style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "clamp(0.8rem, 2vw, 1.5rem)",
-            marginBottom: "clamp(0.6rem, 1.2vw, 1rem)",
+            display: "grid",
+            gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+            gap: "clamp(0.45rem, 1vw, 0.75rem)",
+            marginBottom: "clamp(0.5rem, 1vw, 0.75rem)",
             fontSize: "clamp(0.72rem, 1.2vw, 0.92rem)"
           }}>
             <div style={{ textAlign: "center" }}>
@@ -1285,7 +2229,7 @@ const GroomCard = React.memo(({ person }) => {
               <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.relationshipStatus}</div>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(0.4rem, 0.8vw, 0.6rem)", fontSize: "clamp(0.68rem, 1.05vw, 0.82rem)", color: COLORS.mediumText, marginBottom: "clamp(0.4rem, 1vw, 0.8rem)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(0.35rem, 0.75vw, 0.55rem)", fontSize: "clamp(0.66rem, 1vw, 0.8rem)", color: COLORS.mediumText, marginBottom: "clamp(0.45rem, 0.9vw, 0.7rem)", flexWrap: "wrap", textAlign: "center" }}>
             {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: 16, height: 16, objectFit: "contain" }} />}
             <span>{person.college}</span>
             <span style={{ color: COLORS.lightText }}>|</span>
@@ -1294,19 +2238,18 @@ const GroomCard = React.memo(({ person }) => {
           </div>
           <p style={{
             flex: 1,
-            textAlign: "center",
-            fontSize: "clamp(0.72rem, 1.15vw, 0.92rem)",
+            margin: 0,
+            padding: "0 clamp(0.15rem, 0.35vw, 0.25rem)",
+            textAlign: "left",
+            fontSize: "clamp(0.76rem, 1.15vw, 0.95rem)",
             color: COLORS.mediumText,
             fontStyle: "italic",
             lineHeight: 1.6,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             overflow: "auto"
           }}>
             {person.comment}
           </p>
-          <p style={{ textAlign: "center", marginTop: "clamp(0.3rem, 0.6vw, 0.4rem)", fontSize: "clamp(0.5rem, 0.8vw, 0.6rem)", color: COLORS.lightText }}>Tap to flip back</p>
+          <p style={{ textAlign: "center", marginTop: "clamp(0.3rem, 0.6vw, 0.4rem)", fontSize: "clamp(0.54rem, 0.82vw, 0.64rem)", color: COLORS.lightText }}>Tap to flip back</p>
         </div>
       </div>
     </div>
@@ -1342,6 +2285,7 @@ const BridesmaidCard = React.memo(({ person }) => {
         style={{
           position: "relative",
           width: "100%",
+          minHeight: PARTY_CARD_MIN_HEIGHT,
           transformStyle: "preserve-3d",
           transition: "transform 0.6s ease",
           transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
@@ -1351,6 +2295,7 @@ const BridesmaidCard = React.memo(({ person }) => {
         <div
           style={{
             width: "100%",
+            minHeight: PARTY_CARD_MIN_HEIGHT,
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             background: COLORS.cardBg,
@@ -1370,6 +2315,7 @@ const BridesmaidCard = React.memo(({ person }) => {
               width: "clamp(140px, 28%, 260px)",
               aspectRatio: "4 / 5",
               flexShrink: 0,
+              alignSelf: "stretch",
               background: photos[photoIndex] ? `url(${photos[photoIndex]}) center center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
               display: "flex",
               alignItems: "center",
@@ -1439,16 +2385,16 @@ const BridesmaidCard = React.memo(({ person }) => {
             borderRadius: "clamp(10px, 1.5vw, 14px)",
             boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
             border: `1px solid ${COLORS.border}`,
-            padding: "clamp(0.8rem, 1.8vw, 1.4rem)",
+            padding: "clamp(0.8rem, 1.5vw, 1.15rem)",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
+            justifyContent: "flex-start",
             overflow: "hidden"
           }}
         >
           <h3 style={{
             textAlign: "center",
-            marginBottom: "clamp(0.6rem, 1.2vw, 1rem)",
+            marginBottom: "clamp(0.45rem, 0.9vw, 0.7rem)",
             fontSize: "clamp(1.15rem, 2.35vw, 1.55rem)",
             color: COLORS.darkText,
             fontFamily: "'Cormorant Garamond', serif",
@@ -1457,26 +2403,28 @@ const BridesmaidCard = React.memo(({ person }) => {
           }}>
             {person.backName}
           </h3>
-          <div style={{ textAlign: "center", fontSize: "clamp(0.68rem, 1.05vw, 0.82rem)", color: COLORS.mediumText, marginBottom: "clamp(0.4rem, 1vw, 0.8rem)", lineHeight: 1.8 }}>
-            <span style={{ color: COLORS.lightText }}>College:</span> {person.college}<br />
-            <span style={{ color: COLORS.lightText }}>Drink:</span> <span style={{ color }}>{person.favoriteDrink || "TBD"}</span><br />
-            <span style={{ color: COLORS.lightText }}>Anthem:</span> {person.danceFloorSong || "TBD"}
+          <div style={{ display: "grid", gridTemplateColumns: "max-content 1fr", rowGap: "0.35rem", columnGap: "0.55rem", fontSize: "clamp(0.68rem, 1.05vw, 0.82rem)", color: COLORS.mediumText, marginBottom: "clamp(0.45rem, 0.9vw, 0.7rem)", lineHeight: 1.5, alignItems: "start" }}>
+            <span style={{ color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.06em" }}>College</span>
+            <span>{person.college}</span>
+            <span style={{ color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.06em" }}>Drink</span>
+            <span style={{ color }}>{person.favoriteDrink || "TBD"}</span>
+            <span style={{ color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.06em" }}>Anthem</span>
+            <span>{person.danceFloorSong || "TBD"}</span>
           </div>
           <p style={{
             flex: 1,
-            textAlign: "center",
-            fontSize: "clamp(0.72rem, 1.15vw, 0.92rem)",
+            margin: 0,
+            padding: "0 clamp(0.15rem, 0.35vw, 0.25rem)",
+            textAlign: "left",
+            fontSize: "clamp(0.76rem, 1.15vw, 0.95rem)",
             color: COLORS.mediumText,
             fontStyle: "italic",
             lineHeight: 1.6,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             overflow: "auto"
           }}>
             {person.funFact || person.comment}
           </p>
-          <p style={{ textAlign: "center", marginTop: "clamp(0.3rem, 0.6vw, 0.4rem)", fontSize: "clamp(0.5rem, 0.8vw, 0.6rem)", color: COLORS.lightText }}>Tap to flip back</p>
+          <p style={{ textAlign: "center", marginTop: "clamp(0.3rem, 0.6vw, 0.4rem)", fontSize: "clamp(0.54rem, 0.82vw, 0.64rem)", color: COLORS.lightText }}>Tap to flip back</p>
         </div>
       </div>
     </div>

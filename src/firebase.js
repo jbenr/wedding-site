@@ -14,5 +14,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const clickCountRef = ref(db, "clickCount");
+const hoosierCountRef = ref(db, "goHoosiersCount");
 
-export { db, clickCountRef, onValue, runTransaction };
+export { db, clickCountRef, hoosierCountRef, onValue, runTransaction };
