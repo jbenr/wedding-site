@@ -2017,11 +2017,8 @@ function InfoTab({ isMobile, reducedMotion }) {
         <p style={{ fontSize: isMobile ? "0.84rem" : "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
           <strong style={{ color: COLORS.darkText }}>Drinks & Wine</strong> — Charlottesville is wine country! King Family Vineyards, Pippin Hill Farm & Vineyards, and Early Mountain Vineyards are all beautiful. Check out <a href="https://raggedbranch.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Ragged Branch Distillery</a> for Virginia bourbon, and <a href="https://www.prn.beer/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Pro Re Nata Brewery</a> for craft beer. In town, The Whiskey Jar and Coup Deville's are great for a casual drink.
         </p>
-        <p style={{ fontSize: isMobile ? "0.84rem" : "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
-          <strong style={{ color: COLORS.darkText }}>Shopping</strong> — Stroll the Downtown Mall, a charming pedestrian mall with boutiques and restaurants. Be sure to stop by <a href="https://quattrotizi.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Quattro Tizi</a> at the Dairy Market for men's and women's clothing.
-        </p>
         <p style={{ fontSize: isMobile ? "0.84rem" : "0.9rem", color: COLORS.mediumText, lineHeight: 1.9 }}>
-          <strong style={{ color: COLORS.darkText }}>Things to See</strong> — Walk the UVA Campus & The Rotunda, visit Monticello, pick apples at Carter Mountain Orchard, or take a day trip to Shenandoah National Park.
+          <strong style={{ color: COLORS.darkText }}>Shopping</strong> — Stroll the Downtown Mall, a charming pedestrian mall with boutiques and restaurants. Be sure to stop by <a href="https://quattrotizi.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Quattro Tizi</a> at the Dairy Market for men's and women's clothing.
         </p>
       </motion.div>
 
