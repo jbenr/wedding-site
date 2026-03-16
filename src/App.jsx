@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import heroImage from "./assets/hero.jpg";
+import scrollImage from "./assets/scroll2.png";
 import { clickCountRef, hoosierCountRef, onValue, runTransaction } from "./firebase";
 
 // Import team logos
@@ -72,6 +73,17 @@ const COLORS = {
   indianaWhite: "#FFFFFF"
 };
 
+const PARTY_CARD_THEMES = {
+  groom: {
+    accent: "#5D7FA5",
+    border: "#D6E1EC"
+  },
+  bride: {
+    accent: "#8E6DA6",
+    border: "#E6DCEF"
+  }
+};
+
 const IU_LOGO_IMAGE =
   "https://commons.wikimedia.org/wiki/Special:FilePath/Indiana_Hoosiers_logo.svg";
 const CIGNETTI_IMAGE =
@@ -80,6 +92,8 @@ const MENDOZA_IMAGE =
   "https://commons.wikimedia.org/wiki/Special:FilePath/Fernando_Mendoza.jpg";
 const HOOSIERS_TROPHY_IMAGE =
   "https://commons.wikimedia.org/wiki/Special:FilePath/2023-0109-CFPtitlegame-Stetson_Bennett_Trophy.jpg";
+const GOLF_FORM_URL = "";
+const CARD_FLIP_DURATION_MS = 650;
 
 const INDIANA_CANDY_STRIPE = `repeating-linear-gradient(
   90deg,
@@ -111,26 +125,46 @@ const useIsMobile = () => {
 };
 
 // Simple schedule row — clean two-column layout
-const ScheduleRow = ({ time, event, detail, isLast, isMobile }) => (
+const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, isMobile }) => (
   <div style={{
-    display: "flex",
-    alignItems: "baseline",
     padding: "0.8rem 0",
     borderBottom: isLast ? "none" : `1px solid ${COLORS.border}`
   }}>
-    <div style={{ width: isMobile ? 80 : 100, flexShrink: 0, fontSize: isMobile ? "0.85rem" : "0.95rem", color: COLORS.lightText }}>
-      {time}
-    </div>
-    <div style={{ flex: 1 }}>
-      <span style={{ fontSize: isMobile ? "0.9rem" : "1rem", fontWeight: 500, color: COLORS.darkText }}>{event}</span>
-      {detail && <span style={{ fontSize: "0.8rem", color: COLORS.lightText, marginLeft: "0.5rem" }}>— {detail}</span>}
+    <div style={{ display: "flex", alignItems: "flex-start", gap: isMobile ? "0.5rem" : "0.75rem" }}>
+      <div style={{ width: isMobile ? 62 : 100, flexShrink: 0, fontSize: isMobile ? "0.76rem" : "0.95rem", color: COLORS.lightText, whiteSpace: "nowrap", paddingTop: "0.05rem" }}>
+        {time}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: isMobile ? "0.8rem" : "1rem", fontWeight: 500, color: COLORS.darkText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{event}</div>
+        {location && (
+          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.68rem" : "0.82rem", color: COLORS.lightText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            {location}
+          </div>
+        )}
+        {attire && (
+          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.68rem" : "0.8rem", color: COLORS.mediumText, fontStyle: "italic", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            {attire}
+          </div>
+        )}
+        {note && (
+          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.66rem" : "0.76rem", color: COLORS.mediumText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            {noteHref ? (
+              <a href={noteHref} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
+                {note}
+              </a>
+            ) : (
+              note
+            )}
+          </div>
+        )}
+      </div>
     </div>
   </div>
 );
 
 const getTabTitleStyle = (isMobile) => ({
   textAlign: "center",
-  fontSize: isMobile ? "2.2rem" : "3rem",
+  fontSize: isMobile ? "1.95rem" : "3rem",
   marginBottom: "0.5rem",
   fontFamily: "'Cormorant Garamond', serif",
   fontWeight: 400,
@@ -138,30 +172,30 @@ const getTabTitleStyle = (isMobile) => ({
   fontStyle: "italic"
 });
 
-const tabSubtitleStyle = {
+const getTabSubtitleStyle = (isMobile) => ({
   textAlign: "center",
-  fontSize: "1rem",
-  marginBottom: "2.5rem",
+  fontSize: isMobile ? "0.92rem" : "1rem",
+  marginBottom: isMobile ? "2rem" : "2.5rem",
   color: COLORS.mediumText
-};
+});
 
 const getSectionCardStyle = (isMobile) => ({
   background: COLORS.cardBg,
-  padding: isMobile ? "1.5rem" : "2rem",
+  padding: isMobile ? "1.3rem" : "2rem",
   borderRadius: 14,
   marginBottom: "1.5rem",
   boxShadow: "0 2px 15px rgba(44,36,32,0.05)",
   border: `1px solid ${COLORS.border}`
 });
 
-const sectionTitleStyle = {
-  fontSize: "1.4rem",
+const getSectionTitleStyle = (isMobile) => ({
+  fontSize: isMobile ? "1.25rem" : "1.4rem",
   marginBottom: "1.2rem",
   textAlign: "center",
   color: COLORS.darkText,
   fontWeight: 400,
   fontFamily: "'Cormorant Garamond', serif"
-};
+});
 
 const getTabPanelMotion = (reducedMotion) => ({
   initial: reducedMotion ? { opacity: 1 } : { opacity: 0, y: 18 },
@@ -195,7 +229,7 @@ function TabButton({ id, label, tab, setTab, isMobile, shouldReduceMotion }) {
         border: "none",
         background: "transparent",
         color: tab === id ? COLORS.darkText : COLORS.mediumText,
-        fontSize: isMobile ? "0.75rem" : "0.9rem",
+        fontSize: isMobile ? "0.72rem" : "0.9rem",
         fontWeight: tab === id ? 500 : 400,
         borderRadius: 8,
         cursor: "pointer",
@@ -223,17 +257,17 @@ function TabButton({ id, label, tab, setTab, isMobile, shouldReduceMotion }) {
 }
 
 // Stat cell component
-const StatCell = ({ label, value, color }) => (
+const StatCell = ({ label, value, color, background = COLORS.cream, borderColor = COLORS.border, labelColor = COLORS.lightText }) => (
   <div
     style={{
       textAlign: "center",
-      background: COLORS.cream,
+      background,
       padding: "0.6rem 0.4rem",
       borderRadius: 10,
-      border: `1px solid ${COLORS.border}`
+      border: `1px solid ${borderColor}`
     }}
   >
-    <div style={{ fontSize: "0.7rem", color: COLORS.lightText, marginBottom: "0.2rem", textTransform: "uppercase" }}>
+    <div style={{ fontSize: "0.7rem", color: labelColor, marginBottom: "0.2rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
       {label}
     </div>
     <div style={{ fontSize: "1rem", fontWeight: 600, color }}>{value}</div>
@@ -475,7 +509,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
                 "linear-gradient(315deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 28%, rgba(44,36,32,0.14) 100%)",
               mixBlendMode: "multiply"
             }}
-          />
+          />scr
           <div
             style={{
               position: "absolute",
@@ -1568,7 +1602,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       {/* Page Title */}
       <motion.h2 variants={itemVariants} style={{
         textAlign: "center",
-        fontSize: "min(10vw, 3.5rem)",
+        fontSize: isMobile ? "min(9vw, 2.9rem)" : "min(10vw, 3.5rem)",
         fontFamily: "'Cormorant Garamond', Georgia, serif",
         fontWeight: 300,
         fontStyle: "italic",
@@ -1580,7 +1614,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       </motion.h2>
       <motion.p variants={itemVariants} style={{
         textAlign: "center",
-        fontSize: "min(3vw, 0.8rem)",
+        fontSize: isMobile ? "0.68rem" : "min(3vw, 0.8rem)",
         color: COLORS.lightText,
         textTransform: "uppercase",
         letterSpacing: "0.2em",
@@ -1626,20 +1660,20 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
 
       {/* Story Text */}
       <motion.div variants={itemVariants} style={{ padding: isMobile ? "1rem 0.5rem" : "1.5rem 2rem", marginBottom: "2rem" }}>
-        <p style={{ fontSize: isMobile ? "0.85rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "0.8rem" }}>
+        <p style={{ fontSize: isMobile ? "0.82rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "0.8rem" }}>
           Emily and Ben met on Halloween in Atlanta, with Emily dressed as Padme and Ben as Anakin. Since then, life has taken them from Atlanta to New York City, where they&apos;ve built a home together on the Upper East Side.
         </p>
-        <p style={{ fontSize: isMobile ? "0.85rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "0.8rem" }}>
+        <p style={{ fontSize: isMobile ? "0.82rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "0.8rem" }}>
           We&apos;re looking forward to celebrating this next chapter with you. Here you&apos;ll find all the details about our wedding weekend, travel information, and our registry.
         </p>
-        <p style={{ fontSize: isMobile ? "0.85rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center" }}>
+        <p style={{ fontSize: isMobile ? "0.82rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center" }}>
           We can&apos;t wait to celebrate together!
         </p>
       </motion.div>
 
       {/* Save the Date + Excitement */}
       <motion.div variants={itemVariants} style={{ textAlign: "center", padding: isMobile ? "1.5rem 1rem" : "2rem", borderTop: `1px solid ${COLORS.border}`, marginTop: "1rem", position: "relative", overflow: "visible" }}>
-        <p style={{ fontSize: "0.85rem", color: COLORS.lightText, marginBottom: "1rem", letterSpacing: "0.05em" }}>
+        <p style={{ fontSize: isMobile ? "0.78rem" : "0.85rem", color: COLORS.lightText, marginBottom: "1rem", letterSpacing: "0.05em" }}>
           Save the date — add it to your calendar so you don't forget!
         </p>
         <button
@@ -1650,7 +1684,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
             color: "#FFFFFF",
             border: "none",
             padding: "0.7rem 1.6rem",
-            fontSize: "0.85rem",
+            fontSize: isMobile ? "0.8rem" : "0.85rem",
             fontWeight: 500,
             borderRadius: 50,
             cursor: "pointer",
@@ -1663,7 +1697,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
 
         <div style={{ width: 40, height: 1, background: COLORS.border, margin: "0 auto 2rem" }} />
 
-        <p style={{ fontSize: "0.85rem", color: COLORS.lightText, marginBottom: "0.8rem" }}>
+        <p style={{ fontSize: isMobile ? "0.78rem" : "0.85rem", color: COLORS.lightText, marginBottom: "0.8rem" }}>
           Show us how excited you are!
         </p>
         <button
@@ -1680,7 +1714,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
             color: "#FFFFFF",
             border: "none",
             padding: "0.7rem 1.6rem",
-            fontSize: "0.85rem",
+            fontSize: isMobile ? "0.8rem" : "0.85rem",
             fontWeight: 500,
             borderRadius: 50,
             cursor: "pointer",
@@ -1701,7 +1735,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
           Can't Wait!
           </span>
         </button>
-        <div style={{ fontSize: "0.75rem", color: COLORS.lightText }}>{buttonCount.toLocaleString()} clicks</div>
+        <div style={{ fontSize: isMobile ? "0.7rem" : "0.75rem", color: COLORS.lightText }}>{buttonCount.toLocaleString()} clicks</div>
       </motion.div>
     </motion.div>
   );
@@ -1719,8 +1753,8 @@ function RSVPTab({ isMobile, reducedMotion }) {
     return (
       <motion.div variants={containerVariants} initial="hidden" animate="show">
         <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>RSVP</motion.h2>
-        <motion.p variants={itemVariants} style={tabSubtitleStyle}>Please let us know if you can join us</motion.p>
-        <motion.p variants={itemVariants} style={{ textAlign: "center", fontSize: "1.15rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif" }}>
+        <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Please let us know if you can join us</motion.p>
+        <motion.p variants={itemVariants} style={{ textAlign: "center", fontSize: isMobile ? "1rem" : "1.15rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif" }}>
           Coming soon
         </motion.p>
       </motion.div>
@@ -1730,7 +1764,7 @@ function RSVPTab({ isMobile, reducedMotion }) {
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show">
       <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>RSVP</motion.h2>
-      <motion.p variants={itemVariants} style={tabSubtitleStyle}>Please let us know if you can join us</motion.p>
+      <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Please let us know if you can join us</motion.p>
 
       <motion.div variants={itemVariants} style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem", textAlign: "center" }}>
         <p style={{ marginBottom: "1.5rem", fontSize: "1rem", color: COLORS.mediumText }}>
@@ -1768,86 +1802,113 @@ function RSVPTab({ isMobile, reducedMotion }) {
 
 function InfoTab({ isMobile, reducedMotion }) {
   const cardStyle = getSectionCardStyle(isMobile);
+  const plainSectionStyle = {
+    padding: isMobile ? "0.4rem 0 0.8rem" : "0.6rem 0 1rem",
+    marginBottom: "1.5rem"
+  };
+  const schedulePaperStyle = {
+    position: "relative",
+    backgroundColor: COLORS.bg,
+    backgroundImage: `url(${scrollImage})`,
+    backgroundPosition: "60% top",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: isMobile ? "108% 100%" : "106% 100%",
+    padding: isMobile ? "6.35rem 1.1rem 3.75rem" : "8.2rem 2.15rem 5rem",
+    marginBottom: "1.7rem",
+    overflow: "hidden"
+  };
   const sectionTitle = (text) => (
-    <h3 style={sectionTitleStyle}>
+    <h3 style={getSectionTitleStyle(isMobile)}>
       {text}
     </h3>
   );
   const containerVariants = getStaggerContainerVariants(reducedMotion);
   const itemVariants = getStaggerItemVariants(reducedMotion);
+  const dayDivider = () => (
+    <div style={{ display: "flex", alignItems: "center", gap: isMobile ? "0.65rem" : "0.9rem", margin: isMobile ? "1.6rem 0 1.2rem" : "1.8rem 0 1.4rem" }}>
+      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.border})` }} />
+      <div style={{ display: "flex", alignItems: "center", gap: isMobile ? "0.4rem" : "0.55rem", color: COLORS.accent, flexShrink: 0 }}>
+        <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+        <div style={{ width: isMobile ? 18 : 26, height: 1, background: COLORS.accent, opacity: 0.7 }} />
+        <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+      </div>
+      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${COLORS.border}, transparent)` }} />
+    </div>
+  );
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show">
       <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>Wedding Details</motion.h2>
-      <motion.p variants={itemVariants} style={tabSubtitleStyle}>Everything you need to know</motion.p>
+      <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Everything you need to know</motion.p>
 
       {/* Weekend Schedule */}
-      <motion.div variants={itemVariants} style={cardStyle}>
-        <h3 style={{
-          fontSize: isMobile ? "1.8rem" : "2.2rem",
-          fontWeight: 300,
-          color: COLORS.darkText,
-          fontFamily: "'Cormorant Garamond', serif",
-          textAlign: "center",
-          fontStyle: "italic",
-          marginBottom: "0.3rem"
-        }}>
-          Weekend Schedule
-        </h3>
-        <div style={{ width: 50, height: 1, background: COLORS.accent, margin: "0 auto 2rem" }} />
+      <motion.div variants={itemVariants} style={schedulePaperStyle}>
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1
+          }}
+        >
+          <h3 style={{
+            fontSize: isMobile ? "1.6rem" : "2.2rem",
+            fontWeight: 300,
+            color: COLORS.darkText,
+            fontFamily: "'Cormorant Garamond', serif",
+            textAlign: "center",
+            fontStyle: "italic",
+            marginBottom: "0.3rem"
+          }}>
+            Weekend Schedule
+          </h3>
+          <div style={{ width: 50, height: 1, background: COLORS.accent, margin: "0 auto 2rem" }} />
 
-        <div style={{ maxWidth: 480, margin: "0 auto" }}>
+          <div style={{ maxWidth: 480, margin: "0 auto" }}>
           {/* Friday */}
-          <h4 style={{
-            fontSize: "0.8rem",
-            fontWeight: 600,
-            color: COLORS.accent,
-            textTransform: "uppercase",
-            letterSpacing: "0.2em",
-            marginBottom: "0.5rem"
-          }}>
-            Friday, October 23
-          </h4>
+            <h4 style={{
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              color: COLORS.accent,
+              textTransform: "uppercase",
+              letterSpacing: "0.2em",
+              marginBottom: "0.5rem"
+            }}>
+              Friday, October 23
+            </h4>
 
-          <ScheduleRow time="9:00 PM" event="Welcome Party" detail="Farmington Country Club" isLast isMobile={isMobile} />
+            <ScheduleRow time="TBD" event="Scramble Golf Tournament" location="Birdwood Golf Club" note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} isMobile={isMobile} />
+            <ScheduleRow time="TBD" event="Rehearsal Dinner" location="Farmington Country Club | The Jefferson Room" attire="Cocktail Attire" isMobile={isMobile} />
+            <ScheduleRow time="9:00 PM" event="Welcome Party" location="Farmington Country Club" attire="Cocktail Attire" isLast isMobile={isMobile} />
 
-          <div style={{ margin: "1.5rem 0", height: 1, background: COLORS.border }} />
+            {dayDivider()}
 
-          {/* Saturday */}
-          <h4 style={{
-            fontSize: "0.8rem",
-            fontWeight: 600,
-            color: COLORS.accent,
-            textTransform: "uppercase",
-            letterSpacing: "0.2em",
-            marginBottom: "0.5rem"
-          }}>
-            Saturday, October 24
-          </h4>
+            {/* Saturday */}
+            <h4 style={{
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              color: COLORS.accent,
+              textTransform: "uppercase",
+              letterSpacing: "0.2em",
+              marginBottom: "0.5rem"
+            }}>
+              Saturday, October 24
+            </h4>
 
-          <ScheduleRow time="5:00 PM" event="Ceremony" detail="Christ Episcopal Church" isMobile={isMobile} />
-          <ScheduleRow time="6:30 PM" event="Cocktail Hour" isMobile={isMobile} />
-          <ScheduleRow time="7:30 PM" event="Reception & Dinner" isMobile={isMobile} />
-          <ScheduleRow time="11:00 PM" event="Late Night" isLast isMobile={isMobile} />
+            <ScheduleRow time="5:00 PM" event="Ceremony" location="Christ Episcopal Church" attire="Black Tie Optional" isMobile={isMobile} />
+            <ScheduleRow time="6:30 PM" event="Cocktail Hour" location="Rosemont Farm" attire="Black Tie Optional" isMobile={isMobile} />
+            <ScheduleRow time="7:30 PM" event="Reception & Dinner" location="Rosemont Farm" attire="Black Tie Optional" isMobile={isMobile} />
+            <ScheduleRow time="11:00 PM" event="Late Night" location="Rosemont Farm" attire="Black Tie Optional" isLast isMobile={isMobile} />
+          </div>
         </div>
       </motion.div>
 
-      {/* Shuttle Information */}
-      <motion.div variants={itemVariants} style={cardStyle}>
-        {sectionTitle("Shuttle Information")}
-        <p style={{ textAlign: "center", fontSize: "1.1rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif" }}>
-          Coming Soon
-        </p>
-      </motion.div>
-
       {/* Travel & Hotels */}
-      <motion.div variants={itemVariants} style={cardStyle}>
+      <motion.div variants={itemVariants} style={plainSectionStyle}>
         {sectionTitle("Travel & Stay")}
-        <div style={{ lineHeight: 1.8, color: COLORS.mediumText, fontSize: "0.95rem" }}>
+        <div style={{ lineHeight: 1.8, color: COLORS.mediumText, fontSize: isMobile ? "0.88rem" : "0.95rem" }}>
           <p style={{ marginBottom: "0.8rem" }}><strong style={{ color: COLORS.darkText }}>Hotels with Room Blocks:</strong></p>
           <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.2rem" }}>
             <li style={{ marginBottom: "0.4rem" }}>
-              <a href="https://www.reservationcounter.com/hotels/show/5fa6aba/boars-head-resort-charlottesville-virginia/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.primary, textDecoration: "underline" }}>
+              <a href="https://be.synxis.com/?Hotel=48984&Chain=10237&arrive=2026-10-23&depart=2026-10-25&adult=1&child=0&group=1281" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.primary, textDecoration: "underline" }}>
                 <strong>Boars Head Resort</strong>
               </a> — More details to follow.
             </li>
@@ -1878,33 +1939,31 @@ function InfoTab({ isMobile, reducedMotion }) {
         </div>
       </motion.div>
 
+      {/* Shuttle Information */}
+      <motion.div variants={itemVariants} style={plainSectionStyle}>
+        {sectionTitle("Shuttle Information")}
+        <p style={{ textAlign: "center", fontSize: "1.1rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif" }}>
+          Coming Soon
+        </p>
+      </motion.div>
+
       {/* Things to Do */}
-      <motion.div variants={itemVariants} style={cardStyle}>
+      <motion.div variants={itemVariants} style={plainSectionStyle}>
         {sectionTitle("Things to Do in Charlottesville")}
-        <p style={{ fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
+        <p style={{ fontSize: isMobile ? "0.84rem" : "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
           <strong style={{ color: COLORS.darkText }}>Dining</strong> — Don't miss Riverside for lunch by the water, Bodo's Bagels for the best bagels in town, and C&O Restaurant for a Charlottesville classic.
         </p>
-        <p style={{ fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
+        <p style={{ fontSize: isMobile ? "0.84rem" : "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
           <strong style={{ color: COLORS.darkText }}>Drinks & Wine</strong> — Charlottesville is wine country! King Family Vineyards, Pippin Hill Farm & Vineyards, and Early Mountain Vineyards are all beautiful. Check out <a href="https://raggedbranch.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Ragged Branch Distillery</a> for Virginia bourbon, and <a href="https://www.prn.beer/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Pro Re Nata Brewery</a> for craft beer. In town, The Whiskey Jar and Coup Deville's are great for a casual drink.
         </p>
-        <p style={{ fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
+        <p style={{ fontSize: isMobile ? "0.84rem" : "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
           <strong style={{ color: COLORS.darkText }}>Shopping</strong> — Stroll the Downtown Mall, a charming pedestrian mall with boutiques and restaurants. Be sure to stop by <a href="https://quattrotizi.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Quattro Tizi</a> at the Dairy Market for men's and women's clothing.
         </p>
-        <p style={{ fontSize: "0.9rem", color: COLORS.mediumText, lineHeight: 1.9 }}>
+        <p style={{ fontSize: isMobile ? "0.84rem" : "0.9rem", color: COLORS.mediumText, lineHeight: 1.9 }}>
           <strong style={{ color: COLORS.darkText }}>Things to See</strong> — Walk the UVA Campus & The Rotunda, visit Monticello, pick apples at Carter Mountain Orchard, or take a day trip to Shenandoah National Park.
         </p>
       </motion.div>
 
-      {/* Dress Code */}
-      <motion.div variants={itemVariants} style={{ ...getSectionCardStyle(isMobile), background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.secondary} 100%)`, textAlign: "center" }}>
-        <h3 style={{ ...sectionTitleStyle, marginBottom: "0.6rem" }}>
-          Dress Code
-        </h3>
-        <p style={{ fontSize: "1.1rem", lineHeight: 1.7, color: COLORS.darkText }}>
-          Black Tie Optional<br />
-          <span style={{ fontSize: "0.9rem", color: COLORS.mediumText }}>The reception will be under a tent with flooring, so guests do not need to plan for grass.</span>
-        </p>
-      </motion.div>
     </motion.div>
   );
 }
@@ -1923,7 +1982,7 @@ function RegistryTab({ isMobile, reducedMotion }) {
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show">
       <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>Registry</motion.h2>
-      <motion.p variants={itemVariants} style={tabSubtitleStyle}>Your presence is the greatest gift</motion.p>
+      <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Your presence is the greatest gift</motion.p>
 
       <motion.div variants={itemVariants} style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : registries.length === 1 ? "minmax(0, 420px)" : "repeat(2, 1fr)", justifyContent: "center", gap: "1.2rem", marginBottom: "2rem" }}>
         {registries.map((r) => (
@@ -2014,11 +2073,11 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show">
       <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>Our Wedding Party</motion.h2>
-      <motion.p variants={itemVariants} style={tabSubtitleStyle}>Meet the amazing people standing by our side. Tap cards to see more.</motion.p>
+      <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Meet the amazing people standing by our side. Tap cards to see more.</motion.p>
 
       {/* BRIDESMAIDS FIRST - "Ladies" */}
       <motion.div variants={itemVariants} style={{ marginBottom: "3rem" }}>
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: COLORS.brideAccent, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
+        <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: PARTY_CARD_THEMES.bride.accent, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif", letterSpacing: "0.03em" }}>
           Ladies
         </h3>
         <div style={{ display: "flex", flexDirection: "column", gap: "clamp(0.8rem, 2vw, 1.2rem)" }}>
@@ -2028,6 +2087,7 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
               initial={reducedMotion ? false : { opacity: 0, y: 14 }}
               animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               transition={reducedMotion ? { duration: 0 } : { delay: 0.03 * index, duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              style={{ position: "relative", overflow: "visible", margin: "0 -0.45rem" }}
             >
               <BridesmaidCard person={p} />
             </motion.div>
@@ -2037,7 +2097,7 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
 
       {/* GROOMSMEN SECOND - "Lads" */}
       <motion.div variants={itemVariants}>
-        <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: COLORS.groomAccent, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif" }}>
+        <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center", color: PARTY_CARD_THEMES.groom.accent, fontWeight: 400, fontFamily: "'Cormorant Garamond', serif", letterSpacing: "0.03em" }}>
           Lads
         </h3>
         <div style={{ display: "flex", flexDirection: "column", gap: "clamp(0.8rem, 2vw, 1.2rem)" }}>
@@ -2047,6 +2107,7 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
               initial={reducedMotion ? false : { opacity: 0, y: 14 }}
               animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               transition={reducedMotion ? { duration: 0 } : { delay: 0.04 * index, duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              style={{ position: "relative", overflow: "visible", margin: "0 -0.45rem" }}
             >
               <GroomCard person={p} />
             </motion.div>
@@ -2063,9 +2124,12 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
 
 const GroomCard = React.memo(({ person }) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [isFlipAnimating, setIsFlipAnimating] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const color = COLORS.groomAccent;
+  const theme = PARTY_CARD_THEMES.groom;
+  const color = theme.accent;
   const photos = (person.photos || []).filter(Boolean);
+  const isRaised = isFlipped || isFlipAnimating;
 
   const nextPhoto = (e) => {
     e.stopPropagation();
@@ -2073,14 +2137,31 @@ const GroomCard = React.memo(({ person }) => {
     setPhotoIndex((i) => (i + 1) % photos.length);
   };
 
+  const handleFlip = () => {
+    setIsFlipAnimating(true);
+    setIsFlipped((prev) => !prev);
+  };
+
+  useEffect(() => {
+    if (!isFlipAnimating) return undefined;
+    const timer = window.setTimeout(() => setIsFlipAnimating(false), CARD_FLIP_DURATION_MS);
+    return () => window.clearTimeout(timer);
+  }, [isFlipAnimating, isFlipped]);
+
   return (
     <div
       style={{
         width: "100%",
         perspective: 1200,
-        cursor: "pointer"
+        cursor: "pointer",
+        position: "relative",
+        zIndex: isRaised ? 30 : 1,
+        overflow: "visible",
+        padding: "0 0.8rem",
+        boxSizing: "border-box",
+        isolation: "isolate"
       }}
-      onClick={() => setIsFlipped(!isFlipped)}
+      onClick={handleFlip}
     >
       <div
         style={{
@@ -2088,7 +2169,11 @@ const GroomCard = React.memo(({ person }) => {
           width: "100%",
           transformStyle: "preserve-3d",
           transition: "transform 0.6s ease",
-          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
+          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          transformOrigin: "center center",
+          willChange: "transform",
+          overflow: "visible",
+          zIndex: isRaised ? 2 : 1
         }}
       >
         {/* FRONT FACE */}
@@ -2098,9 +2183,8 @@ const GroomCard = React.memo(({ person }) => {
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             background: COLORS.cardBg,
-            borderRadius: "clamp(10px, 1.5vw, 14px)",
-            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
-            borderTop: `4px solid ${color}`,
+            borderRadius: "clamp(9px, 1.35vw, 12px)",
+            boxShadow: "0 8px 24px rgba(44,36,32,0.07), inset 0 1px 0 rgba(255,255,255,0.78)",
             border: `1px solid ${COLORS.border}`,
             overflow: "hidden",
             display: "flex",
@@ -2116,6 +2200,7 @@ const GroomCard = React.memo(({ person }) => {
               flexShrink: 0,
               alignSelf: "stretch",
               background: photos[photoIndex] ? `url(${photos[photoIndex]}) center center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
+              borderRight: `1px solid ${COLORS.border}`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -2150,7 +2235,8 @@ const GroomCard = React.memo(({ person }) => {
               color,
               fontWeight: 600,
               marginBottom: "clamp(0.15rem, 0.35vw, 0.3rem)",
-              fontSize: "clamp(0.82rem, 1.55vw, 1.05rem)"
+              fontSize: "clamp(0.82rem, 1.55vw, 1.05rem)",
+              letterSpacing: "0.02em"
             }}>
               {person.role}
             </p>
@@ -2181,8 +2267,8 @@ const GroomCard = React.memo(({ person }) => {
             WebkitBackfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
             background: COLORS.cardBg,
-            borderRadius: "clamp(10px, 1.5vw, 14px)",
-            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
+            borderRadius: "clamp(9px, 1.35vw, 12px)",
+            boxShadow: "0 8px 24px rgba(44,36,32,0.07), inset 0 1px 0 rgba(255,255,255,0.78)",
             border: `1px solid ${COLORS.border}`,
             padding: "clamp(0.8rem, 1.5vw, 1.15rem)",
             display: "flex",
@@ -2209,22 +2295,10 @@ const GroomCard = React.memo(({ person }) => {
             marginBottom: "clamp(0.5rem, 1vw, 0.75rem)",
             fontSize: "clamp(0.72rem, 1.2vw, 0.92rem)"
           }}>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.52rem, 0.85vw, 0.68rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Bench</div>
-              <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.maxBench}</div>
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.52rem, 0.85vw, 0.68rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>40-Yard</div>
-              <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.fortyYard}</div>
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.52rem, 0.85vw, 0.68rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Handicap</div>
-              <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.handicap}</div>
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ color: COLORS.lightText, fontSize: "clamp(0.52rem, 0.85vw, 0.68rem)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Status</div>
-              <div style={{ fontWeight: 600, color: COLORS.darkText }}>{person.relationshipStatus}</div>
-            </div>
+            <StatCell label="Bench" value={person.maxBench} color={color} background={COLORS.cream} borderColor={COLORS.border} labelColor={COLORS.lightText} />
+            <StatCell label="40-Yard" value={person.fortyYard} color={color} background={COLORS.cream} borderColor={COLORS.border} labelColor={COLORS.lightText} />
+            <StatCell label="Handicap" value={person.handicap} color={color} background={COLORS.cream} borderColor={COLORS.border} labelColor={COLORS.lightText} />
+            <StatCell label="Status" value={person.relationshipStatus} color={color} background={COLORS.cream} borderColor={COLORS.border} labelColor={COLORS.lightText} />
           </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(0.35rem, 0.75vw, 0.55rem)", fontSize: "clamp(0.66rem, 1vw, 0.8rem)", color: COLORS.mediumText, marginBottom: "clamp(0.45rem, 0.9vw, 0.7rem)", flexWrap: "wrap", textAlign: "center" }}>
             {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: 16, height: 16, objectFit: "contain" }} />}
@@ -2259,9 +2333,12 @@ const GroomCard = React.memo(({ person }) => {
 
 const BridesmaidCard = React.memo(({ person }) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [isFlipAnimating, setIsFlipAnimating] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const color = COLORS.brideAccent;
+  const theme = PARTY_CARD_THEMES.bride;
+  const color = theme.accent;
   const photos = (person.photos || []).filter(Boolean);
+  const isRaised = isFlipped || isFlipAnimating;
 
   const nextPhoto = (e) => {
     e.stopPropagation();
@@ -2269,14 +2346,31 @@ const BridesmaidCard = React.memo(({ person }) => {
     setPhotoIndex((i) => (i + 1) % photos.length);
   };
 
+  const handleFlip = () => {
+    setIsFlipAnimating(true);
+    setIsFlipped((prev) => !prev);
+  };
+
+  useEffect(() => {
+    if (!isFlipAnimating) return undefined;
+    const timer = window.setTimeout(() => setIsFlipAnimating(false), CARD_FLIP_DURATION_MS);
+    return () => window.clearTimeout(timer);
+  }, [isFlipAnimating, isFlipped]);
+
   return (
     <div
       style={{
         width: "100%",
         perspective: 1200,
-        cursor: "pointer"
+        cursor: "pointer",
+        position: "relative",
+        zIndex: isRaised ? 30 : 1,
+        overflow: "visible",
+        padding: "0 0.8rem",
+        boxSizing: "border-box",
+        isolation: "isolate"
       }}
-      onClick={() => setIsFlipped(!isFlipped)}
+      onClick={handleFlip}
     >
       <div
         style={{
@@ -2284,7 +2378,11 @@ const BridesmaidCard = React.memo(({ person }) => {
           width: "100%",
           transformStyle: "preserve-3d",
           transition: "transform 0.6s ease",
-          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)"
+          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          transformOrigin: "center center",
+          willChange: "transform",
+          overflow: "visible",
+          zIndex: isRaised ? 2 : 1
         }}
       >
         {/* FRONT FACE */}
@@ -2294,9 +2392,8 @@ const BridesmaidCard = React.memo(({ person }) => {
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             background: COLORS.cardBg,
-            borderRadius: "clamp(10px, 1.5vw, 14px)",
-            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
-            borderTop: `4px solid ${color}`,
+            borderRadius: "clamp(9px, 1.35vw, 12px)",
+            boxShadow: "0 8px 24px rgba(44,36,32,0.07), inset 0 1px 0 rgba(255,255,255,0.78)",
             border: `1px solid ${COLORS.border}`,
             overflow: "hidden",
             display: "flex",
@@ -2312,6 +2409,7 @@ const BridesmaidCard = React.memo(({ person }) => {
               flexShrink: 0,
               alignSelf: "stretch",
               background: photos[photoIndex] ? `url(${photos[photoIndex]}) center center/cover` : `linear-gradient(135deg, ${color}, ${color}dd)`,
+              borderRight: `1px solid ${COLORS.border}`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -2346,7 +2444,8 @@ const BridesmaidCard = React.memo(({ person }) => {
               color,
               fontWeight: 600,
               marginBottom: "clamp(0.15rem, 0.35vw, 0.3rem)",
-              fontSize: "clamp(0.82rem, 1.55vw, 1.05rem)"
+              fontSize: "clamp(0.82rem, 1.55vw, 1.05rem)",
+              letterSpacing: "0.02em"
             }}>
               {person.role}
             </p>
@@ -2377,8 +2476,8 @@ const BridesmaidCard = React.memo(({ person }) => {
             WebkitBackfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
             background: COLORS.cardBg,
-            borderRadius: "clamp(10px, 1.5vw, 14px)",
-            boxShadow: "0 4px 20px rgba(44,36,32,0.08)",
+            borderRadius: "clamp(9px, 1.35vw, 12px)",
+            boxShadow: "0 8px 24px rgba(44,36,32,0.07), inset 0 1px 0 rgba(255,255,255,0.78)",
             border: `1px solid ${COLORS.border}`,
             padding: "clamp(0.8rem, 1.5vw, 1.15rem)",
             display: "flex",
@@ -2399,11 +2498,11 @@ const BridesmaidCard = React.memo(({ person }) => {
             {person.backName}
           </h3>
           <div style={{ display: "grid", gridTemplateColumns: "max-content 1fr", rowGap: "0.35rem", columnGap: "0.55rem", fontSize: "clamp(0.68rem, 1.05vw, 0.82rem)", color: COLORS.mediumText, marginBottom: "clamp(0.45rem, 0.9vw, 0.7rem)", lineHeight: 1.5, alignItems: "start" }}>
-            <span style={{ color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.06em" }}>College</span>
+            <span style={{ color, textTransform: "uppercase", letterSpacing: "0.06em" }}>College</span>
             <span>{person.college}</span>
-            <span style={{ color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.06em" }}>Drink</span>
+            <span style={{ color, textTransform: "uppercase", letterSpacing: "0.06em" }}>Drink</span>
             <span style={{ color }}>{person.favoriteDrink || "TBD"}</span>
-            <span style={{ color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.06em" }}>Anthem</span>
+            <span style={{ color, textTransform: "uppercase", letterSpacing: "0.06em" }}>Anthem</span>
             <span>{person.danceFloorSong || "TBD"}</span>
           </div>
           <p style={{
