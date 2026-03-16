@@ -5,7 +5,6 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import heroImage from "./assets/hero.jpg";
-import scrollImage from "./assets/scroll2.png";
 import { clickCountRef, hoosierCountRef, onValue, runTransaction } from "./firebase";
 
 // Import team logos
@@ -92,7 +91,7 @@ const MENDOZA_IMAGE =
   "https://commons.wikimedia.org/wiki/Special:FilePath/Fernando_Mendoza.jpg";
 const HOOSIERS_TROPHY_IMAGE =
   "https://commons.wikimedia.org/wiki/Special:FilePath/2023-0109-CFPtitlegame-Stetson_Bennett_Trophy.jpg";
-const GOLF_FORM_URL = "";
+const GOLF_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc05xidXMl9XIGrUmGwN7IqLgqHv727BPUUq3r4118eVUyi-Q/viewform?usp=publish-editor";
 const CARD_FLIP_DURATION_MS = 650;
 
 const INDIANA_CANDY_STRIPE = `repeating-linear-gradient(
@@ -1808,12 +1807,11 @@ function InfoTab({ isMobile, reducedMotion }) {
   };
   const schedulePaperStyle = {
     position: "relative",
-    backgroundColor: COLORS.bg,
-    backgroundImage: `url(${scrollImage})`,
-    backgroundPosition: "60% top",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: isMobile ? "108% 100%" : "106% 100%",
-    padding: isMobile ? "6.35rem 1.1rem 3.75rem" : "8.2rem 2.15rem 5rem",
+    background: "linear-gradient(180deg, #fdfbf7 0%, #faf7f1 45%, #f6f1e8 100%)",
+    border: "1px solid rgba(197, 165, 90, 0.18)",
+    borderRadius: isMobile ? 18 : 22,
+    boxShadow: "0 18px 38px rgba(44,36,32,0.08), inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(181,160,138,0.16)",
+    padding: isMobile ? "2.1rem 1rem 2rem" : "2.6rem 2rem 2.45rem",
     marginBottom: "1.7rem",
     overflow: "hidden"
   };
@@ -1843,6 +1841,69 @@ function InfoTab({ isMobile, reducedMotion }) {
 
       {/* Weekend Schedule */}
       <motion.div variants={itemVariants} style={schedulePaperStyle}>
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: `
+              radial-gradient(circle at 16% 14%, rgba(255,255,255,0.4), transparent 26%),
+              radial-gradient(circle at 82% 84%, rgba(156, 126, 88, 0.05), transparent 22%),
+              linear-gradient(90deg, rgba(201,171,132,0.08) 0%, transparent 8%, transparent 92%, rgba(201,171,132,0.08) 100%)
+            `,
+            pointerEvents: "none"
+          }}
+        />
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: "8px",
+            border: "1px solid rgba(182, 153, 118, 0.12)",
+            borderRadius: isMobile ? 14 : 18,
+            pointerEvents: "none"
+          }}
+        />
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: isMobile ? 14 : 18,
+            left: isMobile ? 24 : 34,
+            right: isMobile ? 24 : 34,
+            display: "flex",
+            alignItems: "center",
+            gap: isMobile ? "0.45rem" : "0.65rem",
+            opacity: 0.75,
+            pointerEvents: "none"
+          }}
+        >
+          <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, transparent, rgba(197,165,90,0.45))" }} />
+          <div style={{ width: 7, height: 7, border: "1px solid rgba(197,165,90,0.65)", transform: "rotate(45deg)" }} />
+          <div style={{ width: isMobile ? 22 : 30, height: 1, background: "rgba(197,165,90,0.65)" }} />
+          <div style={{ width: 7, height: 7, border: "1px solid rgba(197,165,90,0.65)", transform: "rotate(45deg)" }} />
+          <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, rgba(197,165,90,0.45), transparent)" }} />
+        </div>
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            bottom: isMobile ? 14 : 18,
+            left: isMobile ? 24 : 34,
+            right: isMobile ? 24 : 34,
+            display: "flex",
+            alignItems: "center",
+            gap: isMobile ? "0.45rem" : "0.65rem",
+            opacity: 0.75,
+            pointerEvents: "none"
+          }}
+        >
+          <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, transparent, rgba(197,165,90,0.45))" }} />
+          <div style={{ width: 7, height: 7, border: "1px solid rgba(197,165,90,0.65)", transform: "rotate(45deg)" }} />
+          <div style={{ width: isMobile ? 22 : 30, height: 1, background: "rgba(197,165,90,0.65)" }} />
+          <div style={{ width: 7, height: 7, border: "1px solid rgba(197,165,90,0.65)", transform: "rotate(45deg)" }} />
+          <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, rgba(197,165,90,0.45), transparent)" }} />
+        </div>
         <div
           style={{
             position: "relative",
@@ -1875,9 +1936,9 @@ function InfoTab({ isMobile, reducedMotion }) {
               Friday, October 23
             </h4>
 
-            <ScheduleRow time="TBD" event="Scramble Golf Tournament" location="Birdwood Golf Club" note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} isMobile={isMobile} />
-            <ScheduleRow time="TBD" event="Rehearsal Dinner" location="Farmington Country Club | The Jefferson Room" attire="Cocktail Attire" isMobile={isMobile} />
-            <ScheduleRow time="9:00 PM" event="Welcome Party" location="Farmington Country Club" attire="Cocktail Attire" isLast isMobile={isMobile} />
+            <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location="Birdwood Golf Club" note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} isMobile={isMobile} />
+            <ScheduleRow time="6:30 PM" event="Rehearsal Dinner" location="Farmington Country Club - The Jefferson Room" attire="Cocktail Attire" isMobile={isMobile} />
+            <ScheduleRow time="9:00 PM" event="Welcome Party" location="Farmington Country Club - The Blue Ridge Room" attire="Cocktail Attire" isLast isMobile={isMobile} />
 
             {dayDivider()}
 
@@ -1896,7 +1957,7 @@ function InfoTab({ isMobile, reducedMotion }) {
             <ScheduleRow time="5:00 PM" event="Ceremony" location="Christ Episcopal Church" attire="Black Tie Optional" isMobile={isMobile} />
             <ScheduleRow time="6:30 PM" event="Cocktail Hour" location="Rosemont Farm" attire="Black Tie Optional" isMobile={isMobile} />
             <ScheduleRow time="7:30 PM" event="Reception & Dinner" location="Rosemont Farm" attire="Black Tie Optional" isMobile={isMobile} />
-            <ScheduleRow time="11:00 PM" event="Late Night" location="Rosemont Farm" attire="Black Tie Optional" isLast isMobile={isMobile} />
+            <ScheduleRow time="11:00 PM" event="Late Night" location="Rosemont Farm" attire="" isLast isMobile={isMobile} />
           </div>
         </div>
       </motion.div>
