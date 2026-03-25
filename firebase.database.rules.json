@@ -1,0 +1,56 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": false,
+    "clickCount": {
+      ".write": true,
+      ".validate": "newData.isNumber() && newData.val() >= 0"
+    },
+    "goHoosiersCount": {
+      ".write": true,
+      ".validate": "newData.isNumber() && newData.val() >= 0"
+    },
+    "deepTracks": {
+      "$photoId": {
+        "likes": {
+          ".write": true,
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "comments": {
+          "$commentId": {
+            ".write": true,
+            ".validate": "newData.hasChildren(['text', 'ts']) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 280 && newData.child('ts').isNumber()"
+          }
+        }
+      }
+    },
+    "goofyLikes": {
+      "$photoId": {
+        ".write": true,
+        ".validate": "newData.isNumber() && newData.val() >= 0"
+      }
+    },
+    "goofyComments": {
+      "$photoId": {
+        "$commentId": {
+          ".write": true,
+          ".validate": "newData.hasChildren(['text', 'ts']) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 280 && newData.child('ts').isNumber()"
+        }
+      }
+    },
+    "hoosierLikes": {
+      "$photoId": {
+        ".write": true,
+        ".validate": "newData.isNumber() && newData.val() >= 0"
+      }
+    },
+    "hoosierComments": {
+      "$photoId": {
+        "$commentId": {
+          ".write": true,
+          ".validate": "newData.hasChildren(['text', 'ts']) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 280 && newData.child('ts').isNumber()"
+        }
+      }
+    }
+  }
+}

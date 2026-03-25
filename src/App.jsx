@@ -5,7 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import heroImage from "./assets/hero.jpg";
-import { clickCountRef, hoosierCountRef, onValue, runTransaction } from "./firebase";
+import { clickCountRef, hoosierCountRef, deepTrackRef, deepTrackLikesRef, deepTrackCommentsRef, onValue, runTransaction, push } from "./firebase";
 
 // Import team logos
 import bears from "./assets/bears.png";
@@ -46,6 +46,8 @@ const courtneyPhotos = globToArray(import.meta.glob("./assets/courtney/*", { eag
 const addisonPhotos = globToArray(import.meta.glob("./assets/addison/*", { eager: true }));
 const lilyPhotos = globToArray(import.meta.glob("./assets/lily/*", { eager: true }));
 const mariaPhotos = globToArray(import.meta.glob("./assets/maria/*", { eager: true }));
+const goofyPhotos = globToArray(import.meta.glob("./assets/goofy/*", { eager: true }));
+const hoosierPhotos = globToArray(import.meta.glob("./assets/hoosiers/*", { eager: true }));
 const maddiePhotos = globToArray(import.meta.glob("./assets/maddie/*", { eager: true }));
 
 // Toggle RSVP form visibility (set to true when invites are sent)
@@ -83,16 +85,20 @@ const PARTY_CARD_THEMES = {
   }
 };
 
-const IU_LOGO_IMAGE =
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Indiana_Hoosiers_logo.svg";
-const CIGNETTI_IMAGE =
-  "https://commons.wikimedia.org/wiki/Special:FilePath/2026-0117_Curt_Cignetti.jpeg";
-const MENDOZA_IMAGE =
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Fernando_Mendoza.jpg";
-const HOOSIERS_TROPHY_IMAGE =
-  "https://commons.wikimedia.org/wiki/Special:FilePath/2023-0109-CFPtitlegame-Stetson_Bennett_Trophy.jpg";
+import iuLogo from "./assets/IU.png";
+const IU_LOGO_IMAGE = iuLogo;
 const GOLF_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc05xidXMl9XIGrUmGwN7IqLgqHv727BPUUq3r4118eVUyi-Q/viewform?usp=publish-editor";
 const CARD_FLIP_DURATION_MS = 650;
+const CELEBRATE_BUTTON_TEXT = "Can't Wait!";
+const HOOSIER_BUTTON_TEXT = "Go Hoosiers!";
+const HOLD_COLOR_START_MS = 1500;
+const HOLD_MORPH_START_MS = 3000;
+const HOLD_MORPH_DURATION_MS = 4000;
+const HOLD_MORPH_HOLD_MS = 3000;
+const HOLD_FINALE_START_MS = HOLD_MORPH_START_MS + HOLD_MORPH_DURATION_MS;
+const HOLD_FINALE_DURATION_MS = HOLD_MORPH_HOLD_MS;
+const HOLD_REVEAL_MS = HOLD_MORPH_START_MS + HOLD_MORPH_DURATION_MS + HOLD_MORPH_HOLD_MS;
+const HOLD_COLOR_DURATION_MS = HOLD_REVEAL_MS - HOLD_COLOR_START_MS;
 
 const INDIANA_CANDY_STRIPE = `repeating-linear-gradient(
   90deg,
@@ -533,368 +539,916 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
   );
 }
 
-function HoosiersOverlay({ isVisible, isMobile, reducedMotion, hoosierCount, onClose, onGoHoosiers }) {
+// Captions for goofy photos — update to match your photos
+const GOOFY_CAPTIONS = [
+  "Looking good, you two",
+  "Absolutely iconic",
+  "This is peak romance",
+  "Frame-worthy moment",
+  "Can't stop, won't stop",
+  "Goals tbh",
+  "Main characters",
+  "No notes",
+  "Unhinged and in love",
+  "Certified goofballs"
+];
+
+// Phase constants
+const PHASE_SECRET = 0;    // "Congratulations you found our secret stash..."
+const PHASE_TRANSITION = 1; // "Enjoy some deep tracks of Bemily..."
+const PHASE_FEED = 2;       // Instagram-style goofy photo feed
+
+const formatCommentTimestamp = (timestamp) => {
+  if (typeof timestamp !== "number") return "";
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const hours24 = date.getHours();
+  const hours12 = hours24 % 12 || 12;
+  const month = new Intl.DateTimeFormat("en-US", { month: "short" }).format(date);
+
+  return `${String(hours12).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}:${String(date.getSeconds()).padStart(2, "0")} ${hours24 >= 12 ? "pm" : "am"} ${String(date.getDate()).padStart(2, "0")} ${month} ${date.getFullYear()}`;
+};
+
+// Word-by-word sparkle text — words stay together, letters animate in, sparkles track new letters
+const SparkleText = ({ text, onComplete, isMobile }) => {
+  const chars = text.split("");
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [sparkles, setSparkles] = useState([]);
+  const [done, setDone] = useState(false);
+  const charRefs = useRef([]);
+
+  useEffect(() => {
+    if (visibleCount >= chars.length) {
+      setDone(true);
+      return;
+    }
+    const timer = setTimeout(() => {
+      setVisibleCount((c) => c + 1);
+      // Spawn sparkle near the newly revealed character
+      const el = charRefs.current[visibleCount];
+      if (el && Math.random() > 0.35) {
+        const rect = el.getBoundingClientRect();
+        setSparkles((prev) => [...prev.slice(-8), {
+          id: Date.now() + Math.random(),
+          x: rect.left + rect.width / 2 + (Math.random() * 16 - 8),
+          y: rect.top + rect.height / 2 + (Math.random() * 12 - 6)
+        }]);
+      }
+    }, 38);
+    return () => clearTimeout(timer);
+  }, [visibleCount, chars.length]);
+
+  // Split into words, render each word as a nowrap span
+  const words = text.split(" ");
+  let charIndex = 0;
+
+  return (
+    <div style={{ position: "relative", display: "block", width: "100%", maxWidth: "100%", textAlign: "center" }}>
+      <span style={{
+        fontFamily: "'Cormorant Garamond', serif",
+        display: "inline-flex",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        columnGap: "0.35ch",
+        rowGap: isMobile ? "0.1em" : "0.14em",
+        fontSize: isMobile ? "1.5rem" : "2.2rem",
+        fontStyle: "italic",
+        fontWeight: 400,
+        color: COLORS.darkText,
+        lineHeight: 1.6,
+        width: "100%",
+        maxWidth: isMobile ? "14ch" : "18ch",
+        textAlign: "center"
+      }}>
+        {words.map((word, wi) => {
+          const wordChars = word.split("");
+          const startIdx = charIndex;
+          charIndex += word.length + 1; // +1 for space
+          return (
+            <span key={wi} style={{ display: "inline-flex", whiteSpace: "nowrap" }}>
+              {wordChars.map((char, ci) => {
+                const idx = startIdx + ci;
+                return (
+                  <motion.span
+                    key={idx}
+                    ref={(el) => { charRefs.current[idx] = el; }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={idx < visibleCount ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                    transition={{ duration: 0.15 }}
+                    style={{ display: "inline-block" }}
+                  >
+                    {char}
+                  </motion.span>
+                );
+              })}
+            </span>
+          );
+        })}
+      </span>
+      {sparkles.map((s) => (
+        <motion.span
+          key={s.id}
+          initial={{ opacity: 1, scale: 0 }}
+          animate={{ opacity: 0, scale: 1.5, y: -20 }}
+          transition={{ duration: 0.6 }}
+          style={{
+            position: "fixed",
+            left: s.x,
+            top: s.y,
+            fontSize: "0.85rem",
+            pointerEvents: "none",
+            color: COLORS.accent
+          }}
+        >
+          ✦
+        </motion.span>
+      ))}
+      {/* Tap to continue — appears after text is fully revealed */}
+      {done && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          onClick={onComplete}
+          style={{
+            marginTop: "2rem",
+            textAlign: "center",
+            cursor: "pointer"
+          }}
+        >
+          <span style={{
+            fontSize: isMobile ? "0.72rem" : "0.8rem",
+            color: COLORS.lightText,
+            fontStyle: "italic",
+            letterSpacing: "0.05em"
+          }}>
+            Tap to continue
+          </span>
+          <motion.div
+            animate={{ y: [0, 4, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5 }}
+            style={{ fontSize: "0.7rem", color: COLORS.lightText, marginTop: 4 }}
+          >
+            ▼
+          </motion.div>
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
+function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealHoosiers, onGoHoosiers }) {
+  const [phase, setPhase] = useState(PHASE_SECRET);
+  const [secretFading, setSecretFading] = useState(false);  // secret text fading out
+  const [goHoosiersVisible, setGoHoosiersVisible] = useState(false); // Go Hoosiers slam-in
+  const [hoosierSlideIndex, setHoosierSlideIndex] = useState(0);
+  const [slideshowStarted, setSlideshowStarted] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [likes, setLikes] = useState({});
+  const [comments, setComments] = useState({});
+  const [commentText, setCommentText] = useState("");
+  const [transitionStep, setTransitionStep] = useState(0);
+  const [showHeart, setShowHeart] = useState(false);
+  const heartTimerRef = useRef(null);
+  const hoosierTimerRef = useRef(null);
+
+  // Reset phase when overlay opens
+  useEffect(() => {
+    if (isVisible) {
+      setPhase(PHASE_SECRET);
+      setSecretFading(false);
+      setGoHoosiersVisible(false);
+      setSlideshowStarted(false);
+      setSlideshowDone(false);
+      setTransitionStep(0);
+      setHoosierSlideIndex(0);
+      setPhotoIndex(0);
+    }
+    return () => { if (hoosierTimerRef.current) clearInterval(hoosierTimerRef.current); };
+  }, [isVisible]);
+
+  // Secret text done -> fade out -> Go Hoosiers slam
+  const handleSecretComplete = () => {
+    setSecretFading(true);
+    setTimeout(() => {
+      setGoHoosiersVisible(true);
+      onRevealHoosiers();
+    }, 800);
+  };
+
+  const [slideshowDone, setSlideshowDone] = useState(false);
+
+  // Auto-advance hoosier slideshow when started
+  useEffect(() => {
+    if (phase !== PHASE_SECRET || !slideshowStarted) return;
+    if (hoosierPhotos.length === 0) return; // "Tap to continue" shown directly
+    hoosierTimerRef.current = setInterval(() => {
+      setHoosierSlideIndex((prev) => {
+        const next = prev + 1;
+        if (next >= hoosierPhotos.length) {
+          clearInterval(hoosierTimerRef.current);
+          setSlideshowDone(true);
+          return prev;
+        }
+        return next;
+      });
+    }, 4000);
+    return () => { if (hoosierTimerRef.current) clearInterval(hoosierTimerRef.current); };
+  }, [phase, slideshowStarted]);
+
+  // Listen for likes & comments on goofy photos
+  useEffect(() => {
+    if (!isVisible || goofyPhotos.length === 0) return;
+    const unsubs = [];
+    goofyPhotos.forEach((_, i) => {
+      unsubs.push(onValue(deepTrackRef(i), (snap) => {
+        const val = snap.val() || {};
+        const nextComments = val.comments
+          ? Object.entries(val.comments)
+            .map(([id, comment]) => ({
+              id,
+              text: typeof comment?.text === "string" ? comment.text : "",
+              ts: typeof comment?.ts === "number" ? comment.ts : 0
+            }))
+            .filter((comment) => comment.text.trim().length > 0)
+            .sort((a, b) => a.ts - b.ts)
+          : [];
+        setLikes((prev) => ({ ...prev, [i]: typeof val.likes === "number" ? val.likes : 0 }));
+        setComments((prev) => ({ ...prev, [i]: nextComments }));
+      }));
+    });
+    return () => unsubs.forEach((u) => typeof u === "function" && u());
+  }, [isVisible]);
+
   if (!isVisible) return null;
+
+  // Tap left/right to navigate hoosier slideshow
+  const handleHoosierPhotoTap = (e) => {
+    if (hoosierTimerRef.current) clearInterval(hoosierTimerRef.current);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clientX = e.clientX || (e.touches && e.touches[0]?.clientX) || 0;
+    const tapRight = (clientX - rect.left) > rect.width * 0.5;
+    setHoosierSlideIndex((prev) => {
+      if (tapRight) {
+        const next = prev + 1;
+        if (next >= hoosierPhotos.length) { setSlideshowDone(true); return prev; }
+        return next;
+      }
+      return Math.max(0, prev - 1);
+    });
+    // Restart auto-advance
+    hoosierTimerRef.current = setInterval(() => {
+      setHoosierSlideIndex((p) => {
+        const n = p + 1;
+        if (n >= hoosierPhotos.length) { clearInterval(hoosierTimerRef.current); setSlideshowDone(true); return p; }
+        return n;
+      });
+    }, 4000);
+  };
+
+  const doLike = () => {
+    runTransaction(deepTrackLikesRef(photoIndex), (current) => (current || 0) + 1);
+    setShowHeart(true);
+    if (heartTimerRef.current) clearTimeout(heartTimerRef.current);
+    heartTimerRef.current = setTimeout(() => setShowHeart(false), 900);
+  };
+
+  const goToPrevGoofyPhoto = () => {
+    setPhotoIndex((prev) => Math.max(0, prev - 1));
+  };
+
+  const goToNextGoofyPhoto = () => {
+    setPhotoIndex((prev) => Math.min(goofyPhotos.length - 1, prev + 1));
+  };
+
+  const handleSubmitComment = (e) => {
+    e.preventDefault();
+    const text = commentText.replace(/\s+/g, " ").trim();
+    if (!text) return;
+    push(deepTrackCommentsRef(photoIndex), { text, ts: Date.now() });
+    setCommentText("");
+  };
+
+  const handleLogoClick = (event) => {
+    event.stopPropagation();
+    const rect = event.currentTarget.getBoundingClientRect();
+    const origin = {
+      x: Math.min(0.92, Math.max(0.08, (rect.left + rect.width / 2) / window.innerWidth)),
+      y: Math.min(0.88, Math.max(0.12, (rect.top + rect.height / 2) / window.innerHeight))
+    };
+    if (!slideshowStarted) {
+      setHoosierSlideIndex(0);
+      setSlideshowDone(false);
+      setSlideshowStarted(true);
+    }
+    onGoHoosiers(origin);
+  };
+
+  const overlayBase = {
+    position: "fixed",
+    inset: 0,
+    zIndex: 170,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center"
+  };
+
+  const backButton = (
+    <button
+      onClick={(e) => { e.stopPropagation(); onClose(); }}
+      style={{
+        position: "fixed",
+        top: isMobile ? 16 : 22,
+        right: isMobile ? 16 : 22,
+        zIndex: 20,
+        border: `1px solid ${COLORS.border}`,
+        background: "rgba(255,255,255,0.85)",
+        color: COLORS.darkText,
+        padding: "0.55rem 0.9rem",
+        borderRadius: 999,
+        cursor: "pointer",
+        fontSize: "0.72rem",
+        letterSpacing: "0.06em",
+        textTransform: "uppercase",
+        fontWeight: 500,
+        backdropFilter: "blur(10px)"
+      }}
+    >
+      Back
+    </button>
+  );
+
+  // PHASE 0: Secret text -> fade -> Go Hoosiers slam -> slideshow (all one phase)
+  if (phase === PHASE_SECRET) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        style={{
+          ...overlayBase,
+          background: goHoosiersVisible
+            ? `linear-gradient(180deg, rgba(249,245,240,0.92), rgba(255,255,255,0.95)), ${INDIANA_CANDY_STRIPE}`
+            : COLORS.bg,
+          backgroundSize: "100% 100%, 40px 100%",
+          transition: "background 0.6s ease",
+          overflowY: "auto"
+        }}
+      >
+        {backButton}
+
+        {/* Secret text — fades out */}
+        <AnimatePresence>
+          {!secretFading && (
+            <motion.div
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.6 }}
+              style={{ textAlign: "center", padding: "2rem", maxWidth: 520, position: "absolute", zIndex: 2 }}
+            >
+              <SparkleText
+                text="Congratulations, you've discovered our secret stash...!"
+                isMobile={isMobile}
+                onComplete={handleSecretComplete}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Go Hoosiers slam-in */}
+        <AnimatePresence>
+          {goHoosiersVisible && (
+            <motion.div
+              initial={{ scale: 0.3, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                textAlign: "center",
+                position: "relative",
+                zIndex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                width: "100%",
+                maxWidth: 540,
+                padding: "0 1rem"
+              }}
+            >
+              {/* Let's Go / HOOSIERS! */}
+              <motion.h2
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.1, duration: 0.5, type: "spring", stiffness: 200, damping: 15 }}
+                style={{
+                  fontFamily: "'Archivo Black', 'Impact', sans-serif",
+                  color: COLORS.indianaCrimson,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.03em",
+                  margin: 0,
+                  lineHeight: 1
+                }}
+              >
+                <span style={{ fontSize: isMobile ? "2rem" : "3.5rem", display: "block", fontWeight: 400 }}>Let's Go</span>
+                <span style={{ fontSize: isMobile ? "3.8rem" : "6.5rem", display: "block", fontWeight: 900 }}>Hoosiers!</span>
+              </motion.h2>
+
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35, duration: 0.4 }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: isMobile ? "0.12rem" : "0.18rem",
+                  marginTop: "0.5rem",
+                  marginBottom: "0.8rem"
+                }}
+              >
+                {["16-0", "2026 B1G Champions", "2026 National Champions"].map((line, index) => (
+                  <div
+                    key={line}
+                    style={{
+                      color: COLORS.indianaCrimson,
+                      fontSize: isMobile ? "0.72rem" : "0.88rem",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      fontWeight: index === 0 ? 800 : 700,
+                      lineHeight: 1.15
+                    }}
+                  >
+                    {line}
+                  </div>
+                ))}
+              </motion.div>
+
+              {/* Clickable IU logo + count */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.3 }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.35rem",
+                  marginBottom: "0.9rem"
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: isMobile ? "0.45rem" : "0.65rem"
+                  }}
+                >
+                  <span style={{ fontSize: isMobile ? "0.84rem" : "0.98rem", color: COLORS.mediumText, fontWeight: 600 }}>
+                    {hoosierCount.toLocaleString()} Hoo Hoo Hoosiers!
+                  </span>
+                  <motion.button
+                    type="button"
+                    onClick={handleLogoClick}
+                    whileHover={isMobile ? undefined : { y: -1, scale: 1.02 }}
+                    whileTap={{ scale: 0.96 }}
+                    style={{
+                      border: "none",
+                      background: "transparent",
+                      padding: 0,
+                      margin: 0,
+                      outline: "none",
+                      boxShadow: "none",
+                      appearance: "none",
+                      WebkitTapHighlightColor: "transparent",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center"
+                    }}
+                    aria-label="Add one more Hoo Hoo Hoosier"
+                    title="Tap logo!"
+                  >
+                    <img
+                      src={IU_LOGO_IMAGE}
+                      alt="Indiana Hoosiers"
+                      style={{ width: isMobile ? 104 : 156, height: isMobile ? 128 : 192, objectFit: "contain", display: "block" }}
+                    />
+                  </motion.button>
+                </div>
+                <span style={{ fontSize: isMobile ? "0.68rem" : "0.76rem", color: COLORS.lightText, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                  Tap logo to start!
+                </span>
+              </motion.div>
+
+              {/* Hoosier slideshow */}
+              {slideshowStarted && hoosierPhotos.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  onClick={handleHoosierPhotoTap}
+                  style={{
+                    width: isMobile ? "90%" : 440,
+                    aspectRatio: "4 / 3",
+                    borderRadius: 16,
+                    overflow: "hidden",
+                    boxShadow: "0 12px 40px rgba(44,36,32,0.15)",
+                    border: `2px solid ${COLORS.indianaCrimson}`,
+                    position: "relative",
+                    cursor: "pointer"
+                  }}
+                >
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={hoosierSlideIndex}
+                      src={hoosierPhotos[hoosierSlideIndex]}
+                      alt="Go Hoosiers"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.6 }}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", position: "absolute", inset: 0 }}
+                    />
+                  </AnimatePresence>
+                  {/* Dots */}
+                  <div style={{
+                    position: "absolute",
+                    bottom: 10,
+                    left: 0,
+                    right: 0,
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: 4,
+                    pointerEvents: "none"
+                  }}>
+                    {hoosierPhotos.map((_, i) => (
+                      <div key={i} style={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: 3,
+                        background: i === hoosierSlideIndex ? "#fff" : "rgba(255,255,255,0.4)",
+                        transition: "background 0.3s"
+                      }} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {slideshowStarted && hoosierPhotos.length === 0 && (
+                <p style={{ fontSize: "0.75rem", color: COLORS.lightText, fontStyle: "italic", marginTop: "0.5rem" }}>
+                  Drop Hoosier pics into src/assets/hoosiers/
+                </p>
+              )}
+
+              {/* Tap to continue — after slideshow ends or no photos */}
+              {slideshowStarted && (slideshowDone || hoosierPhotos.length === 0) && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                  onClick={() => setPhase(PHASE_TRANSITION)}
+                  style={{ marginTop: "1.5rem", textAlign: "center", cursor: "pointer" }}
+                >
+                  <span style={{
+                    fontSize: isMobile ? "0.72rem" : "0.8rem",
+                    color: COLORS.lightText,
+                    fontStyle: "italic",
+                    letterSpacing: "0.05em"
+                  }}>
+                    Tap to continue
+                  </span>
+                  <motion.div
+                    animate={{ y: [0, 4, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.5 }}
+                    style={{ fontSize: "0.7rem", color: COLORS.lightText, marginTop: 4 }}
+                  >
+                    ▼
+                  </motion.div>
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    );
+  }
+
+  // Transition message — two steps
+  if (phase === PHASE_TRANSITION) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        style={{ ...overlayBase, background: COLORS.bg }}
+      >
+        {backButton}
+        <div style={{ textAlign: "center", padding: "2rem", maxWidth: 500 }}>
+          <AnimatePresence mode="wait">
+            {transitionStep === 0 && (
+              <motion.div key="t0" exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.5 }}>
+                <SparkleText
+                  text="Now that we're on the same page..."
+                  isMobile={isMobile}
+                  onComplete={() => setTransitionStep(1)}
+                />
+              </motion.div>
+            )}
+            {transitionStep === 1 && (
+              <motion.div key="t1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.4 }}>
+                <SparkleText
+                  text="Enjoy some deep tracks of Bemily...!"
+                  isMobile={isMobile}
+                  onComplete={() => setPhase(PHASE_FEED)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.div>
+    );
+  }
+
+  // PHASE 3: Instagram-style goofy photo feed
+  const currentLikes = likes[photoIndex] || 0;
+  const currentComments = comments[photoIndex] || [];
+  const caption = GOOFY_CAPTIONS[photoIndex % GOOFY_CAPTIONS.length];
+  const canGoPrev = photoIndex > 0;
+  const canGoNext = photoIndex < goofyPhotos.length - 1;
 
   return (
     <motion.div
-      initial={reducedMotion ? { opacity: 1 } : { opacity: 0 }}
-      animate={reducedMotion ? { opacity: 1 } : { opacity: 1 }}
-      exit={reducedMotion ? { opacity: 1 } : { opacity: 0 }}
-      transition={reducedMotion ? { duration: 0 } : { duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
       style={{
         position: "fixed",
         inset: 0,
         zIndex: 170,
         overflowY: "auto",
-        background: `linear-gradient(180deg, rgba(249, 245, 240, 0.82), rgba(255, 255, 255, 0.9)), ${INDIANA_CANDY_STRIPE}`,
-        backgroundSize: "100% 100%, 40px 100%"
+        background: COLORS.bg
       }}
     >
-      <motion.div
-        initial={reducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96, y: 28 }}
-        animate={reducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
-        exit={reducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.98, y: 18 }}
-        transition={reducedMotion ? { duration: 0 } : { duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-        style={{
-          minHeight: "100%",
-          padding: isMobile ? "5.5rem 1.25rem 2rem" : "6rem 2rem 3rem",
-          position: "relative"
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `radial-gradient(circle at top left, rgba(153, 0, 0, 0.16), transparent 32%), radial-gradient(circle at bottom right, rgba(153, 0, 0, 0.22), transparent 30%), linear-gradient(135deg, rgba(255,255,255,0.52), rgba(255,255,255,0.18))`,
-            pointerEvents: "none"
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backdropFilter: "blur(4px)",
-            background: "rgba(250, 246, 241, 0.28)",
-            pointerEvents: "none"
-          }}
-        />
+      {/* Header */}
+      <div style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
+        background: "rgba(250,248,243,0.92)",
+        backdropFilter: "blur(12px)",
+        borderBottom: `1px solid ${COLORS.border}`,
+        padding: isMobile ? "0.7rem 1rem" : "0.8rem 1.5rem",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between"
+      }}>
+        <h2 style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          fontSize: isMobile ? "1.2rem" : "1.4rem",
+          fontStyle: "italic",
+          color: COLORS.darkText,
+          fontWeight: 500
+        }}>
+          Bemily — Unfiltered
+        </h2>
         <button
           onClick={onClose}
           style={{
-            position: "fixed",
-            top: isMobile ? 16 : 22,
-            right: isMobile ? 16 : 22,
-            zIndex: 2,
-            border: "1px solid rgba(153, 0, 0, 0.18)",
-            background: "rgba(255,255,255,0.85)",
-            color: COLORS.indianaCrimson,
-            padding: "0.7rem 1rem",
+            border: `1px solid ${COLORS.border}`,
+            background: "rgba(255,255,255,0.8)",
+            color: COLORS.darkText,
+            padding: "0.45rem 0.8rem",
             borderRadius: 999,
             cursor: "pointer",
-            fontSize: "0.8rem",
-            letterSpacing: "0.08em",
+            fontSize: "0.72rem",
+            letterSpacing: "0.06em",
             textTransform: "uppercase",
-            fontWeight: 600,
-            backdropFilter: "blur(10px)"
+            fontWeight: 500
           }}
         >
-          Back to Wedding Site
+          Back
         </button>
-        <div
-          style={{
-            maxWidth: 1120,
-            margin: "0 auto",
-            position: "relative",
-            zIndex: 1,
-            display: "grid",
-            gridTemplateColumns: isMobile ? "1fr" : "minmax(0, 1.05fr) minmax(420px, 0.95fr)",
-            gap: isMobile ? "2rem" : "2.5rem",
-            alignItems: "center"
-          }}
-        >
-          <div>
-            <div
-              style={{
-                display: "inline-block",
-                marginBottom: "1rem",
-                padding: "0.4rem 0.7rem",
-                borderRadius: 999,
-                background: "rgba(153, 0, 0, 0.08)",
-                color: COLORS.indianaCrimson,
-                fontSize: "0.75rem",
-                letterSpacing: "0.16em",
-                textTransform: "uppercase",
-                fontWeight: 600
-              }}
-            >
-              National Champions
-            </div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "1rem",
-                marginBottom: "1.25rem"
-              }}
-            >
-              <div
-                style={{
-                  width: isMobile ? 74 : 96,
-                  height: isMobile ? 92 : 118,
-                  borderRadius: 18,
-                  background: "rgba(255,255,255,0.74)",
-                  border: "1px solid rgba(153, 0, 0, 0.14)",
-                  boxShadow: "0 16px 34px rgba(44,36,32,0.12)",
-                  display: "grid",
-                  placeItems: "center",
-                  flexShrink: 0
-                }}
-              >
-                <img
-                  src={IU_LOGO_IMAGE}
-                  alt="Indiana Hoosiers logo"
+      </div>
+
+      {/* Feed */}
+      <div style={{ maxWidth: 520, margin: "0 auto", padding: isMobile ? "0" : "1rem 0" }}>
+        {goofyPhotos.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "4rem 1rem", color: COLORS.lightText }}>
+            <p style={{ fontSize: "1.1rem", fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", marginBottom: "0.5rem" }}>
+              Coming Soon
+            </p>
+            <p style={{ fontSize: "0.82rem" }}>Drop photos into src/assets/goofy/</p>
+          </div>
+        ) : (
+          <>
+            {/* Photo dots */}
+            <div style={{ display: "flex", justifyContent: "center", gap: 5, padding: "0.6rem 0" }}>
+              {goofyPhotos.map((_, i) => (
+                <div
+                  key={i}
+                  onClick={() => setPhotoIndex(i)}
                   style={{
-                    width: "64%",
-                    height: "64%",
-                    objectFit: "contain"
+                    width: i === photoIndex ? 18 : 6,
+                    height: 6,
+                    borderRadius: 3,
+                    background: i === photoIndex ? COLORS.accent : COLORS.border,
+                    cursor: "pointer",
+                    transition: "all 0.2s ease"
                   }}
                 />
-              </div>
-              <div
-                style={{
-                  fontSize: isMobile ? "0.82rem" : "0.88rem",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: COLORS.indianaCrimson,
-                  fontWeight: 600
-                }}
-              >
-                Indiana Football
-              </div>
+              ))}
             </div>
-            <h2
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: isMobile ? "3.5rem" : "6.2rem",
-                lineHeight: 0.92,
-                color: COLORS.indianaCrimson,
-                marginBottom: "1rem",
-                fontStyle: "italic",
-                fontWeight: 600
-              }}
-            >
-              Go Hoosiers
-            </h2>
+
+            {/* Photo */}
             <div
               style={{
-                fontSize: isMobile ? "1rem" : "1.15rem",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: COLORS.indianaCrimson,
-                fontWeight: 700,
-                marginBottom: "1rem"
-              }}
-            >
-              National Champions
-            </div>
-            <p
-              style={{
-                fontSize: isMobile ? "1rem" : "1.15rem",
-                lineHeight: 1.8,
-                color: COLORS.darkText,
-                maxWidth: 520,
-                marginBottom: "1.5rem"
-              }}
-            >
-              The hidden page opens into a full Indiana celebration: candy stripes, the IU monogram, Curt Cignetti, Fernando Mendoza, and the championship trophy.
-            </p>
-            <button
-              className="press-button"
-              onClick={onGoHoosiers}
-              style={{
-                background: COLORS.indianaCrimson,
-                color: "#FFFFFF",
-                border: "none",
-                padding: isMobile ? "0.9rem 1.8rem" : "1rem 2.3rem",
-                fontSize: isMobile ? "0.95rem" : "1rem",
-                fontWeight: 600,
-                borderRadius: 999,
+                position: "relative",
+                width: "100%",
+                aspectRatio: "4 / 5",
+                background: COLORS.cream,
                 cursor: "pointer",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                marginBottom: "0.75rem"
+                overflow: "hidden",
+                userSelect: "none"
               }}
             >
-              Go Hoosiers
-            </button>
-            <div style={{ fontSize: "0.9rem", color: COLORS.mediumText }}>
-              {hoosierCount.toLocaleString()} Hoosier cheers counted
+              <motion.img
+                key={photoIndex}
+                src={goofyPhotos[photoIndex]}
+                alt={caption}
+                initial={{ opacity: 0.3 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.25 }}
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+              <button
+                type="button"
+                onClick={goToPrevGoofyPhoto}
+                disabled={!canGoPrev}
+                aria-label="Previous deep track photo"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  bottom: 0,
+                  width: "50%",
+                  border: "none",
+                  outline: "none",
+                  boxShadow: "none",
+                  appearance: "none",
+                  WebkitTapHighlightColor: "transparent",
+                  background: canGoPrev ? "linear-gradient(90deg, rgba(0,0,0,0.16), rgba(0,0,0,0))" : "transparent",
+                  cursor: canGoPrev ? "pointer" : "default",
+                  opacity: canGoPrev ? 1 : 0
+                }}
+              />
+              <button
+                type="button"
+                onClick={goToNextGoofyPhoto}
+                disabled={!canGoNext}
+                aria-label="Next deep track photo"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  width: "50%",
+                  border: "none",
+                  outline: "none",
+                  boxShadow: "none",
+                  appearance: "none",
+                  WebkitTapHighlightColor: "transparent",
+                  background: canGoNext ? "linear-gradient(270deg, rgba(0,0,0,0.16), rgba(0,0,0,0))" : "transparent",
+                  cursor: canGoNext ? "pointer" : "default",
+                  opacity: canGoNext ? 1 : 0
+                }}
+              />
+              <AnimatePresence>
+                {showHeart && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 1 }}
+                    animate={{ scale: 1.3, opacity: 1 }}
+                    exit={{ scale: 1.5, opacity: 0 }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      fontSize: isMobile ? "4rem" : "5rem",
+                      color: "#e74c3c",
+                      pointerEvents: "none",
+                      textShadow: "0 4px 20px rgba(0,0,0,0.3)",
+                      zIndex: 5
+                    }}
+                  >
+                    ♥
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <div style={{
+                position: "absolute",
+                bottom: 12,
+                left: 0,
+                right: 0,
+                display: "none",
+                justifyContent: "space-between",
+                padding: "0 14px",
+                pointerEvents: "none",
+                fontSize: "0.6rem",
+                color: "rgba(255,255,255,0.4)"
+              }}>
+                <span>{photoIndex > 0 ? "← Prev" : ""}</span>
+                <span>{photoIndex < goofyPhotos.length - 1 ? "Next →" : ""}</span>
+              </div>
             </div>
-          </div>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-              gridTemplateRows: isMobile ? "repeat(4, auto)" : "auto auto",
-              gap: "1rem"
-            }}
-          >
-            <div
-              style={{
-                gridColumn: isMobile ? "auto" : "1 / span 2",
-                background: "rgba(255,255,255,0.74)",
-                borderRadius: 26,
-                border: "1px solid rgba(153, 0, 0, 0.12)",
-                padding: isMobile ? "1.1rem" : "1.3rem",
-                boxShadow: "0 22px 46px rgba(44,36,32,0.12)"
-              }}
-            >
-              <div
+
+            {/* Actions */}
+            <div style={{ padding: isMobile ? "0.6rem 1rem" : "0.7rem 0.5rem", display: "flex", alignItems: "center", gap: "1rem" }}>
+              <button
+                onClick={doLike}
+                style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.5rem", padding: 0, lineHeight: 1, color: "#e74c3c" }}
+              >
+                ♥
+              </button>
+              <span style={{ fontSize: "0.88rem", fontWeight: 600, color: COLORS.darkText }}>
+                {currentLikes.toLocaleString()} {currentLikes === 1 ? "like" : "likes"}
+              </span>
+            </div>
+
+            {/* Caption */}
+            <div style={{ padding: isMobile ? "0 1rem 0.5rem" : "0 0.5rem 0.5rem" }}>
+              <p style={{ fontSize: "0.88rem", color: COLORS.darkText, lineHeight: 1.6 }}>
+                <strong>bemily</strong>{" "}
+                <span style={{ color: COLORS.mediumText }}>{caption}</span>
+              </p>
+            </div>
+
+            {/* Comments */}
+            <div style={{ padding: isMobile ? "0 1rem" : "0 0.5rem", borderTop: `1px solid ${COLORS.border}`, marginTop: "0.3rem" }}>
+              {currentComments.length > 0 && (
+                <div style={{ padding: "0.6rem 0", maxHeight: 180, overflowY: "auto" }}>
+                  {currentComments.map((c, i) => (
+                    <div key={c.id || i} style={{ fontSize: "0.82rem", color: COLORS.mediumText, lineHeight: 1.6, marginBottom: "0.35rem", display: "flex", flexWrap: "wrap", alignItems: "baseline", columnGap: "0.45rem" }}>
+                      <span>{c.text}</span>
+                      {c.ts > 0 && (
+                        <span style={{ fontSize: "0.68rem", color: COLORS.lightText }}>
+                          {formatCommentTimestamp(c.ts)}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              <form
+                onSubmit={handleSubmitComment}
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: "1rem",
-                  marginBottom: "1rem"
+                  gap: "0.5rem",
+                  padding: "0.7rem 0 1rem",
+                  borderTop: currentComments.length > 0 ? `1px solid ${COLORS.border}` : "none"
                 }}
               >
-                <div>
-                  <div
-                    style={{
-                      fontSize: "0.8rem",
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      color: COLORS.indianaCrimson,
-                      fontWeight: 600,
-                      marginBottom: "0.35rem"
-                    }}
-                  >
-                    2026 Season
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      fontSize: isMobile ? "2rem" : "2.5rem",
-                      fontStyle: "italic",
-                      color: COLORS.darkText
-                    }}
-                  >
-                    Indiana National Champions
-                  </div>
-                </div>
-                <img
-                  src={IU_LOGO_IMAGE}
-                  alt="Indiana Hoosiers logo"
+                <input
+                  type="text"
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  maxLength={280}
+                  autoComplete="off"
+                  placeholder="Add a comment..."
                   style={{
-                    width: isMobile ? 52 : 66,
-                    height: isMobile ? 64 : 82,
-                    objectFit: "contain",
-                    opacity: 0.95
+                    flex: 1,
+                    border: `1px solid ${COLORS.border}`,
+                    borderRadius: 999,
+                    padding: "0.5rem 0.9rem",
+                    fontSize: "0.82rem",
+                    background: COLORS.cardBg,
+                    color: COLORS.darkText,
+                    outline: "none"
                   }}
                 />
-              </div>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
-                  gap: "0.9rem"
-                }}
-              >
-                {[
-                  { src: CIGNETTI_IMAGE, label: "Curt Cignetti" },
-                  { src: MENDOZA_IMAGE, label: "Fernando Mendoza" },
-                  { src: HOOSIERS_TROPHY_IMAGE, label: "CFP Trophy" }
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    style={{
-                      background: "#fff",
-                      borderRadius: 18,
-                      overflow: "hidden",
-                      border: "1px solid rgba(153, 0, 0, 0.1)"
-                    }}
-                  >
-                    <img
-                      src={item.src}
-                      alt={item.label}
-                      style={{
-                        display: "block",
-                        width: "100%",
-                        aspectRatio: "1 / 1",
-                        objectFit: "cover"
-                      }}
-                    />
-                    <div
-                      style={{
-                        padding: "0.85rem 0.9rem",
-                        fontSize: "0.82rem",
-                        letterSpacing: "0.08em",
-                        textTransform: "uppercase",
-                        color: COLORS.indianaCrimson,
-                        fontWeight: 600,
-                        textAlign: "center"
-                      }}
-                    >
-                      {item.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                <button
+                  type="submit"
+                  disabled={!commentText.trim()}
+                  style={{
+                    border: "none",
+                    background: commentText.trim() ? COLORS.accent : COLORS.border,
+                    color: "#fff",
+                    borderRadius: 999,
+                    padding: "0.5rem 1rem",
+                    fontSize: "0.78rem",
+                    fontWeight: 600,
+                    cursor: commentText.trim() ? "pointer" : "default",
+                    transition: "background 0.2s"
+                  }}
+                >
+                  Post
+                </button>
+              </form>
             </div>
-            <div
-              style={{
-                background: "rgba(255,255,255,0.74)",
-                borderRadius: 22,
-                border: "1px solid rgba(153, 0, 0, 0.12)",
-                padding: isMobile ? "1rem" : "1.15rem",
-                boxShadow: "0 18px 36px rgba(44,36,32,0.1)"
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "0.78rem",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: COLORS.indianaCrimson,
-                  fontWeight: 600,
-                  marginBottom: "0.5rem"
-                }}
-              >
-                Stripe Status
-              </div>
-              <div style={{ color: COLORS.darkText, lineHeight: 1.7 }}>
-                Candy stripes all the way out. Full reveal, full crimson, full championship energy.
-              </div>
-            </div>
-            <div
-              style={{
-                background: "rgba(255,255,255,0.74)",
-                borderRadius: 22,
-                border: "1px solid rgba(153, 0, 0, 0.12)",
-                padding: isMobile ? "1rem" : "1.15rem",
-                boxShadow: "0 18px 36px rgba(44,36,32,0.1)"
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "0.78rem",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: COLORS.indianaCrimson,
-                  fontWeight: 600,
-                  marginBottom: "0.5rem"
-                }}
-              >
-                Bloomington
-              </div>
-              <div style={{ color: COLORS.darkText, lineHeight: 1.7 }}>
-                Cignetti on the sideline, Mendoza under center, the trophy on display, and the IU logo front and center.
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+          </>
+        )}
+      </div>
     </motion.div>
   );
 }
@@ -1050,15 +1604,24 @@ export default function App() {
     setPeelOffset({ x: 0, y: 0 });
   };
 
-  const handleGoHoosiers = () => {
-    runTransaction(hoosierCountRef, (current) => (current || 0) + 1);
-    confetti({
-      particleCount: 120,
-      spread: 90,
-      origin: { y: 0.72 },
-      colors: [COLORS.indianaCrimson, COLORS.indianaWhite, COLORS.primary],
-      zIndex: 9999
+  const fireHoosierConfetti = (origin = { x: 0.5, y: 0.72 }) => {
+    [
+      { particleCount: 70, spread: 60, startVelocity: 42, scalar: 1.05 },
+      { particleCount: 45, spread: 100, startVelocity: 28, scalar: 0.9, decay: 0.92 },
+      { particleCount: 18, spread: 125, startVelocity: 54, scalar: 1.2 }
+    ].forEach((burst) => {
+      confetti({
+        ...burst,
+        origin,
+        colors: [COLORS.indianaCrimson, COLORS.indianaWhite, COLORS.accent],
+        zIndex: 9999
+      });
     });
+  };
+
+  const handleGoHoosiers = (origin) => {
+    runTransaction(hoosierCountRef, (current) => (current || 0) + 1);
+    fireHoosierConfetti(origin);
   };
 
   const handlePeelPointerDown = (event) => {
@@ -1176,7 +1739,7 @@ END:VCALENDAR`;
     <>
       {/* GLOBAL STYLES */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lora:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lora:wght@400;500;600&family=Archivo+Black&display=swap');
 
         .press-button {
           position: relative;
@@ -1507,9 +2070,9 @@ END:VCALENDAR`;
             <HoosiersOverlay
               isVisible={showHoosierPage}
               isMobile={isMobile}
-              reducedMotion={shouldReduceMotion}
               hoosierCount={hoosierCount}
               onClose={handleCloseHoosierPage}
+              onRevealHoosiers={fireHoosierConfetti}
               onGoHoosiers={handleGoHoosiers}
             />
           )}
@@ -1526,12 +2089,28 @@ END:VCALENDAR`;
 function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalendarEvent, isMobile, reducedMotion, onRevealHoosierCorner }) {
   const [indices, setIndices] = useState(photoBuckets.map(() => 0));
   const [holdProgress, setHoldProgress] = useState(0);
+  const [holdColorProgress, setHoldColorProgress] = useState(0);
+  const [holdFinaleProgress, setHoldFinaleProgress] = useState(0);
   const containerVariants = getStaggerContainerVariants(reducedMotion);
   const itemVariants = getStaggerItemVariants(reducedMotion);
   const holdTimerRef = useRef(null);
   const longPressTriggeredRef = useRef(false);
   const holdStartRef = useRef(0);
   const holdAnimationRef = useRef(null);
+  const celebrateMorphLength = Math.max(CELEBRATE_BUTTON_TEXT.length, HOOSIER_BUTTON_TEXT.length);
+  const celebrateSourceChars = CELEBRATE_BUTTON_TEXT.padEnd(celebrateMorphLength, " ").split("");
+  const celebrateTargetChars = HOOSIER_BUTTON_TEXT.padEnd(celebrateMorphLength, " ").split("");
+  const celebrateCharStates = celebrateSourceChars.map((sourceChar, index) => {
+    const segmentSize = 1 / celebrateSourceChars.length;
+    const charProgress = Math.max(0, Math.min(1, (holdProgress - index * segmentSize) / segmentSize));
+
+    return {
+      index,
+      sourceChar,
+      char: charProgress >= 0.5 ? (celebrateTargetChars[index] ?? sourceChar) : sourceChar,
+      progress: charProgress
+    };
+  });
 
   useEffect(() => () => {
     if (holdTimerRef.current) {
@@ -1560,13 +2139,20 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
 
   const updateHoldProgress = () => {
     const elapsed = performance.now() - holdStartRef.current;
-    const nextProgress = Math.max(0, Math.min(1, (elapsed - 5000) / 5000));
+    // Color starts warming earlier; letter morph completes by 8s, then holds for 2s.
+    const nextColorProgress = Math.max(0, Math.min(1, (elapsed - HOLD_COLOR_START_MS) / HOLD_COLOR_DURATION_MS));
+    const nextProgress = Math.max(0, Math.min(1, (elapsed - HOLD_MORPH_START_MS) / HOLD_MORPH_DURATION_MS));
+    const nextFinaleProgress = Math.max(0, Math.min(1, (elapsed - HOLD_FINALE_START_MS) / HOLD_FINALE_DURATION_MS));
+    setHoldColorProgress(nextColorProgress);
     setHoldProgress(nextProgress);
+    setHoldFinaleProgress(nextFinaleProgress);
 
-    if (elapsed >= 10000) {
+    if (elapsed >= HOLD_REVEAL_MS) {
       longPressTriggeredRef.current = true;
       clearCelebrateHold();
       setHoldProgress(0);
+      setHoldColorProgress(0);
+      setHoldFinaleProgress(0);
       onRevealHoosierCorner();
       return;
     }
@@ -1579,12 +2165,16 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
     clearCelebrateHold();
     holdStartRef.current = performance.now();
     setHoldProgress(0);
+    setHoldColorProgress(0);
+    setHoldFinaleProgress(0);
     holdAnimationRef.current = requestAnimationFrame(updateHoldProgress);
   };
 
   const handleCelebratePointerUp = () => {
     clearCelebrateHold();
     setHoldProgress(0);
+    setHoldColorProgress(0);
+    setHoldFinaleProgress(0);
   };
 
   const handleCelebrateTap = (event) => {
@@ -1595,6 +2185,13 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
     }
     handleButtonClick();
   };
+
+  const celebrateBaseFontSize = isMobile ? 0.8 : 0.85;
+  const celebrateButtonFontSize = celebrateBaseFontSize + holdFinaleProgress * (isMobile ? 0.18 : 0.22);
+  const celebrateButtonScale = 1 + holdFinaleProgress * 0.1;
+  const celebrateButtonRed = Math.round(197 + (153 - 197) * holdColorProgress + 15 * holdFinaleProgress);
+  const celebrateButtonGreen = Math.max(0, Math.round(165 + (0 - 165) * holdColorProgress - 22 * holdFinaleProgress));
+  const celebrateButtonBlue = Math.max(0, Math.round(90 + (0 - 90) * holdColorProgress - 14 * holdFinaleProgress));
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show">
@@ -1635,6 +2232,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4 }}
               style={{
+                position: "relative",
                 borderRadius: 14,
                 overflow: "hidden",
                 aspectRatio: "4/5",
@@ -1648,7 +2246,12 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
               }}
             >
               {src ? (
-                <img src={src} alt={`Story ${i + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: i === 2 ? "40% center" : "center" }} />
+                <>
+                  <img src={src} alt={`Story ${i + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: i === 2 ? "40% center" : "center" }} />
+                  {bucket.length > 1 && (
+                    <span style={{ position: "absolute", bottom: 10, right: 12, fontSize: "0.6rem", color: "rgba(255,255,255,0.55)", fontStyle: "italic", pointerEvents: "none" }}>Tap for more</span>
+                  )}
+                </>
               ) : (
                 <span style={{ color: COLORS.lightText, fontSize: "0.85rem", fontStyle: "italic" }}>Add photos to assets/b{i + 1}</span>
               )}
@@ -1709,29 +2312,47 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
           style={{
             position: "relative",
             overflow: "hidden",
-            background: COLORS.accent,
+            background: `rgb(${celebrateButtonRed}, ${celebrateButtonGreen}, ${celebrateButtonBlue})`,
             color: "#FFFFFF",
             border: "none",
             padding: "0.7rem 1.6rem",
-            fontSize: isMobile ? "0.8rem" : "0.85rem",
+            fontSize: `${celebrateButtonFontSize}rem`,
             fontWeight: 500,
             borderRadius: 50,
             cursor: "pointer",
             marginBottom: "0.5rem",
-            letterSpacing: "0.05em"
+            letterSpacing: "0.05em",
+            transform: `scale(${celebrateButtonScale})`,
+            boxShadow: holdColorProgress > 0
+              ? `0 ${Math.round(8 + holdFinaleProgress * 8)}px ${Math.round(20 + holdFinaleProgress * 14)}px rgba(153, 0, 0, ${0.16 + holdFinaleProgress * 0.12})`
+              : "none",
+            transition: holdProgress === 0 && holdColorProgress === 0 && holdFinaleProgress === 0
+              ? "background 0.3s ease-out, transform 0.22s ease-out, box-shadow 0.22s ease-out, font-size 0.22s ease-out"
+              : "none"
           }}
         >
-          <span
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: `${holdProgress * 100}%`,
-              background: "linear-gradient(90deg, rgba(153, 0, 0, 0.28), rgba(153, 0, 0, 0.55))",
-              transition: holdProgress === 0 ? "width 0.18s ease-out" : "none"
-            }}
-          />
-          <span style={{ position: "relative", zIndex: 1 }}>
-          Can't Wait!
+          <span style={{ position: "relative", zIndex: 1, display: "inline-flex", alignItems: "center" }}>
+            {celebrateCharStates.map(({ index, sourceChar, char, progress }) => {
+              const hasChanged = char !== sourceChar;
+              const popAmount = reducedMotion ? 0 : Math.sin(progress * Math.PI) * 0.24;
+              const settledBoost = hasChanged ? progress * 0.06 : 0;
+              const finaleBoost = hasChanged ? holdFinaleProgress * 0.14 : 0;
+              const lift = reducedMotion ? 0 : Math.sin(progress * Math.PI) * 3;
+              return (
+                <span
+                  key={index}
+                  style={{
+                    display: "inline-block",
+                    minWidth: char === " " ? "0.34em" : undefined,
+                    transform: `translateY(${-lift}px) scale(${1 + popAmount + settledBoost + finaleBoost})`,
+                    transition: holdProgress === 0 ? "transform 0.18s ease-out, text-shadow 0.18s ease-out" : "none",
+                    textShadow: progress > 0 ? `0 ${Math.round(3 + holdFinaleProgress * 2)}px ${Math.round(10 + holdFinaleProgress * 6)}px rgba(89, 14, 14, ${0.2 + holdFinaleProgress * 0.1})` : "none"
+                  }}
+                >
+                  {char === " " ? "\u00A0" : char}
+                </span>
+              );
+            })}
           </span>
         </button>
         <div style={{ fontSize: isMobile ? "0.7rem" : "0.75rem", color: COLORS.lightText }}>{buttonCount.toLocaleString()} clicks</div>
