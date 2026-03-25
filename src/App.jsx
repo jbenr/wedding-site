@@ -261,15 +261,15 @@ const StatCell = ({ label, value, color, background = COLORS.cream, borderColor 
     style={{
       textAlign: "center",
       background,
-      padding: "0.6rem 0.4rem",
+      padding: "clamp(0.3rem, 0.6vw, 0.6rem) clamp(0.2rem, 0.4vw, 0.4rem)",
       borderRadius: 10,
       border: `1px solid ${borderColor}`
     }}
   >
-    <div style={{ fontSize: "0.7rem", color: labelColor, marginBottom: "0.2rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+    <div style={{ fontSize: "clamp(0.55rem, 0.7vw, 0.7rem)", color: labelColor, marginBottom: "0.1rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
       {label}
     </div>
-    <div style={{ fontSize: "1rem", fontWeight: 600, color }}>{value}</div>
+    <div style={{ fontSize: "clamp(0.75rem, 1vw, 1rem)", fontWeight: 600, color }}>{value}</div>
   </div>
 );
 
@@ -1659,10 +1659,10 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
 
       {/* Story Text */}
       <motion.div variants={itemVariants} style={{ padding: isMobile ? "1rem 0.5rem" : "1.5rem 2rem", marginBottom: "2rem" }}>
-        <p style={{ fontSize: isMobile ? "0.82rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "0.8rem" }}>
+        <p style={{ fontSize: isMobile ? "0.82rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "1.4rem" }}>
           Emily and Ben met on Halloween in Atlanta, with Emily dressed as Padme and Ben as Anakin. Since then, life has taken them from Atlanta to New York City, where they&apos;ve built a home together on the Upper East Side.
         </p>
-        <p style={{ fontSize: isMobile ? "0.82rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "0.8rem" }}>
+        <p style={{ fontSize: isMobile ? "0.82rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "1.4rem" }}>
           We&apos;re looking forward to celebrating this next chapter with you. Here you&apos;ll find all the details about our wedding weekend, travel information, and our registry.
         </p>
         <p style={{ fontSize: isMobile ? "0.82rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center" }}>
@@ -1811,7 +1811,7 @@ function InfoTab({ isMobile, reducedMotion }) {
     border: "1px solid rgba(197, 165, 90, 0.18)",
     borderRadius: isMobile ? 18 : 22,
     boxShadow: "0 18px 38px rgba(44,36,32,0.08), inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(181,160,138,0.16)",
-    padding: isMobile ? "2.1rem 1rem 2rem" : "2.6rem 2rem 2.45rem",
+    padding: isMobile ? "3.2rem 1rem 3rem" : "3.8rem 2rem 3.5rem",
     marginBottom: "1.7rem",
     overflow: "hidden"
   };
@@ -1873,16 +1873,15 @@ function InfoTab({ isMobile, reducedMotion }) {
             right: isMobile ? 24 : 34,
             display: "flex",
             alignItems: "center",
-            gap: isMobile ? "0.45rem" : "0.65rem",
-            opacity: 0.75,
+            gap: isMobile ? "0.4rem" : "0.55rem",
             pointerEvents: "none"
           }}
         >
-          <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, transparent, rgba(197,165,90,0.45))" }} />
-          <div style={{ width: 7, height: 7, border: "1px solid rgba(197,165,90,0.65)", transform: "rotate(45deg)" }} />
-          <div style={{ width: isMobile ? 22 : 30, height: 1, background: "rgba(197,165,90,0.65)" }} />
-          <div style={{ width: 7, height: 7, border: "1px solid rgba(197,165,90,0.65)", transform: "rotate(45deg)" }} />
-          <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, rgba(197,165,90,0.45), transparent)" }} />
+          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.border})` }} />
+          <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+          <div style={{ width: isMobile ? 18 : 26, height: 1, background: COLORS.accent, opacity: 0.7 }} />
+          <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${COLORS.border}, transparent)` }} />
         </div>
         <div
           aria-hidden="true"
@@ -1893,16 +1892,15 @@ function InfoTab({ isMobile, reducedMotion }) {
             right: isMobile ? 24 : 34,
             display: "flex",
             alignItems: "center",
-            gap: isMobile ? "0.45rem" : "0.65rem",
-            opacity: 0.75,
+            gap: isMobile ? "0.4rem" : "0.55rem",
             pointerEvents: "none"
           }}
         >
-          <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, transparent, rgba(197,165,90,0.45))" }} />
-          <div style={{ width: 7, height: 7, border: "1px solid rgba(197,165,90,0.65)", transform: "rotate(45deg)" }} />
-          <div style={{ width: isMobile ? 22 : 30, height: 1, background: "rgba(197,165,90,0.65)" }} />
-          <div style={{ width: 7, height: 7, border: "1px solid rgba(197,165,90,0.65)", transform: "rotate(45deg)" }} />
-          <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, rgba(197,165,90,0.45), transparent)" }} />
+          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.border})` }} />
+          <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+          <div style={{ width: isMobile ? 18 : 26, height: 1, background: COLORS.accent, opacity: 0.7 }} />
+          <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${COLORS.border}, transparent)` }} />
         </div>
         <div
           style={{
@@ -1962,16 +1960,23 @@ function InfoTab({ isMobile, reducedMotion }) {
         </div>
       </motion.div>
 
+      {/* Divider before Travel */}
+      <div style={{ width: "60%", maxWidth: 300, height: 1, background: COLORS.border, margin: "1.5rem auto 2.5rem" }} />
+
       {/* Travel & Hotels */}
       <motion.div variants={itemVariants} style={plainSectionStyle}>
         {sectionTitle("Travel & Stay")}
         <div style={{ lineHeight: 1.8, color: COLORS.mediumText, fontSize: isMobile ? "0.88rem" : "0.95rem" }}>
-          <p style={{ marginBottom: "0.8rem" }}><strong style={{ color: COLORS.darkText }}>Hotels with Room Blocks:</strong></p>
-          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.2rem" }}>
-            <li style={{ marginBottom: "0.4rem" }}>
-              <a href="https://be.synxis.com/?Hotel=48984&Chain=10237&arrive=2026-10-23&depart=2026-10-25&adult=1&child=0&group=1281" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.primary, textDecoration: "underline" }}>
+          <p style={{ marginBottom: "1.2rem" }}><strong style={{ color: COLORS.darkText }}>Hotels with Room Blocks:</strong></p>
+          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.8rem" }}>
+            <li style={{ marginBottom: "0.6rem" }}>
+              <a href="https://be.synxis.com/?Hotel=48984&Chain=10237&arrive=2026-10-23&depart=2026-10-25&adult=1&child=0&group=1281" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
                 <strong>Boars Head Resort</strong>
-              </a> — More details to follow.
+              </a>
+              <br />
+              <span style={{ fontSize: "0.82rem" }}>
+                If you need a reservation for before or after these dates, or if you need to book more than two rooms, please call to speak with a Reservation agent and have them reference <strong>Collins-Reichert Wedding Room Block</strong>. Block code: <strong>1281</strong>.
+              </span>
             </li>
             <li style={{ marginBottom: "0.4rem" }}>
               <strong>The Draftsman</strong> — Courtesy block available (10 rooms). More details to follow.
@@ -1981,24 +1986,60 @@ function InfoTab({ isMobile, reducedMotion }) {
             </li>
           </ul>
 
-          <p style={{ marginBottom: "0.8rem" }}><strong style={{ color: COLORS.darkText }}>Other Hotel Options:</strong></p>
-          <p style={{ fontSize: "0.85rem", color: COLORS.lightText, marginBottom: "0.8rem", fontStyle: "italic" }}>
+          <p style={{ marginBottom: "1.2rem" }}><strong style={{ color: COLORS.darkText }}>Other Hotel Options:</strong></p>
+          <p style={{ color: COLORS.lightText, marginBottom: "0.8rem", fontStyle: "italic" }}>
             Please note: we do not have a wedding block at these hotels. Book directly at general rates.
           </p>
-          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.2rem" }}>
+          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.8rem" }}>
+            <li style={{ marginBottom: "0.4rem" }}>
+              <a href="https://www.ihg.com/kimptonhotels/hotels/us/en/find-hotels/select-roomrate?fromRedirect=true&qSrt=sBR&qDest=Kimpton%20The%20Forum%20Hotel&qErm=false&qSlH=chodd&qRms=1&qAdlt=1&qChld=0&qCiD=26&qCiMy=072025&qCoD=29&qCoMy=072025&qCpid=100221153&qAAR=6CBARC&qRtP=6CBARC&setPMCookies=true&qSHBrC=KI&qpMbw=0&qpMn=1&srb_u=1&qRmFltr=" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
+                Kimpton The Forum Hotel
+              </a> — 15% off with room block link.
+            </li>
             <li>
-              <a href="https://www.hilton.com/en/hotels/chogcgu-graduate-charlottesville/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.primary, textDecoration: "underline" }}>
+              <a href="https://www.hilton.com/en/hotels/chogcgu-graduate-charlottesville/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
                 The Graduate
               </a>
             </li>
           </ul>
 
-          <p>
-            <strong style={{ color: COLORS.darkText }}>Getting There:</strong><br />
-            Charlottesville-Albemarle Airport (CHO) is 20 minutes from downtown.
+          <p style={{ marginBottom: "1.2rem" }}><strong style={{ color: COLORS.darkText }}>VA Guest Houses:</strong></p>
+          <p style={{ marginBottom: "0.8rem" }}>
+            Guesthouses accommodates wedding block holds across their entire portfolio of properties, allowing guests to book and pay directly. Here's how it works:
+          </p>
+          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.2rem" }}>
+            <li>Minimum stay of 2 nights (select dates or properties require 3)</li>
+            <li>10% deposit to hold properties</li>
+            <li>Guests may call and book any held units</li>
+          </ul>
+          <p style={{ marginBottom: "0.8rem" }}>
+            Accommodations close to Rosemont Farm:
+          </p>
+          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.2rem" }}>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/blue-mountain-haven" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Blue Mountain Haven</a> — 5 bedrooms, 4 bathrooms, sleeps 10</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/farlea" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Farlea</a> — 4 bedrooms, 2.5 bathrooms, sleeps 8</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/fox-cottage" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Fox Cottage</a> — 2 bedrooms, 2 bathrooms, sleeps 4</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/ivy-cottages-all-cottages" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ivy Cottages</a> — 5 one-bedroom cottages, each sleeping 2–4 guests</li>
+            <li>Ramsay Estate Main House — 3 bedrooms, 5 bathrooms, sleeps 8 (not on website, but bookable for select groups)</li>
+            <li><a href="https://www.vaguesthouses.com/piedmont-place-suites" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Piedmont Place Suites</a> — 6 two-bedroom, 2 bathroom suites, each sleeps 4–6 guests</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/ramsay-estate-carriage-house" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ramsay Estate Carriage House</a> — 1 bedroom, 1 bathroom, sleeps 2</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/ramsay-estate-cottage" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ramsay Estate Cottage</a> — 3 bedrooms, 3 bathrooms, sleeps 6</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/stockton-creek-farmhouse" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Stockton Creek Farmhouse</a> — 3 bedrooms, 2.5 bathrooms, sleeps 6</li>
+          </ul>
+          <p style={{ marginBottom: "1.8rem" }}>
+            You can view a map of all properties on the <a href="https://www.vaguesthouses.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>VA Guesthouses website</a>.
+          </p>
+
+          <p style={{ marginTop: "1.2rem" }}>
+            <strong style={{ color: COLORS.darkText }}>Getting There:</strong><br /><br />
+            Charlottesville-Albemarle Airport (CHO) is 20 minutes from downtown.<br />
+            Charlottesville Amtrak Station (CVS) is right in town with daily service from DC, NYC, and beyond.
           </p>
         </div>
       </motion.div>
+
+      {/* Divider before Shuttle */}
+      <div style={{ width: "60%", maxWidth: 300, height: 1, background: COLORS.border, margin: "1rem auto 2.5rem" }} />
 
       {/* Shuttle Information */}
       <motion.div variants={itemVariants} style={plainSectionStyle}>
@@ -2008,18 +2049,23 @@ function InfoTab({ isMobile, reducedMotion }) {
         </p>
       </motion.div>
 
+      {/* Divider before Things to Do */}
+      <div style={{ width: "60%", maxWidth: 300, height: 1, background: COLORS.border, margin: "1rem auto 2.5rem" }} />
+
       {/* Things to Do */}
       <motion.div variants={itemVariants} style={plainSectionStyle}>
         {sectionTitle("Things to Do in Charlottesville")}
-        <p style={{ fontSize: isMobile ? "0.84rem" : "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
-          <strong style={{ color: COLORS.darkText }}>Dining</strong> — Don't miss Riverside for lunch by the water, Bodo's Bagels for the best bagels in town, and C&O Restaurant for a Charlottesville classic.
-        </p>
-        <p style={{ fontSize: isMobile ? "0.84rem" : "0.9rem", color: COLORS.mediumText, lineHeight: 1.9, marginBottom: "1.2rem" }}>
-          <strong style={{ color: COLORS.darkText }}>Drinks & Wine</strong> — Charlottesville is wine country! King Family Vineyards, Pippin Hill Farm & Vineyards, and Early Mountain Vineyards are all beautiful. Check out <a href="https://raggedbranch.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Ragged Branch Distillery</a> for Virginia bourbon, and <a href="https://www.prn.beer/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Pro Re Nata Brewery</a> for craft beer. In town, The Whiskey Jar and Coup Deville's are great for a casual drink.
-        </p>
-        <p style={{ fontSize: isMobile ? "0.84rem" : "0.9rem", color: COLORS.mediumText, lineHeight: 1.9 }}>
-          <strong style={{ color: COLORS.darkText }}>Shopping</strong> — Stroll the Downtown Mall, a charming pedestrian mall with boutiques and restaurants. Be sure to stop by <a href="https://quattrotizi.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText }}>Quattro Tizi</a> at the Dairy Market for men's and women's clothing.
-        </p>
+        <div style={{ lineHeight: 1.8, color: COLORS.mediumText, fontSize: isMobile ? "0.88rem" : "0.95rem" }}>
+          <p style={{ marginBottom: "1.2rem" }}>
+            <strong style={{ color: COLORS.darkText }}>Dining</strong> — Don't miss Riverside for lunch by the water, Bodo's Bagels for the best bagels in town, and C&O Restaurant for a Charlottesville classic.
+          </p>
+          <p style={{ marginBottom: "1.2rem" }}>
+            <strong style={{ color: COLORS.darkText }}>Drinks & Wine</strong> — Charlottesville is wine country! King Family Vineyards, Pippin Hill Farm & Vineyards, and Early Mountain Vineyards are all beautiful. Check out <a href="https://raggedbranch.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ragged Branch Distillery</a> for Virginia bourbon, and <a href="https://www.prn.beer/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Pro Re Nata Brewery</a> for craft beer. In town, The Whiskey Jar and Coup Deville's are great for a casual drink.
+          </p>
+          <p>
+            <strong style={{ color: COLORS.darkText }}>Shopping</strong> — Stroll the Downtown Mall, a charming pedestrian mall with boutiques and restaurants. Be sure to stop by <a href="https://quattrotizi.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Quattro Tizi</a> at the Dairy Market for men's and women's clothing.
+          </p>
+        </div>
       </motion.div>
 
     </motion.div>
@@ -2078,11 +2124,29 @@ function RegistryTab({ isMobile, reducedMotion }) {
         ))}
       </motion.div>
 
-      <motion.div variants={itemVariants} style={{ ...getSectionCardStyle(isMobile), textAlign: "center", borderTop: `4px solid ${COLORS.accent}` }}>
-        <p style={{ fontSize: "1rem", color: COLORS.mediumText, lineHeight: 1.8 }}>
-          <strong style={{ color: COLORS.primary, fontSize: "1.1rem" }}>A Note from Us</strong><br /><br />
+      <motion.div variants={itemVariants} style={{ textAlign: "center", padding: isMobile ? "2rem 1rem" : "2.5rem 2rem", marginTop: "1rem" }}>
+        <div style={{ width: 40, height: 1, background: COLORS.accent, margin: "0 auto 1.5rem", opacity: 0.5 }} />
+        <h3 style={{
+          fontSize: isMobile ? "1.3rem" : "1.5rem",
+          fontFamily: "'Cormorant Garamond', serif",
+          fontWeight: 500,
+          fontStyle: "italic",
+          color: COLORS.darkText,
+          marginBottom: "1rem"
+        }}>
+          A Note from Us
+        </h3>
+        <p style={{
+          fontSize: isMobile ? "0.88rem" : "0.95rem",
+          color: COLORS.mediumText,
+          lineHeight: 1.9,
+          fontStyle: "italic",
+          maxWidth: 480,
+          margin: "0 auto"
+        }}>
           The most important gift is your presence on our special day. If you'd still like to give something, we'd be grateful for contributions toward our honeymoon adventure!
         </p>
+        <div style={{ width: 40, height: 1, background: COLORS.accent, margin: "1.5rem auto 0", opacity: 0.5 }} />
       </motion.div>
     </motion.div>
   );
@@ -2096,13 +2160,13 @@ function RegistryTab({ isMobile, reducedMotion }) {
 
 function WeddingPartyTab({ isMobile, reducedMotion }) {
   const groomsmen = [
-    { frontName: "Harry", backName: "Harry", relation: "Brother", photos: harryPhotos, role: "Best Man", maxBench: "175 lbs", fortyYard: "4.95s", handicap: "19.0", relationshipStatus: "Taken", currentCity: "Williamsburg, NY", college: "Northwestern University", collegeLogo: nu, footballTeam: "Cleveland Browns", footballLogo: brown, comment: "Let's hope Harry shows up on time to the ceremony." },
-    { frontName: "Chuck", backName: "Chuck", relation: "Brother", photos: chuckPhotos, role: "Groomsman", maxBench: "135 lbs", fortyYard: "5.4s", handicap: "13.5", relationshipStatus: "Taken", currentCity: "Chicago, IL", college: "University of Wisconsin", collegeLogo: w, footballTeam: "Chicago Bears", footballLogo: bears, comment: "Known for his inconsistency off the tee. Keep your eyes peeled when Chuck hits the dance floor." },
-    { frontName: "Jacko", backName: "Jacko", relation: "Brother", photos: jackoPhotos, role: "Groomsman", maxBench: "185 lbs", fortyYard: "5.8s", handicap: "20.0", relationshipStatus: "Single", currentCity: "Washington DC", college: "University of Virginia", collegeLogo: uva, footballTeam: "The Hokies", footballLogo: vt, comment: "The most controversial character in the lineup. Look for Jacko on stage for the late night." },
-    { frontName: "Cole Dickinson", backName: "Cole", relation: "Friend", photos: colePhotos, role: "Groomsman", maxBench: "285 lbs", fortyYard: "4.9s", handicap: "9.5", relationshipStatus: "Married", currentCity: "Charleston, SC", college: "University of South Carolina", collegeLogo: sc, footballTeam: "Washington Football Team", footballLogo: skins, comment: "It's too Cole for my Dickinson." },
-    { frontName: "Henry Kreienbaum", backName: "Henry", relation: "Friend", photos: henryPhotos, role: "Groomsman", maxBench: "265 lbs", fortyYard: "5.3s", handicap: "15.0", relationshipStatus: "Taken", currentCity: "Atlanta, GA", college: "James Madison University", collegeLogo: dukes, footballTeam: "Washington Commanders", footballLogo: skins, comment: "Don't ask this guy about Nascar." },
-    { frontName: "Oliver", backName: "Oliver", relation: "Friend", photos: oliPhotos, role: "Groomsman", maxBench: "255 lbs", fortyYard: "4.6s", handicap: "22.0", relationshipStatus: "Taken", currentCity: "New York, NY", college: "Washington & Lee University", collegeLogo: wl, footballTeam: "Washington Redskins", footballLogo: skins, comment: "Can I get a roll tide." },
-    { frontName: "Wyatt", backName: "Wyatt", relation: "Brother-in-law", photos: wyattPhotos, role: "Groomsman", maxBench: "225 lbs", fortyYard: "5.5s", handicap: "8.0", relationshipStatus: "Single", currentCity: "Knoxville, TN", college: "University of Tennessee", collegeLogo: ut, footballTeam: "The Vols", footballLogo: ut, comment: "Fill in description." }
+    { frontName: "Harry Reichert", backName: "Gresh", relation: "Brother", photos: harryPhotos, role: "Best Man", maxBench: "175 lbs", fortyYard: "4.95s", handicap: "19.0", relationshipStatus: "Taken", currentCity: "Williamsburg, NY", college: "Northwestern University", collegeLogo: nu, footballTeam: "Cleveland Browns", footballLogo: brown, comment: "Let's hope Harry shows up on time to the ceremony." },
+    { frontName: "Charlie Reichert", backName: "Chuck", relation: "Brother", photos: chuckPhotos, role: "Groomsman", maxBench: "135 lbs", fortyYard: "5.4s", handicap: "13.5", relationshipStatus: "Taken", currentCity: "Chicago, IL", college: "University of Wisconsin", collegeLogo: w, footballTeam: "Chicago Bears", footballLogo: bears, comment: "Known for his inconsistency off the tee. Keep your eyes peeled when Chuck hits the dance floor." },
+    { frontName: "Jack Reichert", backName: "Jacko", relation: "Brother", photos: jackoPhotos, role: "Groomsman", maxBench: "185 lbs", fortyYard: "5.8s", handicap: "20.0", relationshipStatus: "Single", currentCity: "Washington DC", college: "University of Virginia", collegeLogo: uva, footballTeam: "The Hokies", footballLogo: vt, comment: "The most controversial character in the lineup. Look for Jacko on stage for the late night." },
+    { frontName: "Cole Dickinson", backName: "Cole D", relation: "Dog", photos: colePhotos, role: "Groomsman", maxBench: "285 lbs", fortyYard: "4.9s", handicap: "9.5", relationshipStatus: "Married", currentCity: "Charleston, SC", college: "University of South Carolina", collegeLogo: sc, footballTeam: "Washington Football Team", footballLogo: skins, comment: "It's too Cole for my Dickinson." },
+    { frontName: "Henry Kreienbaum", backName: "Henry Cignetti", relation: "Dog", photos: henryPhotos, role: "Groomsman", maxBench: "265 lbs", fortyYard: "5.3s", handicap: "15.0", relationshipStatus: "Taken", currentCity: "Atlanta, GA", college: "James Madison University", collegeLogo: dukes, footballTeam: "Washington Commanders", footballLogo: skins, comment: "Don't ask this guy about Nascar." },
+    { frontName: "Oliver Herndon", backName: "Oli", relation: "Dog", photos: oliPhotos, role: "Groomsman", maxBench: "255 lbs", fortyYard: "4.6s", handicap: "22.0", relationshipStatus: "Taken", currentCity: "New York, NY", college: "Washington & Lee University", collegeLogo: wl, footballTeam: "Washington Redskins", footballLogo: skins, comment: "Can I get a roll tide." },
+    { frontName: "Wyatt Collins", backName: "Wyatt", relation: "Brother-in-law", photos: wyattPhotos, role: "Groomsman", maxBench: "225 lbs", fortyYard: "5.5s", handicap: "8.0", relationshipStatus: "Single", currentCity: "Knoxville, TN", college: "University of Tennessee", collegeLogo: ut, footballTeam: "The Vols", footballLogo: ut, comment: "Pretty cool guy." }
   ];
 
   const bridesmaids = [
@@ -2328,7 +2392,7 @@ const GroomCard = React.memo(({ person }) => {
             borderRadius: "clamp(9px, 1.35vw, 12px)",
             boxShadow: "0 8px 24px rgba(44,36,32,0.07), inset 0 1px 0 rgba(255,255,255,0.78)",
             border: `1px solid ${COLORS.border}`,
-            padding: "clamp(0.8rem, 1.5vw, 1.15rem)",
+            padding: "clamp(0.5rem, 1.5vw, 1.15rem)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-start",
@@ -2337,8 +2401,8 @@ const GroomCard = React.memo(({ person }) => {
         >
           <h3 style={{
             textAlign: "center",
-            marginBottom: "clamp(0.45rem, 0.9vw, 0.7rem)",
-            fontSize: "clamp(1.15rem, 2.35vw, 1.55rem)",
+            marginBottom: "clamp(0.25rem, 0.9vw, 0.7rem)",
+            fontSize: "clamp(0.95rem, 2.35vw, 1.55rem)",
             color: COLORS.darkText,
             fontFamily: "'Cormorant Garamond', serif",
             fontWeight: 400,
@@ -2349,20 +2413,20 @@ const GroomCard = React.memo(({ person }) => {
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-            gap: "clamp(0.45rem, 1vw, 0.75rem)",
-            marginBottom: "clamp(0.5rem, 1vw, 0.75rem)",
-            fontSize: "clamp(0.72rem, 1.2vw, 0.92rem)"
+            gap: "clamp(0.25rem, 1vw, 0.75rem)",
+            marginBottom: "clamp(0.3rem, 1vw, 0.75rem)",
+            fontSize: "clamp(0.62rem, 1.2vw, 0.92rem)"
           }}>
             <StatCell label="Bench" value={person.maxBench} color={color} background={COLORS.cream} borderColor={COLORS.border} labelColor={COLORS.lightText} />
             <StatCell label="40-Yard" value={person.fortyYard} color={color} background={COLORS.cream} borderColor={COLORS.border} labelColor={COLORS.lightText} />
             <StatCell label="Handicap" value={person.handicap} color={color} background={COLORS.cream} borderColor={COLORS.border} labelColor={COLORS.lightText} />
             <StatCell label="Status" value={person.relationshipStatus} color={color} background={COLORS.cream} borderColor={COLORS.border} labelColor={COLORS.lightText} />
           </div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(0.35rem, 0.75vw, 0.55rem)", fontSize: "clamp(0.66rem, 1vw, 0.8rem)", color: COLORS.mediumText, marginBottom: "clamp(0.45rem, 0.9vw, 0.7rem)", flexWrap: "wrap", textAlign: "center" }}>
-            {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: 16, height: 16, objectFit: "contain" }} />}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(0.25rem, 0.75vw, 0.55rem)", fontSize: "clamp(0.6rem, 1vw, 0.8rem)", color: COLORS.mediumText, marginBottom: "clamp(0.25rem, 0.9vw, 0.7rem)", flexWrap: "wrap", textAlign: "center" }}>
+            {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: 14, height: 14, objectFit: "contain" }} />}
             <span>{person.college}</span>
             <span style={{ color: COLORS.lightText }}>|</span>
-            {person.footballLogo && <img src={person.footballLogo} alt="" style={{ width: 16, height: 16, objectFit: "contain" }} />}
+            {person.footballLogo && <img src={person.footballLogo} alt="" style={{ width: 14, height: 14, objectFit: "contain" }} />}
             <span>{person.footballTeam}</span>
           </div>
           <p style={{
@@ -2370,15 +2434,15 @@ const GroomCard = React.memo(({ person }) => {
             margin: 0,
             padding: "0 clamp(0.15rem, 0.35vw, 0.25rem)",
             textAlign: "left",
-            fontSize: "clamp(0.76rem, 1.15vw, 0.95rem)",
+            fontSize: "clamp(0.65rem, 1.15vw, 0.95rem)",
             color: COLORS.mediumText,
             fontStyle: "italic",
-            lineHeight: 1.6,
-            overflow: "auto"
+            lineHeight: 1.45,
+            overflow: "hidden"
           }}>
             {person.comment}
           </p>
-          <p style={{ textAlign: "center", marginTop: "clamp(0.3rem, 0.6vw, 0.4rem)", fontSize: "clamp(0.54rem, 0.82vw, 0.64rem)", color: COLORS.lightText }}>Tap to flip back</p>
+          <p style={{ textAlign: "center", marginTop: "clamp(0.15rem, 0.6vw, 0.4rem)", fontSize: "clamp(0.5rem, 0.82vw, 0.64rem)", color: COLORS.lightText }}>Tap to flip back</p>
         </div>
       </div>
     </div>
@@ -2537,7 +2601,7 @@ const BridesmaidCard = React.memo(({ person }) => {
             borderRadius: "clamp(9px, 1.35vw, 12px)",
             boxShadow: "0 8px 24px rgba(44,36,32,0.07), inset 0 1px 0 rgba(255,255,255,0.78)",
             border: `1px solid ${COLORS.border}`,
-            padding: "clamp(0.8rem, 1.5vw, 1.15rem)",
+            padding: "clamp(0.5rem, 1.5vw, 1.15rem)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-start",
@@ -2546,8 +2610,8 @@ const BridesmaidCard = React.memo(({ person }) => {
         >
           <h3 style={{
             textAlign: "center",
-            marginBottom: "clamp(0.45rem, 0.9vw, 0.7rem)",
-            fontSize: "clamp(1.15rem, 2.35vw, 1.55rem)",
+            marginBottom: "clamp(0.25rem, 0.9vw, 0.7rem)",
+            fontSize: "clamp(0.95rem, 2.35vw, 1.55rem)",
             color: COLORS.darkText,
             fontFamily: "'Cormorant Garamond', serif",
             fontWeight: 400,
@@ -2555,11 +2619,11 @@ const BridesmaidCard = React.memo(({ person }) => {
           }}>
             {person.backName}
           </h3>
-          <div style={{ display: "grid", gridTemplateColumns: "max-content 1fr", rowGap: "0.35rem", columnGap: "0.55rem", fontSize: "clamp(0.68rem, 1.05vw, 0.82rem)", color: COLORS.mediumText, marginBottom: "clamp(0.45rem, 0.9vw, 0.7rem)", lineHeight: 1.5, alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "max-content 1fr", rowGap: "clamp(0.15rem, 0.35vw, 0.35rem)", columnGap: "0.55rem", fontSize: "clamp(0.6rem, 1.05vw, 0.82rem)", color: COLORS.mediumText, marginBottom: "clamp(0.25rem, 0.9vw, 0.7rem)", lineHeight: 1.4, alignItems: "start" }}>
             <span style={{ color, textTransform: "uppercase", letterSpacing: "0.06em" }}>College</span>
             <span>{person.college}</span>
             <span style={{ color, textTransform: "uppercase", letterSpacing: "0.06em" }}>Drink</span>
-            <span style={{ color }}>{person.favoriteDrink || "TBD"}</span>
+            <span>{person.favoriteDrink || "TBD"}</span>
             <span style={{ color, textTransform: "uppercase", letterSpacing: "0.06em" }}>Anthem</span>
             <span>{person.danceFloorSong || "TBD"}</span>
           </div>
@@ -2568,15 +2632,15 @@ const BridesmaidCard = React.memo(({ person }) => {
             margin: 0,
             padding: "0 clamp(0.15rem, 0.35vw, 0.25rem)",
             textAlign: "left",
-            fontSize: "clamp(0.76rem, 1.15vw, 0.95rem)",
+            fontSize: "clamp(0.65rem, 1.15vw, 0.95rem)",
             color: COLORS.mediumText,
             fontStyle: "italic",
-            lineHeight: 1.6,
-            overflow: "auto"
+            lineHeight: 1.45,
+            overflow: "hidden"
           }}>
             {person.funFact || person.comment}
           </p>
-          <p style={{ textAlign: "center", marginTop: "clamp(0.3rem, 0.6vw, 0.4rem)", fontSize: "clamp(0.54rem, 0.82vw, 0.64rem)", color: COLORS.lightText }}>Tap to flip back</p>
+          <p style={{ textAlign: "center", marginTop: "clamp(0.15rem, 0.6vw, 0.4rem)", fontSize: "clamp(0.5rem, 0.82vw, 0.64rem)", color: COLORS.lightText }}>Tap to flip back</p>
         </div>
       </div>
     </div>
