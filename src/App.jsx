@@ -130,23 +130,23 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, is
     borderBottom: isLast ? "none" : `1px solid ${COLORS.border}`
   }}>
     <div style={{ display: "flex", alignItems: "flex-start", gap: isMobile ? "0.5rem" : "0.75rem" }}>
-      <div style={{ width: isMobile ? 62 : 100, flexShrink: 0, fontSize: isMobile ? "0.76rem" : "0.95rem", color: COLORS.lightText, whiteSpace: "nowrap", paddingTop: "0.05rem" }}>
+      <div style={{ width: isMobile ? 55 : 100, flexShrink: 0, fontSize: isMobile ? "0.68rem" : "0.95rem", color: COLORS.lightText, whiteSpace: "nowrap", paddingTop: "0.05rem" }}>
         {time}
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: isMobile ? "0.8rem" : "1rem", fontWeight: 500, color: COLORS.darkText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{event}</div>
+        <div style={{ fontSize: isMobile ? "0.72rem" : "1rem", fontWeight: 500, color: COLORS.darkText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{event}</div>
         {location && (
-          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.68rem" : "0.82rem", color: COLORS.lightText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.62rem" : "0.82rem", color: COLORS.lightText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {location}
           </div>
         )}
         {attire && (
-          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.68rem" : "0.8rem", color: COLORS.mediumText, fontStyle: "italic", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.6rem" : "0.8rem", color: COLORS.mediumText, fontStyle: "italic", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {attire}
           </div>
         )}
         {note && (
-          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.66rem" : "0.76rem", color: COLORS.mediumText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.58rem" : "0.76rem", color: COLORS.mediumText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {noteHref ? (
               <a href={noteHref} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
                 {note}
@@ -1811,7 +1811,7 @@ function InfoTab({ isMobile, reducedMotion }) {
     border: "1px solid rgba(197, 165, 90, 0.18)",
     borderRadius: isMobile ? 18 : 22,
     boxShadow: "0 18px 38px rgba(44,36,32,0.08), inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(181,160,138,0.16)",
-    padding: isMobile ? "3.2rem 1rem 3rem" : "3.8rem 2rem 3.5rem",
+    padding: isMobile ? "3.2rem 1.4rem 3rem" : "3.8rem 2rem 3.5rem",
     marginBottom: "1.7rem",
     overflow: "hidden"
   };
@@ -1967,7 +1967,14 @@ function InfoTab({ isMobile, reducedMotion }) {
       <motion.div variants={itemVariants} style={plainSectionStyle}>
         {sectionTitle("Travel & Stay")}
         <div style={{ lineHeight: 1.8, color: COLORS.mediumText, fontSize: isMobile ? "0.88rem" : "0.95rem" }}>
-          <p style={{ marginBottom: "1.2rem" }}><strong style={{ color: COLORS.darkText }}>Hotels with Room Blocks:</strong></p>
+
+          <p style={{ marginBottom: "0.6rem" }}><strong style={{ color: COLORS.darkText }}>Getting There:</strong></p>
+          <p style={{ marginBottom: "1.8rem" }}>
+            Charlottesville-Albemarle Airport (CHO) is 20 minutes from downtown.<br />
+            Charlottesville Amtrak Station (CVS) is right in town with daily service from DC, NYC, and beyond.
+          </p>
+
+          <p style={{ marginBottom: "0.6rem" }}><strong style={{ color: COLORS.darkText }}>Hotels with Room Blocks:</strong></p>
           <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.8rem" }}>
             <li style={{ marginBottom: "0.6rem" }}>
               <a href="https://be.synxis.com/?Hotel=48984&Chain=10237&arrive=2026-10-23&depart=2026-10-25&adult=1&child=0&group=1281" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
@@ -1986,7 +1993,7 @@ function InfoTab({ isMobile, reducedMotion }) {
             </li>
           </ul>
 
-          <p style={{ marginBottom: "1.2rem" }}><strong style={{ color: COLORS.darkText }}>Other Hotel Options:</strong></p>
+          <p style={{ marginBottom: "0.6rem" }}><strong style={{ color: COLORS.darkText }}>Other Hotel Options:</strong></p>
           <p style={{ color: COLORS.lightText, marginBottom: "0.8rem", fontStyle: "italic" }}>
             Please note: we do not have a wedding block at these hotels. Book directly at general rates.
           </p>
@@ -2003,7 +2010,7 @@ function InfoTab({ isMobile, reducedMotion }) {
             </li>
           </ul>
 
-          <p style={{ marginBottom: "1.2rem" }}><strong style={{ color: COLORS.darkText }}>VA Guest Houses:</strong></p>
+          <p style={{ marginBottom: "0.6rem" }}><strong style={{ color: COLORS.darkText }}>VA Guest Houses:</strong></p>
           <p style={{ marginBottom: "0.8rem" }}>
             Guesthouses accommodates wedding block holds across their entire portfolio of properties, allowing guests to book and pay directly. Here's how it works:
           </p>
@@ -2026,14 +2033,8 @@ function InfoTab({ isMobile, reducedMotion }) {
             <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/ramsay-estate-cottage" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ramsay Estate Cottage</a> — 3 bedrooms, 3 bathrooms, sleeps 6</li>
             <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/stockton-creek-farmhouse" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Stockton Creek Farmhouse</a> — 3 bedrooms, 2.5 bathrooms, sleeps 6</li>
           </ul>
-          <p style={{ marginBottom: "1.8rem" }}>
+          <p>
             You can view a map of all properties on the <a href="https://www.vaguesthouses.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>VA Guesthouses website</a>.
-          </p>
-
-          <p style={{ marginTop: "1.2rem" }}>
-            <strong style={{ color: COLORS.darkText }}>Getting There:</strong><br /><br />
-            Charlottesville-Albemarle Airport (CHO) is 20 minutes from downtown.<br />
-            Charlottesville Amtrak Station (CVS) is right in town with daily service from DC, NYC, and beyond.
           </p>
         </div>
       </motion.div>
