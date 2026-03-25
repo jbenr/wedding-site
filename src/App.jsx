@@ -1033,7 +1033,7 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
                     <img
                       src={IU_LOGO_IMAGE}
                       alt="Indiana Hoosiers"
-                      style={{ width: isMobile ? 104 : 156, height: isMobile ? 128 : 192, objectFit: "contain", display: "block" }}
+                      style={{ width: isMobile ? 156 : 234, height: isMobile ? 192 : 288, objectFit: "contain", display: "block" }}
                     />
                   </motion.button>
                 </div>
@@ -1367,7 +1367,7 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
             <div style={{ padding: isMobile ? "0.6rem 1rem" : "0.7rem 0.5rem", display: "flex", alignItems: "center", gap: "1rem" }}>
               <button
                 onClick={doLike}
-                style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.5rem", padding: 0, lineHeight: 1, color: "#e74c3c" }}
+                style={{ background: "none", border: "none", outline: "none", boxShadow: "none", appearance: "none", WebkitTapHighlightColor: "transparent", cursor: "pointer", fontSize: "1.5rem", padding: 0, lineHeight: 1, color: currentLikes > 0 ? "#e74c3c" : "transparent", WebkitTextStroke: currentLikes > 0 ? "0" : "1px #e74c3c" }}
               >
                 ♥
               </button>
@@ -1389,10 +1389,10 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
               {currentComments.length > 0 && (
                 <div style={{ padding: "0.6rem 0", maxHeight: 180, overflowY: "auto" }}>
                   {currentComments.map((c, i) => (
-                    <div key={c.id || i} style={{ fontSize: "0.82rem", color: COLORS.mediumText, lineHeight: 1.6, marginBottom: "0.35rem", display: "flex", flexWrap: "wrap", alignItems: "baseline", columnGap: "0.45rem" }}>
-                      <span>{c.text}</span>
+                    <div key={c.id || i} style={{ fontSize: "0.82rem", color: COLORS.mediumText, lineHeight: 1.6, marginBottom: "0.35rem", display: "grid", gridTemplateColumns: "minmax(0, 1fr) auto", alignItems: "baseline", columnGap: "0.55rem" }}>
+                      <span style={{ minWidth: 0 }}>{c.text}</span>
                       {c.ts > 0 && (
-                        <span style={{ fontSize: "0.68rem", color: COLORS.lightText }}>
+                        <span style={{ fontSize: "0.65rem", color: COLORS.lightText, whiteSpace: "nowrap", textAlign: "right" }}>
                           {formatCommentTimestamp(c.ts)}
                         </span>
                       )}
