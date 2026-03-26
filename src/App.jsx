@@ -2173,7 +2173,7 @@ END:VCALENDAR`;
                   background: COLORS.cream,
                   padding: isMobile ? "0.28rem" : "0.4rem",
                   borderRadius: 10,
-                  justifyContent: isMobile ? "flex-start" : "center",
+                  justifyContent: "center",
                   flexWrap: "nowrap",
                   border: `1px solid ${COLORS.border}`,
                   overflowX: isMobile ? "auto" : "visible",
@@ -2660,7 +2660,7 @@ function InfoTab({ isMobile, reducedMotion }) {
     border: "1px solid rgba(197, 165, 90, 0.18)",
     borderRadius: isMobile ? 18 : 22,
     boxShadow: "0 18px 38px rgba(44,36,32,0.08), inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(181,160,138,0.16)",
-    padding: isMobile ? "3rem 1.2rem 2.7rem" : "3.8rem 2rem 3.5rem",
+    padding: isMobile ? "2.8rem 1.45rem 2.45rem" : "3.8rem 2rem 3.5rem",
     marginBottom: "1.7rem",
     overflow: "hidden"
   };
@@ -2672,12 +2672,12 @@ function InfoTab({ isMobile, reducedMotion }) {
   const containerVariants = getStaggerContainerVariants(reducedMotion);
   const itemVariants = getStaggerItemVariants(reducedMotion);
   const dayDivider = () => (
-    <div style={{ display: "flex", alignItems: "center", gap: isMobile ? "0.65rem" : "0.9rem", margin: isMobile ? "1.6rem 0 1.2rem" : "1.8rem 0 1.4rem" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: isMobile ? "0.45rem" : "0.9rem", margin: isMobile ? "1.3rem 0 1rem" : "1.8rem 0 1.4rem" }}>
       <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.border})` }} />
-      <div style={{ display: "flex", alignItems: "center", gap: isMobile ? "0.4rem" : "0.55rem", color: COLORS.accent, flexShrink: 0 }}>
-        <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
-        <div style={{ width: isMobile ? 18 : 26, height: 1, background: COLORS.accent, opacity: 0.7 }} />
-        <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+      <div style={{ display: "flex", alignItems: "center", gap: isMobile ? "0.28rem" : "0.55rem", color: COLORS.accent, flexShrink: 0 }}>
+        <div style={{ width: isMobile ? 6 : 8, height: isMobile ? 6 : 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+        <div style={{ width: isMobile ? 14 : 26, height: 1, background: COLORS.accent, opacity: 0.7 }} />
+        <div style={{ width: isMobile ? 6 : 8, height: isMobile ? 6 : 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
       </div>
       <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${COLORS.border}, transparent)` }} />
     </div>
@@ -2707,7 +2707,7 @@ function InfoTab({ isMobile, reducedMotion }) {
           aria-hidden="true"
           style={{
             position: "absolute",
-            inset: "8px",
+            inset: isMobile ? "7px" : "8px",
             border: "1px solid rgba(182, 153, 118, 0.12)",
             borderRadius: isMobile ? 14 : 18,
             pointerEvents: "none"
@@ -2717,38 +2717,38 @@ function InfoTab({ isMobile, reducedMotion }) {
           aria-hidden="true"
           style={{
             position: "absolute",
-            top: isMobile ? 14 : 18,
+            top: isMobile ? 12 : 18,
             left: isMobile ? 24 : 34,
             right: isMobile ? 24 : 34,
             display: "flex",
             alignItems: "center",
-            gap: isMobile ? "0.4rem" : "0.55rem",
+            gap: isMobile ? "0.3rem" : "0.55rem",
             pointerEvents: "none"
           }}
         >
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.border})` }} />
-          <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
-          <div style={{ width: isMobile ? 18 : 26, height: 1, background: COLORS.accent, opacity: 0.7 }} />
-          <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+          <div style={{ width: isMobile ? 6 : 8, height: isMobile ? 6 : 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+          <div style={{ width: isMobile ? 14 : 26, height: 1, background: COLORS.accent, opacity: 0.7 }} />
+          <div style={{ width: isMobile ? 6 : 8, height: isMobile ? 6 : 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${COLORS.border}, transparent)` }} />
         </div>
         <div
           aria-hidden="true"
           style={{
             position: "absolute",
-            bottom: isMobile ? 14 : 18,
+            bottom: isMobile ? 12 : 18,
             left: isMobile ? 24 : 34,
             right: isMobile ? 24 : 34,
             display: "flex",
             alignItems: "center",
-            gap: isMobile ? "0.4rem" : "0.55rem",
+            gap: isMobile ? "0.3rem" : "0.55rem",
             pointerEvents: "none"
           }}
         >
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.border})` }} />
-          <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
-          <div style={{ width: isMobile ? 18 : 26, height: 1, background: COLORS.accent, opacity: 0.7 }} />
-          <div style={{ width: 8, height: 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+          <div style={{ width: isMobile ? 6 : 8, height: isMobile ? 6 : 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
+          <div style={{ width: isMobile ? 14 : 26, height: 1, background: COLORS.accent, opacity: 0.7 }} />
+          <div style={{ width: isMobile ? 6 : 8, height: isMobile ? 6 : 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${COLORS.border}, transparent)` }} />
         </div>
         <div
@@ -2768,7 +2768,7 @@ function InfoTab({ isMobile, reducedMotion }) {
           }}>
             Weekend Schedule
           </h3>
-          <div style={{ width: 50, height: 1, background: COLORS.accent, margin: "0 auto 2rem" }} />
+          <div style={{ width: isMobile ? 40 : 50, height: 1, background: COLORS.accent, margin: isMobile ? "0 auto 1.55rem" : "0 auto 2rem" }} />
 
           <div style={{ maxWidth: isMobile ? "100%" : 480, margin: "0 auto" }}>
           {/* Friday */}
