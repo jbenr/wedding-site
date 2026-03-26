@@ -1858,11 +1858,11 @@ export default function App() {
 VERSION:2.0
 PRODID:-//Ben & Emily Wedding//EN
 BEGIN:VEVENT
-DTSTART:20261024T170000
-DTEND:20261024T230000
-SUMMARY:Ben & Emily's Wedding
-DESCRIPTION:Ceremony at Christ Episcopal Church, 120 W. High Street. Reception at 241 Rosemont Farm Way.
-LOCATION:120 W. High Street, Charlottesville, VA 22902
+DTSTART;TZID=America/New_York:20261024T170000
+DTEND;TZID=America/New_York:20261024T180000
+SUMMARY:Ben & Emily Wedding Ceremony
+DESCRIPTION:Christ Episcopal Church at 5:00 PM on October 24, 2026.
+LOCATION:Christ Episcopal Church, 120 W High St, Charlottesville, VA 22902
 URL:${window.location.href}
 STATUS:CONFIRMED
 END:VEVENT
@@ -2717,7 +2717,7 @@ function InfoTab({ isMobile, reducedMotion }) {
           aria-hidden="true"
           style={{
             position: "absolute",
-            top: isMobile ? 12 : 18,
+            top: isMobile ? 14 : 20,
             left: isMobile ? 24 : 34,
             right: isMobile ? 24 : 34,
             display: "flex",
@@ -2736,7 +2736,7 @@ function InfoTab({ isMobile, reducedMotion }) {
           aria-hidden="true"
           style={{
             position: "absolute",
-            bottom: isMobile ? 12 : 18,
+            bottom: isMobile ? 14 : 20,
             left: isMobile ? 24 : 34,
             right: isMobile ? 24 : 34,
             display: "flex",
