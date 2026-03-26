@@ -120,7 +120,10 @@ const CONTENT_WIDTH = 900;
 
 // Hook for mobile detection
 const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth < 960;
+  });
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 960);
     check();
@@ -2457,13 +2460,13 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
 
       {/* Story Text */}
       <motion.div variants={itemVariants} style={{ padding: isMobile ? "0.9rem 0.3rem" : "1.5rem 2rem", marginBottom: "2rem", maxWidth: isMobile ? 360 : "none", marginInline: "auto" }}>
-        <p style={{ fontSize: isMobile ? "0.76rem" : "0.9rem", lineHeight: isMobile ? 1.72 : 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "1.15rem" }}>
+        <p style={{ fontSize: isMobile ? "0.79rem" : "0.9rem", lineHeight: isMobile ? 1.72 : 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "1.15rem" }}>
           Emily and Ben met on Halloween in Atlanta, with Emily dressed as Padme and Ben as Anakin. Since then, life has taken them from Atlanta to New York City, where they&apos;ve built a home together on the Upper East Side.
         </p>
-        <p style={{ fontSize: isMobile ? "0.76rem" : "0.9rem", lineHeight: isMobile ? 1.72 : 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "1.15rem" }}>
+        <p style={{ fontSize: isMobile ? "0.79rem" : "0.9rem", lineHeight: isMobile ? 1.72 : 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "1.15rem" }}>
           We&apos;re looking forward to celebrating this next chapter with you. Here you&apos;ll find all the details about our wedding weekend, travel information, and our registry.
         </p>
-        <p style={{ fontSize: isMobile ? "0.76rem" : "0.9rem", lineHeight: isMobile ? 1.72 : 1.8, color: COLORS.mediumText, textAlign: "center" }}>
+        <p style={{ fontSize: isMobile ? "0.79rem" : "0.9rem", lineHeight: isMobile ? 1.72 : 1.8, color: COLORS.mediumText, textAlign: "center" }}>
           We can&apos;t wait to celebrate together!
         </p>
       </motion.div>
