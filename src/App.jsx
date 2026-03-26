@@ -88,6 +88,7 @@ const PARTY_CARD_THEMES = {
 import iuLogo from "./assets/IU.png";
 const IU_LOGO_IMAGE = iuLogo;
 const GOLF_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc05xidXMl9XIGrUmGwN7IqLgqHv727BPUUq3r4118eVUyi-Q/viewform?usp=publish-editor";
+const DRAFTSMAN_URL = "https://app.marriott.com/reslink?id=1770319213584&key=GRP&app=resvlink";
 const CARD_FLIP_DURATION_MS = 650;
 const CELEBRATE_BUTTON_TEXT = "Can't Wait!";
 const HOOSIER_BUTTON_TEXT = "Go Hoosiers!";
@@ -132,27 +133,80 @@ const useIsMobile = () => {
 // Simple schedule row — clean two-column layout
 const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, isMobile }) => (
   <div style={{
-    padding: "0.8rem 0",
+    padding: isMobile ? "0.95rem 0" : "0.8rem 0",
     borderBottom: isLast ? "none" : `1px solid ${COLORS.border}`
   }}>
-    <div style={{ display: "flex", alignItems: "flex-start", gap: isMobile ? "0.5rem" : "0.75rem" }}>
-      <div style={{ width: isMobile ? 55 : 100, flexShrink: 0, fontSize: isMobile ? "0.68rem" : "0.95rem", color: COLORS.lightText, whiteSpace: "nowrap", paddingTop: "0.05rem" }}>
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: isMobile ? "1fr" : "92px minmax(0, 1fr)",
+      gap: isMobile ? "0.42rem" : "0.75rem",
+      alignItems: "start"
+    }}>
+      <div style={{
+        width: isMobile ? "fit-content" : 92,
+        flexShrink: 0,
+        fontSize: isMobile ? "0.64rem" : "0.95rem",
+        color: COLORS.lightText,
+        whiteSpace: "nowrap",
+        paddingTop: isMobile ? 0 : "0.05rem",
+        letterSpacing: isMobile ? "0.08em" : "normal",
+        textTransform: isMobile ? "uppercase" : "none",
+        border: isMobile ? `1px solid ${COLORS.border}` : "none",
+        borderRadius: isMobile ? 999 : 0,
+        padding: isMobile ? "0.22rem 0.5rem" : 0,
+        background: isMobile ? "rgba(255,255,255,0.7)" : "transparent"
+      }}>
         {time}
       </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: isMobile ? "0.72rem" : "1rem", fontWeight: 500, color: COLORS.darkText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{event}</div>
+      <div style={{ minWidth: 0 }}>
+        <div style={{
+          fontSize: isMobile ? "0.84rem" : "1rem",
+          fontWeight: 500,
+          color: COLORS.darkText,
+          lineHeight: isMobile ? 1.35 : 1.3,
+          whiteSpace: isMobile ? "normal" : "nowrap",
+          overflow: isMobile ? "visible" : "hidden",
+          textOverflow: isMobile ? "clip" : "ellipsis"
+        }}>
+          {event}
+        </div>
         {location && (
-          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.62rem" : "0.82rem", color: COLORS.lightText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{
+            marginTop: "0.18rem",
+            fontSize: isMobile ? "0.7rem" : "0.82rem",
+            lineHeight: isMobile ? 1.45 : 1.35,
+            color: COLORS.lightText,
+            whiteSpace: isMobile ? "normal" : "nowrap",
+            overflow: isMobile ? "visible" : "hidden",
+            textOverflow: isMobile ? "clip" : "ellipsis"
+          }}>
             {location}
           </div>
         )}
         {attire && (
-          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.6rem" : "0.8rem", color: COLORS.mediumText, fontStyle: "italic", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{
+            marginTop: "0.18rem",
+            fontSize: isMobile ? "0.68rem" : "0.8rem",
+            lineHeight: isMobile ? 1.4 : 1.35,
+            color: COLORS.mediumText,
+            fontStyle: "italic",
+            whiteSpace: isMobile ? "normal" : "nowrap",
+            overflow: isMobile ? "visible" : "hidden",
+            textOverflow: isMobile ? "clip" : "ellipsis"
+          }}>
             {attire}
           </div>
         )}
         {note && (
-          <div style={{ marginTop: "0.15rem", fontSize: isMobile ? "0.58rem" : "0.76rem", color: COLORS.mediumText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{
+            marginTop: "0.2rem",
+            fontSize: isMobile ? "0.68rem" : "0.76rem",
+            lineHeight: isMobile ? 1.45 : 1.35,
+            color: COLORS.mediumText,
+            whiteSpace: isMobile ? "normal" : "nowrap",
+            overflow: isMobile ? "visible" : "hidden",
+            textOverflow: isMobile ? "clip" : "ellipsis"
+          }}>
             {noteHref ? (
               <a href={noteHref} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
                 {note}
@@ -2187,6 +2241,8 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
   };
 
   const celebrateBaseFontSize = isMobile ? 0.8 : 0.85;
+  const celebrateButtonMinWidth = isMobile ? "11.5rem" : "12.75rem";
+  const celebrateButtonMinHeight = isMobile ? "2.7rem" : "2.9rem";
   const celebrateButtonFontSize = celebrateBaseFontSize + holdFinaleProgress * (isMobile ? 0.18 : 0.22);
   const celebrateButtonScale = 1 + holdFinaleProgress * 0.1;
   const celebrateButtonRed = Math.round(197 + (153 - 197) * holdColorProgress + 15 * holdFinaleProgress);
@@ -2261,14 +2317,14 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       </motion.div>
 
       {/* Story Text */}
-      <motion.div variants={itemVariants} style={{ padding: isMobile ? "1rem 0.5rem" : "1.5rem 2rem", marginBottom: "2rem" }}>
-        <p style={{ fontSize: isMobile ? "0.82rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "1.4rem" }}>
+      <motion.div variants={itemVariants} style={{ padding: isMobile ? "0.9rem 0.3rem" : "1.5rem 2rem", marginBottom: "2rem", maxWidth: isMobile ? 360 : "none", marginInline: "auto" }}>
+        <p style={{ fontSize: isMobile ? "0.76rem" : "0.9rem", lineHeight: isMobile ? 1.72 : 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "1.15rem" }}>
           Emily and Ben met on Halloween in Atlanta, with Emily dressed as Padme and Ben as Anakin. Since then, life has taken them from Atlanta to New York City, where they&apos;ve built a home together on the Upper East Side.
         </p>
-        <p style={{ fontSize: isMobile ? "0.82rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "1.4rem" }}>
+        <p style={{ fontSize: isMobile ? "0.76rem" : "0.9rem", lineHeight: isMobile ? 1.72 : 1.8, color: COLORS.mediumText, textAlign: "center", marginBottom: "1.15rem" }}>
           We&apos;re looking forward to celebrating this next chapter with you. Here you&apos;ll find all the details about our wedding weekend, travel information, and our registry.
         </p>
-        <p style={{ fontSize: isMobile ? "0.82rem" : "0.9rem", lineHeight: 1.8, color: COLORS.mediumText, textAlign: "center" }}>
+        <p style={{ fontSize: isMobile ? "0.76rem" : "0.9rem", lineHeight: isMobile ? 1.72 : 1.8, color: COLORS.mediumText, textAlign: "center" }}>
           We can&apos;t wait to celebrate together!
         </p>
       </motion.div>
@@ -2312,16 +2368,23 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
           style={{
             position: "relative",
             overflow: "hidden",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
             background: `rgb(${celebrateButtonRed}, ${celebrateButtonGreen}, ${celebrateButtonBlue})`,
             color: "#FFFFFF",
             border: "none",
             padding: "0.7rem 1.6rem",
+            minWidth: celebrateButtonMinWidth,
+            minHeight: celebrateButtonMinHeight,
             fontSize: `${celebrateButtonFontSize}rem`,
             fontWeight: 500,
+            lineHeight: 1,
             borderRadius: 50,
             cursor: "pointer",
             marginBottom: "0.5rem",
             letterSpacing: "0.05em",
+            whiteSpace: "nowrap",
             transform: `scale(${celebrateButtonScale})`,
             boxShadow: holdColorProgress > 0
               ? `0 ${Math.round(8 + holdFinaleProgress * 8)}px ${Math.round(20 + holdFinaleProgress * 14)}px rgba(153, 0, 0, ${0.16 + holdFinaleProgress * 0.12})`
@@ -2331,7 +2394,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
               : "none"
           }}
         >
-          <span style={{ position: "relative", zIndex: 1, display: "inline-flex", alignItems: "center" }}>
+          <span style={{ position: "relative", zIndex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
             {celebrateCharStates.map(({ index, sourceChar, char, progress }) => {
               const hasChanged = char !== sourceChar;
               const popAmount = reducedMotion ? 0 : Math.sin(progress * Math.PI) * 0.24;
@@ -2432,7 +2495,7 @@ function InfoTab({ isMobile, reducedMotion }) {
     border: "1px solid rgba(197, 165, 90, 0.18)",
     borderRadius: isMobile ? 18 : 22,
     boxShadow: "0 18px 38px rgba(44,36,32,0.08), inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(181,160,138,0.16)",
-    padding: isMobile ? "3.2rem 1.4rem 3rem" : "3.8rem 2rem 3.5rem",
+    padding: isMobile ? "2.9rem 1rem 2.6rem" : "3.8rem 2rem 3.5rem",
     marginBottom: "1.7rem",
     overflow: "hidden"
   };
@@ -2542,32 +2605,32 @@ function InfoTab({ isMobile, reducedMotion }) {
           </h3>
           <div style={{ width: 50, height: 1, background: COLORS.accent, margin: "0 auto 2rem" }} />
 
-          <div style={{ maxWidth: 480, margin: "0 auto" }}>
+          <div style={{ maxWidth: isMobile ? "100%" : 480, margin: "0 auto" }}>
           {/* Friday */}
             <h4 style={{
-              fontSize: "0.8rem",
+              fontSize: isMobile ? "0.72rem" : "0.8rem",
               fontWeight: 600,
               color: COLORS.accent,
               textTransform: "uppercase",
-              letterSpacing: "0.2em",
+              letterSpacing: isMobile ? "0.16em" : "0.2em",
               marginBottom: "0.5rem"
             }}>
               Friday, October 23
             </h4>
 
             <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location="Birdwood Golf Club" note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} isMobile={isMobile} />
-            <ScheduleRow time="6:30 PM" event="Rehearsal Dinner" location="Farmington Country Club - The Jefferson Room" attire="Cocktail Attire" isMobile={isMobile} />
-            <ScheduleRow time="9:00 PM" event="Welcome Party" location="Farmington Country Club - The Blue Ridge Room" attire="Cocktail Attire" isLast isMobile={isMobile} />
+            <ScheduleRow time="5:00 PM" event="Rehearsal Dinner" location="Farmington Country Club - The Jefferson Room" attire="Cocktail Attire" isMobile={isMobile} />
+            <ScheduleRow time="8:00 PM" event="Welcome Party" location="Farmington Country Club - The Blue Ridge Room" attire="Cocktail Attire" isLast isMobile={isMobile} />
 
             {dayDivider()}
 
             {/* Saturday */}
             <h4 style={{
-              fontSize: "0.8rem",
+              fontSize: isMobile ? "0.72rem" : "0.8rem",
               fontWeight: 600,
               color: COLORS.accent,
               textTransform: "uppercase",
-              letterSpacing: "0.2em",
+              letterSpacing: isMobile ? "0.16em" : "0.2em",
               marginBottom: "0.5rem"
             }}>
               Saturday, October 24
@@ -2607,6 +2670,12 @@ function InfoTab({ isMobile, reducedMotion }) {
               </span>
             </li>
             <li style={{ marginBottom: "0.4rem" }}>
+              <a href={DRAFTSMAN_URL} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
+                <strong>The Draftsman</strong>
+              </a>
+              : Courtesy block available (10 rooms).
+            </li>
+            <li style={{ marginBottom: "0.4rem", display: "none" }}>
               <strong>The Draftsman</strong> — Courtesy block available (10 rooms). More details to follow.
             </li>
             <li>
