@@ -91,15 +91,20 @@ const GOLF_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc05xidXMl9XIGrU
 const DRAFTSMAN_URL = "https://app.marriott.com/reslink?id=1770319213584&key=GRP&app=resvlink";
 const CARD_FLIP_DURATION_MS = 650;
 const CELEBRATE_BUTTON_TEXT = "Can't Wait!";
-const HOOSIER_BUTTON_TEXT = "Go Hoosiers!";
-const HOLD_COLOR_START_MS = 1500;
-const HOLD_MORPH_START_MS = 3000;
-const HOLD_MORPH_DURATION_MS = 4000;
-const HOLD_MORPH_HOLD_MS = 3000;
-const HOLD_FINALE_START_MS = HOLD_MORPH_START_MS + HOLD_MORPH_DURATION_MS;
-const HOLD_FINALE_DURATION_MS = HOLD_MORPH_HOLD_MS;
-const HOLD_REVEAL_MS = HOLD_MORPH_START_MS + HOLD_MORPH_DURATION_MS + HOLD_MORPH_HOLD_MS;
-const HOLD_COLOR_DURATION_MS = HOLD_REVEAL_MS - HOLD_COLOR_START_MS;
+const HOLD_REVEAL_MS = 10000;
+const HOLD_MUSH_DURATION_MS = 3000;
+const HOLD_SWELL_START_MS = 3000;
+const HOLD_SWELL_DURATION_MS = HOLD_REVEAL_MS - HOLD_SWELL_START_MS;
+const HOLD_COLOR_DURATION_MS = 8000;
+const PEEL_HANDLE_SIZE_MOBILE = 84;
+const PEEL_HANDLE_SIZE_DESKTOP = 96;
+const PEEL_MAX_X_MOBILE = 168;
+const PEEL_MAX_X_DESKTOP = 236;
+const PEEL_MAX_Y_MOBILE = 132;
+const PEEL_MAX_Y_DESKTOP = 186;
+const PEEL_MAX_PULL_MOBILE = 210;
+const PEEL_MAX_PULL_DESKTOP = 290;
+const PEEL_COMMIT_PROGRESS = 0.68;
 
 const INDIANA_CANDY_STRIPE = `repeating-linear-gradient(
   90deg,
@@ -108,6 +113,8 @@ const INDIANA_CANDY_STRIPE = `repeating-linear-gradient(
   ${COLORS.indianaWhite} 20px,
   ${COLORS.indianaWhite} 40px
 )`;
+
+const clamp01 = (value) => Math.max(0, Math.min(1, value));
 
 // FIXED CARD DIMENSIONS
 const CARD_HEIGHT_DESKTOP = 380;
@@ -432,40 +439,40 @@ const IndianaCandyStripe = () => (
 );
 
 const getPeelGeometry = (progress, isMobile, peelOffset = { x: 0, y: 0 }) => {
-  const handleSize = isMobile ? 70 : 84;
-  const restFoldX = isMobile ? 18 : 22;
-  const restFoldY = isMobile ? 16 : 20;
+  const handleSize = isMobile ? PEEL_HANDLE_SIZE_MOBILE : PEEL_HANDLE_SIZE_DESKTOP;
+  const restFoldX = isMobile ? 26 : 32;
+  const restFoldY = isMobile ? 20 : 24;
   const restRevealX = restFoldX + (isMobile ? 8 : 10);
   const restRevealY = restFoldY + (isMobile ? 7 : 9);
-  const maxCornerX = isMobile ? 120 : 170;
-  const maxCornerY = isMobile ? 100 : 145;
+  const maxCornerX = isMobile ? PEEL_MAX_X_MOBILE : PEEL_MAX_X_DESKTOP;
+  const maxCornerY = isMobile ? PEEL_MAX_Y_MOBILE : PEEL_MAX_Y_DESKTOP;
   const cornerX = Math.min(peelOffset.x, maxCornerX);
   const cornerY = Math.min(peelOffset.y, maxCornerY);
   const activeCornerX = progress > 0 ? cornerX : 0;
   const activeCornerY = progress > 0 ? cornerY : 0;
   const foldX = Math.min(
-    isMobile ? 176 : 250,
-    restFoldX + activeCornerX * 1.08 + (progress > 0 ? (isMobile ? 18 : 22) : 0)
+    isMobile ? 214 : 292,
+    restFoldX + activeCornerX * 1.14 + (progress > 0 ? (isMobile ? 24 : 30) : 0)
   );
   const foldY = Math.min(
-    isMobile ? 154 : 220,
-    restFoldY + activeCornerY * 1.06 + (progress > 0 ? (isMobile ? 16 : 20) : 0)
+    isMobile ? 176 : 248,
+    restFoldY + activeCornerY * 1.1 + (progress > 0 ? (isMobile ? 20 : 26) : 0)
   );
 
   return {
     handleSize,
     revealClipPath:
       progress <= 0
-        ? `polygon(100% calc(100% - ${restRevealY}px), 100% 100%, calc(100% - ${restRevealX}px) 100%)`
-        : `polygon(100% calc(100% - ${foldY}px), 100% 100%, calc(100% - ${foldX}px) 100%, calc(100% - ${activeCornerX}px) calc(100% - ${activeCornerY}px))`,
+        ? `polygon(0 calc(100% - ${restRevealY}px), ${restRevealX}px 100%, 0 100%)`
+        : `polygon(0 calc(100% - ${foldY}px), ${activeCornerX}px calc(100% - ${activeCornerY}px), ${foldX}px 100%, 0 100%)`,
     flapClipPath:
       progress <= 0
-        ? `polygon(100% calc(100% - ${foldY}px), 100% 100%, calc(100% - ${foldX}px) 100%)`
-        : `polygon(100% calc(100% - ${foldY}px), calc(100% - ${activeCornerX}px) calc(100% - ${activeCornerY}px), calc(100% - ${foldX}px) 100%)`,
+        ? `polygon(0 calc(100% - ${foldY}px), ${foldX}px 100%, 0 100%)`
+        : `polygon(0 calc(100% - ${foldY}px), ${activeCornerX}px calc(100% - ${activeCornerY}px), ${foldX}px 100%, 0 100%)`,
     shadowClipPath:
       progress <= 0
-        ? `polygon(100% calc(100% - ${foldY + 2}px), 100% 100%, calc(100% - ${foldX + 2}px) 100%)`
-        : `polygon(100% calc(100% - ${foldY + 2}px), calc(100% - ${Math.max(0, activeCornerX - 2)}px) calc(100% - ${Math.max(0, activeCornerY - 2)}px), calc(100% - ${foldX + 2}px) 100%)`
+        ? `polygon(0 calc(100% - ${foldY + 2}px), ${foldX + 2}px 100%, 0 100%)`
+        : `polygon(0 calc(100% - ${foldY + 2}px), ${Math.max(0, activeCornerX - 2)}px calc(100% - ${Math.max(0, activeCornerY - 2)}px), ${foldX + 2}px 100%, 0 100%)`
   };
 };
 
@@ -478,7 +485,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
   const flapLift = reducedMotion ? 0 : Math.min(10, peelOffset.x * 0.022 + peelOffset.y * 0.02);
   const flapTilt = reducedMotion ? 0 : Math.min(4.5, peelOffset.x * 0.014 + peelOffset.y * 0.012);
   const paperOpacity = progress > 0 ? 0.98 : 0.94;
-  const revealOpacity = 0.4 + progress * 0.38;
+  const revealOpacity = 0.38 + progress * 0.34;
   const promptOpacity = Math.max(0, 0.82 - progress * 0.58);
   const promptWidth = isMobile ? 138 : 182;
   const promptHeight = isMobile ? 102 : 124;
@@ -504,7 +511,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
               inset: 0,
               clipPath: revealClipPath,
               backgroundImage: INDIANA_CANDY_STRIPE,
-              backgroundPosition: isMobile ? "0 0" : "right top",
+              backgroundPosition: isMobile ? "0 0" : "left top",
               backgroundSize: "40px 100%",
               opacity: revealOpacity
             }}
@@ -515,8 +522,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
               inset: 0,
               clipPath: revealClipPath,
               background:
-                "linear-gradient(225deg, rgba(153, 0, 0, 0) 22%, rgba(153, 0, 0, 0.06) 58%, rgba(153, 0, 0, 0.15) 100%)"
-              ,
+                "linear-gradient(135deg, rgba(153, 0, 0, 0) 22%, rgba(153, 0, 0, 0.06) 58%, rgba(153, 0, 0, 0.15) 100%)",
               opacity: 0.7 + progress * 0.18
             }}
           />
@@ -526,8 +532,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
               inset: 0,
               clipPath: revealClipPath,
               background:
-                "linear-gradient(235deg, rgba(255,255,255,0) 42%, rgba(255,255,255,0.14) 72%, rgba(255,255,255,0.26) 100%)"
-              ,
+                "linear-gradient(125deg, rgba(255,255,255,0) 42%, rgba(255,255,255,0.14) 72%, rgba(255,255,255,0.26) 100%)",
               opacity: 0.5 + progress * 0.25
             }}
           />
@@ -537,7 +542,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
               inset: 0,
               clipPath: revealClipPath,
               background:
-                "radial-gradient(circle at bottom right, rgba(255,255,255,0.28), rgba(255,255,255,0) 72%)",
+                "radial-gradient(circle at bottom left, rgba(255,255,255,0.28), rgba(255,255,255,0) 72%)",
               opacity: 0.25 + progress * 0.45
             }}
           />
@@ -549,7 +554,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
         transition={reducedMotion ? { duration: 0 } : { duration: 0.32, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
         style={{
           position: "absolute",
-          right: isMobile ? 18 : 26,
+          left: isMobile ? 18 : 26,
           bottom: isMobile ? 18 : 26,
           width: promptWidth,
           height: promptHeight,
@@ -559,13 +564,13 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
         <div
           style={{
             position: "absolute",
-            left: isMobile ? 4 : 8,
-            top: isMobile ? -12 : -14,
+            right: isMobile ? 4 : 8,
+            top: isMobile ? -18 : -20,
             fontFamily: "'Caveat', cursive",
             fontSize: isMobile ? "0.96rem" : "1.14rem",
             color: "rgba(153, 0, 0, 0.42)",
             letterSpacing: "0.01em",
-            transform: "rotate(-5deg)",
+            transform: "rotate(5deg)",
             textShadow: "0 1px 0 rgba(255,255,255,0.45)",
             whiteSpace: "nowrap",
             background: "rgba(250,248,243,0.82)",
@@ -590,21 +595,21 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
           <defs>
             <marker
               id="peel-arrowhead"
-              markerWidth="8"
-              markerHeight="8"
-              refX="6.8"
-              refY="4"
+              markerWidth="7"
+              markerHeight="7"
+              refX="6.1"
+              refY="3.5"
               orient="auto"
               markerUnits="strokeWidth"
             >
-              <path d="M0 0.9 L6.6 4 L0 7.1" fill="none" stroke="rgba(153, 0, 0, 0.28)" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M0 0.8 L6.1 3.5 L0 6.2" fill="none" stroke="rgba(153, 0, 0, 0.24)" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
             </marker>
           </defs>
           <path
-            d="M16 28 C 70 2, 118 12, 154 82"
+            d="M164 28 C 110 2, 62 12, 26 82"
             fill="none"
-            stroke="rgba(153, 0, 0, 0.28)"
-            strokeWidth="1.9"
+            stroke="rgba(153, 0, 0, 0.24)"
+            strokeWidth="1.6"
             strokeLinecap="round"
             strokeDasharray="4 8"
             markerEnd="url(#peel-arrowhead)"
@@ -614,7 +619,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
       <div
         style={{
           position: "absolute",
-          right: 0,
+          left: 0,
           bottom: 0,
           width: handleSize,
           height: handleSize,
@@ -640,10 +645,10 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
             position: "absolute",
             inset: 0,
             clipPath: shadowClipPath,
-            background: "linear-gradient(225deg, rgba(44,36,32,0), rgba(44,36,32,0.16))",
+            background: "linear-gradient(135deg, rgba(44,36,32,0), rgba(44,36,32,0.16))",
             filter: "blur(8px)",
             opacity: reducedMotion ? 0.14 : 0.12 + foldIntensity * 0.18,
-            transform: `translate(${-flapLift * 0.16}px, ${-flapLift * 0.16}px)`
+            transform: `translate(${flapLift * 0.16}px, ${-flapLift * 0.16}px)`
           }}
         />
         <div
@@ -651,12 +656,12 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
             position: "absolute",
             inset: 0,
             clipPath: flapClipPath,
-            background: `linear-gradient(145deg, rgba(255,255,255,${paperOpacity}) 0%, rgba(250, 246, 241, ${paperOpacity}) 36%, rgba(238, 228, 217, ${paperOpacity}) 68%, rgba(214, 198, 182, ${paperOpacity}) 100%)`,
-            filter: "drop-shadow(-10px -10px 18px rgba(44,36,32,0.16))",
-            transformOrigin: "bottom right",
+            background: `linear-gradient(145deg, rgba(255,255,255,${paperOpacity}) 0%, rgba(249, 244, 238, ${paperOpacity}) 38%, rgba(236, 226, 216, ${paperOpacity}) 68%, rgba(210, 192, 176, ${paperOpacity}) 100%)`,
+            filter: "drop-shadow(10px -10px 18px rgba(44,36,32,0.16))",
+            transformOrigin: "bottom left",
             transform: reducedMotion
               ? "none"
-              : `perspective(900px) rotateX(${foldIntensity * 9}deg) rotateY(${-foldIntensity * 6}deg) translate3d(${-flapLift * 0.22}px, ${-flapLift * 0.22}px, 0) rotate(${-flapTilt}deg)`
+              : `perspective(900px) rotateX(${foldIntensity * 7.5}deg) rotateY(${foldIntensity * 7.5}deg) translate3d(${flapLift * 0.18}px, ${-flapLift * 0.18}px, 0) rotate(${flapTilt}deg)`
           }}
         >
           <div
@@ -665,7 +670,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
               inset: 0,
               clipPath: flapClipPath,
               backgroundImage: INDIANA_CANDY_STRIPE,
-              backgroundPosition: "right bottom",
+              backgroundPosition: "left bottom",
               backgroundSize: "40px 100%",
               opacity: 0.08
             }}
@@ -676,7 +681,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
               inset: 0,
               clipPath: flapClipPath,
               background:
-                "linear-gradient(225deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.18) 36%, rgba(153,0,0,0.06) 100%)"
+                "linear-gradient(135deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.18) 36%, rgba(153,0,0,0.06) 100%)"
             }}
           />
           <div
@@ -685,7 +690,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
               inset: 0,
               clipPath: flapClipPath,
               background:
-                "linear-gradient(315deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 62%, rgba(120, 36, 36, 0.16) 82%, rgba(94, 18, 18, 0.28) 100%)"
+                "linear-gradient(45deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 58%, rgba(120, 36, 36, 0.14) 78%, rgba(94, 18, 18, 0.28) 100%)"
             }}
           />
           <div
@@ -694,7 +699,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
               inset: 0,
               clipPath: flapClipPath,
               background:
-                "linear-gradient(315deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 28%, rgba(44,36,32,0.14) 100%)",
+                "linear-gradient(45deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 28%, rgba(44,36,32,0.14) 100%)",
               mixBlendMode: "multiply"
             }}
           />
@@ -712,7 +717,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
               inset: 0,
               clipPath: flapClipPath,
               background:
-                "linear-gradient(215deg, rgba(255,255,255,0) 52%, rgba(255,255,255,0.66) 70%, rgba(255,255,255,0.06) 100%)",
+                "linear-gradient(325deg, rgba(255,255,255,0) 52%, rgba(255,255,255,0.66) 70%, rgba(255,255,255,0.06) 100%)",
               opacity: 0.45
             }}
           />
@@ -1550,9 +1555,24 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
             <div style={{ padding: isMobile ? "0.6rem 1rem" : "0.7rem 0.5rem", display: "flex", alignItems: "center", gap: "1rem" }}>
               <button
                 onClick={doLike}
-                style={{ background: "none", border: "none", outline: "none", boxShadow: "none", appearance: "none", WebkitTapHighlightColor: "transparent", cursor: "pointer", fontSize: "1.5rem", padding: 0, lineHeight: 1, color: currentLikes > 0 ? "#e74c3c" : "transparent", WebkitTextStroke: currentLikes > 0 ? "0" : "1px #e74c3c" }}
+                aria-label={currentLikes > 0 ? "Liked photo" : "Like photo"}
+                style={{ background: "none", border: "none", outline: "none", boxShadow: "none", appearance: "none", WebkitTapHighlightColor: "transparent", cursor: "pointer", padding: 0, lineHeight: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
               >
-                ♥
+                <svg
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  aria-hidden="true"
+                  style={{ display: "block", overflow: "visible" }}
+                >
+                  <path
+                    d="M12 21.2 10.55 19.88C5.4 15.22 2 12.14 2 8.35 2 5.27 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.27 22 8.35c0 3.79-3.4 6.87-8.55 11.56L12 21.2Z"
+                    fill={currentLikes > 0 ? "#e74c3c" : "none"}
+                    stroke="#e74c3c"
+                    strokeWidth={currentLikes > 0 ? 1.15 : 1.9}
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </button>
               <span style={{ fontSize: "0.88rem", fontWeight: 600, color: COLORS.darkText }}>
                 {currentLikes.toLocaleString()} {currentLikes === 1 ? "like" : "likes"}
@@ -1811,22 +1831,24 @@ export default function App() {
     if (isPeelCommitting) return;
     event.preventDefault();
     peelStartPointRef.current = { x: event.clientX, y: event.clientY };
-    const maxPull = isMobile ? 150 : 210;
+    const maxPull = isMobile ? PEEL_MAX_PULL_MOBILE : PEEL_MAX_PULL_DESKTOP;
+    const maxOffsetX = isMobile ? PEEL_MAX_X_MOBILE : PEEL_MAX_X_DESKTOP;
+    const maxOffsetY = isMobile ? PEEL_MAX_Y_MOBILE : PEEL_MAX_Y_DESKTOP;
 
     const handlePointerMove = (moveEvent) => {
       if (!peelStartPointRef.current || isPeelCommitting) return;
-      const dx = Math.max(0, peelStartPointRef.current.x - moveEvent.clientX);
+      const dx = Math.max(0, moveEvent.clientX - peelStartPointRef.current.x);
       const dy = Math.max(0, peelStartPointRef.current.y - moveEvent.clientY);
       const nextOffset = {
-        x: Math.min(dx, isMobile ? 120 : 170),
-        y: Math.min(dy, isMobile ? 100 : 145)
+        x: Math.min(dx, maxOffsetX),
+        y: Math.min(dy, maxOffsetY)
       };
       setPeelOffset(nextOffset);
       setPeelProgress(Math.min(1, (dx + dy) / maxPull));
     };
 
     const handlePointerUp = (upEvent) => {
-      const dx = peelStartPointRef.current ? Math.max(0, peelStartPointRef.current.x - upEvent.clientX) : 0;
+      const dx = peelStartPointRef.current ? Math.max(0, upEvent.clientX - peelStartPointRef.current.x) : 0;
       const dy = peelStartPointRef.current ? Math.max(0, peelStartPointRef.current.y - upEvent.clientY) : 0;
       const nextProgress = Math.min(1, (dx + dy) / maxPull);
 
@@ -1835,12 +1857,12 @@ export default function App() {
       window.removeEventListener("pointercancel", handlePointerUp);
       peelStartPointRef.current = null;
 
-      if (nextProgress > 0.72) {
+      if (nextProgress > PEEL_COMMIT_PROGRESS) {
         setIsPeelCommitting(true);
         setPeelProgress(1);
         setPeelOffset({
-          x: isMobile ? 120 : 170,
-          y: isMobile ? 100 : 145
+          x: maxOffsetX,
+          y: maxOffsetY
         });
         peelCommitTimerRef.current = window.setTimeout(() => {
           handleOpenHoosierPage();
@@ -1928,11 +1950,24 @@ END:VCALENDAR`;
           position: relative;
           transition: transform 0.06s ease, box-shadow 0.06s ease, letter-spacing 0.06s ease;
           box-shadow: 0 4px 0 rgba(0,0,0,0.15), 0 6px 12px rgba(0,0,0,0.08) !important;
+          user-select: none;
+          -webkit-user-select: none;
+          -webkit-touch-callout: none;
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
         }
         .press-button:active {
           transform: translateY(3px) scaleY(0.95) scaleX(1.02) !important;
           box-shadow: 0 0px 0 rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.05) !important;
           letter-spacing: -0.02em;
+        }
+
+        .press-button.press-button--celebrate {
+          transform: var(--celebrate-transform, none);
+        }
+
+        .press-button.press-button--celebrate:active {
+          transform: var(--celebrate-transform, translateY(3px) scaleY(0.95) scaleX(1.02)) !important;
         }
 
         .tab-strip {
@@ -2284,34 +2319,18 @@ END:VCALENDAR`;
 
 function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalendarEvent, isMobile, reducedMotion, onRevealHoosierCorner }) {
   const [indices, setIndices] = useState(photoBuckets.map(() => 0));
-  const [holdProgress, setHoldProgress] = useState(0);
   const [holdColorProgress, setHoldColorProgress] = useState(0);
-  const [holdFinaleProgress, setHoldFinaleProgress] = useState(0);
+  const [holdMushProgress, setHoldMushProgress] = useState(0);
+  const [holdSwellProgress, setHoldSwellProgress] = useState(0);
+  const [isCelebrateHolding, setIsCelebrateHolding] = useState(false);
   const containerVariants = getStaggerContainerVariants(reducedMotion);
   const itemVariants = getStaggerItemVariants(reducedMotion);
-  const holdTimerRef = useRef(null);
   const longPressTriggeredRef = useRef(false);
   const holdStartRef = useRef(0);
   const holdAnimationRef = useRef(null);
-  const celebrateMorphLength = Math.max(CELEBRATE_BUTTON_TEXT.length, HOOSIER_BUTTON_TEXT.length);
-  const celebrateSourceChars = CELEBRATE_BUTTON_TEXT.padEnd(celebrateMorphLength, " ").split("");
-  const celebrateTargetChars = HOOSIER_BUTTON_TEXT.padEnd(celebrateMorphLength, " ").split("");
-  const celebrateCharStates = celebrateSourceChars.map((sourceChar, index) => {
-    const segmentSize = 1 / celebrateSourceChars.length;
-    const charProgress = Math.max(0, Math.min(1, (holdProgress - index * segmentSize) / segmentSize));
-
-    return {
-      index,
-      sourceChar,
-      char: charProgress >= 0.5 ? (celebrateTargetChars[index] ?? sourceChar) : sourceChar,
-      progress: charProgress
-    };
-  });
+  const mixChannel = (start, end, amount) => Math.round(start + (end - start) * amount);
 
   useEffect(() => () => {
-    if (holdTimerRef.current) {
-      clearTimeout(holdTimerRef.current);
-    }
     if (holdAnimationRef.current) {
       cancelAnimationFrame(holdAnimationRef.current);
     }
@@ -2323,10 +2342,6 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
     );
 
   const clearCelebrateHold = () => {
-    if (holdTimerRef.current) {
-      clearTimeout(holdTimerRef.current);
-      holdTimerRef.current = null;
-    }
     if (holdAnimationRef.current) {
       cancelAnimationFrame(holdAnimationRef.current);
       holdAnimationRef.current = null;
@@ -2335,20 +2350,20 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
 
   const updateHoldProgress = () => {
     const elapsed = performance.now() - holdStartRef.current;
-    // Color starts warming earlier; letter morph completes by 8s, then holds for 2s.
-    const nextColorProgress = Math.max(0, Math.min(1, (elapsed - HOLD_COLOR_START_MS) / HOLD_COLOR_DURATION_MS));
-    const nextProgress = Math.max(0, Math.min(1, (elapsed - HOLD_MORPH_START_MS) / HOLD_MORPH_DURATION_MS));
-    const nextFinaleProgress = Math.max(0, Math.min(1, (elapsed - HOLD_FINALE_START_MS) / HOLD_FINALE_DURATION_MS));
+    const nextColorProgress = clamp01(elapsed / HOLD_COLOR_DURATION_MS);
+    const nextMushProgress = clamp01(elapsed / HOLD_MUSH_DURATION_MS);
+    const nextSwellProgress = clamp01((elapsed - HOLD_SWELL_START_MS) / HOLD_SWELL_DURATION_MS);
     setHoldColorProgress(nextColorProgress);
-    setHoldProgress(nextProgress);
-    setHoldFinaleProgress(nextFinaleProgress);
+    setHoldMushProgress(nextMushProgress);
+    setHoldSwellProgress(nextSwellProgress);
 
     if (elapsed >= HOLD_REVEAL_MS) {
       longPressTriggeredRef.current = true;
       clearCelebrateHold();
-      setHoldProgress(0);
+      setIsCelebrateHolding(false);
       setHoldColorProgress(0);
-      setHoldFinaleProgress(0);
+      setHoldMushProgress(0);
+      setHoldSwellProgress(0);
       onRevealHoosierCorner();
       return;
     }
@@ -2356,21 +2371,24 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
     holdAnimationRef.current = requestAnimationFrame(updateHoldProgress);
   };
 
-  const handleCelebratePointerDown = () => {
+  const handleCelebratePointerDown = (event) => {
+    event.preventDefault();
     longPressTriggeredRef.current = false;
     clearCelebrateHold();
     holdStartRef.current = performance.now();
-    setHoldProgress(0);
+    setIsCelebrateHolding(true);
     setHoldColorProgress(0);
-    setHoldFinaleProgress(0);
+    setHoldMushProgress(0);
+    setHoldSwellProgress(0);
     holdAnimationRef.current = requestAnimationFrame(updateHoldProgress);
   };
 
   const handleCelebratePointerUp = () => {
     clearCelebrateHold();
-    setHoldProgress(0);
+    setIsCelebrateHolding(false);
     setHoldColorProgress(0);
-    setHoldFinaleProgress(0);
+    setHoldMushProgress(0);
+    setHoldSwellProgress(0);
   };
 
   const handleCelebrateTap = (event) => {
@@ -2383,13 +2401,14 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
   };
 
   const celebrateBaseFontSize = isMobile ? 0.8 : 0.85;
-  const celebrateButtonMinWidth = isMobile ? "11.5rem" : "12.75rem";
-  const celebrateButtonMinHeight = isMobile ? "2.7rem" : "2.9rem";
-  const celebrateButtonFontSize = celebrateBaseFontSize + holdFinaleProgress * (isMobile ? 0.18 : 0.22);
-  const celebrateButtonScale = 1 + holdFinaleProgress * 0.1;
-  const celebrateButtonRed = Math.round(197 + (153 - 197) * holdColorProgress + 15 * holdFinaleProgress);
-  const celebrateButtonGreen = Math.max(0, Math.round(165 + (0 - 165) * holdColorProgress - 22 * holdFinaleProgress));
-  const celebrateButtonBlue = Math.max(0, Math.round(90 + (0 - 90) * holdColorProgress - 14 * holdFinaleProgress));
+  const holdWarmth = isCelebrateHolding ? Math.min(1, 0.08 + holdColorProgress * 0.92) : 0;
+  const mushProgress = reducedMotion ? 0 : holdMushProgress;
+  const swellProgress = reducedMotion ? 0 : holdSwellProgress;
+  const celebrateScaleX = 1.02 + mushProgress * 0.03 + swellProgress * 0.045;
+  const celebrateScaleY = 0.95 - mushProgress * 0.055 + swellProgress * 0.125;
+  const celebrateTranslateY = 3 - swellProgress * 1.25;
+  const celebrateHoldTransform = `translateY(${celebrateTranslateY}px) scaleX(${celebrateScaleX}) scaleY(${celebrateScaleY})`;
+  const celebrateButtonBackground = `rgb(${mixChannel(197, 153, holdWarmth)}, ${mixChannel(165, 0, holdWarmth)}, ${mixChannel(90, 0, holdWarmth)})`;
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show">
@@ -2501,64 +2520,34 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
           Show us how excited you are!
         </p>
         <button
-          className="press-button"
+          className="press-button press-button--celebrate"
           onClick={handleCelebrateTap}
+          onContextMenu={(event) => event.preventDefault()}
           onPointerDown={handleCelebratePointerDown}
           onPointerUp={handleCelebratePointerUp}
           onPointerLeave={handleCelebratePointerUp}
           onPointerCancel={handleCelebratePointerUp}
           style={{
             position: "relative",
-            overflow: "hidden",
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: `rgb(${celebrateButtonRed}, ${celebrateButtonGreen}, ${celebrateButtonBlue})`,
+            "--celebrate-transform": isCelebrateHolding ? celebrateHoldTransform : undefined,
+            background: celebrateButtonBackground,
             color: "#FFFFFF",
             border: "none",
             padding: "0.7rem 1.6rem",
-            minWidth: celebrateButtonMinWidth,
-            minHeight: celebrateButtonMinHeight,
-            fontSize: `${celebrateButtonFontSize}rem`,
+            fontSize: `${celebrateBaseFontSize}rem`,
             fontWeight: 500,
-            lineHeight: 1,
             borderRadius: 50,
             cursor: "pointer",
             marginBottom: "0.5rem",
             letterSpacing: "0.05em",
-            whiteSpace: "nowrap",
-            transform: `scale(${celebrateButtonScale})`,
-            boxShadow: holdColorProgress > 0
-              ? `0 ${Math.round(8 + holdFinaleProgress * 8)}px ${Math.round(20 + holdFinaleProgress * 14)}px rgba(153, 0, 0, ${0.16 + holdFinaleProgress * 0.12})`
-              : "none",
-            transition: holdProgress === 0 && holdColorProgress === 0 && holdFinaleProgress === 0
-              ? "background 0.3s ease-out, transform 0.22s ease-out, box-shadow 0.22s ease-out, font-size 0.22s ease-out"
-              : "none"
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            WebkitTouchCallout: "none",
+            touchAction: "manipulation",
+            transition: isCelebrateHolding ? "none" : "background 0.2s linear, transform 0.24s ease-out"
           }}
         >
-          <span style={{ position: "relative", zIndex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
-            {celebrateCharStates.map(({ index, sourceChar, char, progress }) => {
-              const hasChanged = char !== sourceChar;
-              const popAmount = reducedMotion ? 0 : Math.sin(progress * Math.PI) * 0.24;
-              const settledBoost = hasChanged ? progress * 0.06 : 0;
-              const finaleBoost = hasChanged ? holdFinaleProgress * 0.14 : 0;
-              const lift = reducedMotion ? 0 : Math.sin(progress * Math.PI) * 3;
-              return (
-                <span
-                  key={index}
-                  style={{
-                    display: "inline-block",
-                    minWidth: char === " " ? "0.34em" : undefined,
-                    transform: `translateY(${-lift}px) scale(${1 + popAmount + settledBoost + finaleBoost})`,
-                    transition: holdProgress === 0 ? "transform 0.18s ease-out, text-shadow 0.18s ease-out" : "none",
-                    textShadow: progress > 0 ? `0 ${Math.round(3 + holdFinaleProgress * 2)}px ${Math.round(10 + holdFinaleProgress * 6)}px rgba(89, 14, 14, ${0.2 + holdFinaleProgress * 0.1})` : "none"
-                  }}
-                >
-                  {char === " " ? "\u00A0" : char}
-                </span>
-              );
-            })}
-          </span>
+          {CELEBRATE_BUTTON_TEXT}
         </button>
         <div style={{ fontSize: isMobile ? "0.7rem" : "0.75rem", color: COLORS.lightText }}>{buttonCount.toLocaleString()} clicks</div>
       </motion.div>
