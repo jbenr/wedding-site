@@ -131,95 +131,147 @@ const useIsMobile = () => {
 };
 
 // Simple schedule row — clean two-column layout
-const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, isMobile }) => (
-  <div style={{
-    padding: isMobile ? "0.95rem 0" : "0.8rem 0",
-    borderBottom: isLast ? "none" : `1px solid ${COLORS.border}`
-  }}>
+const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, isMobile }) => {
+  return (
     <div style={{
-      display: "grid",
-      gridTemplateColumns: isMobile ? "1fr" : "92px minmax(0, 1fr)",
-      gap: isMobile ? "0.42rem" : "0.75rem",
-      alignItems: "start"
+      padding: isMobile ? "0.9rem 0" : "0.8rem 0",
+      borderBottom: isLast ? "none" : `1px solid ${COLORS.border}`
     }}>
-      <div style={{
-        width: isMobile ? "fit-content" : 92,
-        flexShrink: 0,
-        fontSize: isMobile ? "0.64rem" : "0.95rem",
-        color: COLORS.lightText,
-        whiteSpace: "nowrap",
-        paddingTop: isMobile ? 0 : "0.05rem",
-        letterSpacing: isMobile ? "0.08em" : "normal",
-        textTransform: isMobile ? "uppercase" : "none",
-        border: isMobile ? `1px solid ${COLORS.border}` : "none",
-        borderRadius: isMobile ? 999 : 0,
-        padding: isMobile ? "0.22rem 0.5rem" : 0,
-        background: isMobile ? "rgba(255,255,255,0.7)" : "transparent"
-      }}>
-        {time}
-      </div>
-      <div style={{ minWidth: 0 }}>
-        <div style={{
-          fontSize: isMobile ? "0.84rem" : "1rem",
-          fontWeight: 500,
-          color: COLORS.darkText,
-          lineHeight: isMobile ? 1.35 : 1.3,
-          whiteSpace: isMobile ? "normal" : "nowrap",
-          overflow: isMobile ? "visible" : "hidden",
-          textOverflow: isMobile ? "clip" : "ellipsis"
-        }}>
-          {event}
+      {isMobile ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.16rem" }}>
+          <div style={{
+            fontSize: "0.64rem",
+            fontWeight: 600,
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            color: COLORS.accent
+          }}>
+            {time}
+          </div>
+          <div style={{
+            fontSize: "0.95rem",
+            fontWeight: 500,
+            color: COLORS.darkText,
+            lineHeight: 1.32
+          }}>
+            {event}
+          </div>
+          {location && (
+            <div style={{
+              fontSize: "0.76rem",
+              lineHeight: 1.45,
+              color: COLORS.mediumText
+            }}>
+              {location}
+            </div>
+          )}
+          {attire && (
+            <div style={{
+              fontSize: "0.72rem",
+              lineHeight: 1.45,
+              color: COLORS.lightText,
+              fontStyle: "italic"
+            }}>
+              {attire}
+            </div>
+          )}
+          {note && (
+            <div style={{
+              fontSize: "0.72rem",
+              lineHeight: 1.45,
+              color: COLORS.mediumText
+            }}>
+              {noteHref ? (
+                <a href={noteHref} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
+                  {note}
+                </a>
+              ) : (
+                note
+              )}
+            </div>
+          )}
         </div>
-        {location && (
+      ) : (
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "92px minmax(0, 1fr)",
+          gap: "0.75rem",
+          alignItems: "start"
+        }}>
           <div style={{
-            marginTop: "0.18rem",
-            fontSize: isMobile ? "0.7rem" : "0.82rem",
-            lineHeight: isMobile ? 1.45 : 1.35,
+            width: 92,
+            flexShrink: 0,
+            fontSize: "0.95rem",
             color: COLORS.lightText,
-            whiteSpace: isMobile ? "normal" : "nowrap",
-            overflow: isMobile ? "visible" : "hidden",
-            textOverflow: isMobile ? "clip" : "ellipsis"
+            whiteSpace: "nowrap",
+            paddingTop: "0.05rem"
           }}>
-            {location}
+            {time}
           </div>
-        )}
-        {attire && (
-          <div style={{
-            marginTop: "0.18rem",
-            fontSize: isMobile ? "0.68rem" : "0.8rem",
-            lineHeight: isMobile ? 1.4 : 1.35,
-            color: COLORS.mediumText,
-            fontStyle: "italic",
-            whiteSpace: isMobile ? "normal" : "nowrap",
-            overflow: isMobile ? "visible" : "hidden",
-            textOverflow: isMobile ? "clip" : "ellipsis"
-          }}>
-            {attire}
-          </div>
-        )}
-        {note && (
-          <div style={{
-            marginTop: "0.2rem",
-            fontSize: isMobile ? "0.68rem" : "0.76rem",
-            lineHeight: isMobile ? 1.45 : 1.35,
-            color: COLORS.mediumText,
-            whiteSpace: isMobile ? "normal" : "nowrap",
-            overflow: isMobile ? "visible" : "hidden",
-            textOverflow: isMobile ? "clip" : "ellipsis"
-          }}>
-            {noteHref ? (
-              <a href={noteHref} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
-                {note}
-              </a>
-            ) : (
-              note
+          <div style={{ minWidth: 0 }}>
+            <div style={{
+              fontSize: "1rem",
+              fontWeight: 500,
+              color: COLORS.darkText,
+              lineHeight: 1.3,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis"
+            }}>
+              {event}
+            </div>
+            {location && (
+              <div style={{
+                marginTop: "0.18rem",
+                fontSize: "0.82rem",
+                lineHeight: 1.35,
+                color: COLORS.lightText,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis"
+              }}>
+                {location}
+              </div>
+            )}
+            {attire && (
+              <div style={{
+                marginTop: "0.18rem",
+                fontSize: "0.8rem",
+                lineHeight: 1.35,
+                color: COLORS.mediumText,
+                fontStyle: "italic",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis"
+              }}>
+                {attire}
+              </div>
+            )}
+            {note && (
+              <div style={{
+                marginTop: "0.2rem",
+                fontSize: "0.76rem",
+                lineHeight: 1.35,
+                color: COLORS.mediumText,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis"
+              }}>
+                {noteHref ? (
+                  <a href={noteHref} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
+                    {note}
+                  </a>
+                ) : (
+                  note
+                )}
+              </div>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 const getTabTitleStyle = (isMobile) => ({
   textAlign: "center",
@@ -284,17 +336,20 @@ function TabButton({ id, label, tab, setTab, isMobile, shouldReduceMotion }) {
       whileTap={shouldReduceMotion ? undefined : { y: 1, scale: 0.99 }}
       style={{
         position: "relative",
-        padding: isMobile ? "0.6rem 0.7rem" : "0.7rem 1.2rem",
+        padding: isMobile ? "0.5rem 0.52rem" : "0.7rem 1.2rem",
         border: "none",
         background: "transparent",
         color: tab === id ? COLORS.darkText : COLORS.mediumText,
-        fontSize: isMobile ? "0.72rem" : "0.9rem",
+        fontSize: isMobile ? "0.64rem" : "0.9rem",
         fontWeight: tab === id ? 500 : 400,
         borderRadius: 8,
         cursor: "pointer",
         transition: "all 0.2s ease",
         whiteSpace: "nowrap",
-        overflow: "hidden"
+        overflow: "hidden",
+        flexShrink: 0,
+        minHeight: isMobile ? 34 : undefined,
+        letterSpacing: isMobile ? "0.01em" : "normal"
       }}
     >
       {tab === id && (
@@ -421,6 +476,9 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
   const flapTilt = reducedMotion ? 0 : Math.min(4.5, peelOffset.x * 0.014 + peelOffset.y * 0.012);
   const paperOpacity = progress > 0 ? 0.98 : 0.94;
   const revealOpacity = 0.4 + progress * 0.38;
+  const promptOpacity = Math.max(0, 0.82 - progress * 0.58);
+  const promptWidth = isMobile ? 138 : 182;
+  const promptHeight = isMobile ? 102 : 124;
 
   return (
     <motion.div
@@ -482,6 +540,74 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
           />
         </>
       )}
+      <motion.div
+        initial={reducedMotion ? undefined : { opacity: 0, y: 8 }}
+        animate={reducedMotion ? { opacity: promptOpacity } : { opacity: promptOpacity, y: 0 }}
+        transition={reducedMotion ? { duration: 0 } : { duration: 0.32, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          position: "absolute",
+          right: isMobile ? 18 : 26,
+          bottom: isMobile ? 18 : 26,
+          width: promptWidth,
+          height: promptHeight,
+          pointerEvents: "none"
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            left: isMobile ? 4 : 8,
+            top: isMobile ? -12 : -14,
+            fontFamily: "'Caveat', cursive",
+            fontSize: isMobile ? "0.96rem" : "1.14rem",
+            color: "rgba(153, 0, 0, 0.42)",
+            letterSpacing: "0.01em",
+            transform: "rotate(-5deg)",
+            textShadow: "0 1px 0 rgba(255,255,255,0.45)",
+            whiteSpace: "nowrap",
+            background: "rgba(250,248,243,0.82)",
+            padding: isMobile ? "0.02rem 0.28rem" : "0.04rem 0.36rem",
+            borderRadius: 999
+          }}
+        >
+          Drag the corner
+        </div>
+        <motion.svg
+          viewBox="0 0 180 120"
+          animate={reducedMotion ? undefined : { x: [0, 2, 0], y: [0, -2, 0] }}
+          transition={reducedMotion ? { duration: 0 } : { repeat: Infinity, duration: 2.4, ease: "easeInOut" }}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            overflow: "visible"
+          }}
+        >
+          <defs>
+            <marker
+              id="peel-arrowhead"
+              markerWidth="8"
+              markerHeight="8"
+              refX="6.8"
+              refY="4"
+              orient="auto"
+              markerUnits="strokeWidth"
+            >
+              <path d="M0 0.9 L6.6 4 L0 7.1" fill="none" stroke="rgba(153, 0, 0, 0.28)" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
+            </marker>
+          </defs>
+          <path
+            d="M16 28 C 70 2, 118 12, 154 82"
+            fill="none"
+            stroke="rgba(153, 0, 0, 0.28)"
+            strokeWidth="1.9"
+            strokeLinecap="round"
+            strokeDasharray="4 8"
+            markerEnd="url(#peel-arrowhead)"
+          />
+        </motion.svg>
+      </motion.div>
       <div
         style={{
           position: "absolute",
@@ -568,7 +694,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
                 "linear-gradient(315deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 28%, rgba(44,36,32,0.14) 100%)",
               mixBlendMode: "multiply"
             }}
-          />scr
+          />
           <div
             style={{
               position: "absolute",
@@ -1599,7 +1725,7 @@ export default function App() {
     if (!node) return undefined;
 
     const updateHeight = () => {
-      setTabContentHeight(node.getBoundingClientRect().height);
+      setTabContentHeight(Math.max(node.getBoundingClientRect().height, node.scrollHeight));
     };
 
     updateHeight();
@@ -1793,7 +1919,7 @@ END:VCALENDAR`;
     <>
       {/* GLOBAL STYLES */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lora:wght@400;500;600&family=Archivo+Black&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lora:wght@400;500;600&family=Caveat:wght@500;600&family=Archivo+Black&display=swap');
 
         .press-button {
           position: relative;
@@ -1804,6 +1930,15 @@ END:VCALENDAR`;
           transform: translateY(3px) scaleY(0.95) scaleX(1.02) !important;
           box-shadow: 0 0px 0 rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.05) !important;
           letter-spacing: -0.02em;
+        }
+
+        .tab-strip {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+
+        .tab-strip::-webkit-scrollbar {
+          display: none;
         }
         
         *, *::before, *::after {
@@ -2031,15 +2166,19 @@ END:VCALENDAR`;
               }}
             >
               <div
+                className="tab-strip"
                 style={{
                   display: "flex",
-                  gap: "0.3rem",
+                  gap: isMobile ? "0.18rem" : "0.3rem",
                   background: COLORS.cream,
-                  padding: "0.4rem",
+                  padding: isMobile ? "0.28rem" : "0.4rem",
                   borderRadius: 10,
-                  justifyContent: "center",
-                  flexWrap: "wrap",
-                  border: `1px solid ${COLORS.border}`
+                  justifyContent: isMobile ? "flex-start" : "center",
+                  flexWrap: "nowrap",
+                  border: `1px solid ${COLORS.border}`,
+                  overflowX: isMobile ? "auto" : "visible",
+                  overflowY: "hidden",
+                  WebkitOverflowScrolling: "touch"
                 }}
               >
                 <TabButton id="main" label="Home" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
@@ -2066,11 +2205,11 @@ END:VCALENDAR`;
           >
             <motion.div
               initial={false}
-              animate={shouldReduceMotion ? { height: "auto" } : { height: tabContentHeight || "auto" }}
+              animate={shouldReduceMotion || isMobile ? { height: "auto" } : { height: tabContentHeight || "auto" }}
               transition={tabHeightTransition}
               style={{
                 position: "relative",
-                overflow: "hidden",
+                overflow: shouldReduceMotion || isMobile ? "visible" : "hidden",
                 background: COLORS.bg
               }}
             >
@@ -2489,13 +2628,39 @@ function InfoTab({ isMobile, reducedMotion }) {
     padding: isMobile ? "0.4rem 0 0.8rem" : "0.6rem 0 1rem",
     marginBottom: "1.5rem"
   };
+  const detailBodyStyle = {
+    lineHeight: isMobile ? 1.72 : 1.8,
+    color: COLORS.mediumText,
+    fontSize: isMobile ? "0.84rem" : "0.95rem"
+  };
+  const detailLabelStyle = {
+    marginBottom: "0.6rem"
+  };
+  const detailListStyle = {
+    paddingLeft: isMobile ? "1.1rem" : "1.5rem",
+    marginBottom: "1.8rem"
+  };
+  const detailListItemStyle = {
+    marginBottom: "0.55rem",
+    lineHeight: isMobile ? 1.68 : 1.75
+  };
+  const detailLinkStyle = {
+    color: COLORS.darkText,
+    textDecoration: "underline"
+  };
+  const detailMutedStyle = {
+    color: COLORS.lightText,
+    marginBottom: "0.8rem",
+    fontStyle: "italic",
+    fontSize: isMobile ? "0.78rem" : "0.85rem"
+  };
   const schedulePaperStyle = {
     position: "relative",
     background: "linear-gradient(180deg, #fdfbf7 0%, #faf7f1 45%, #f6f1e8 100%)",
     border: "1px solid rgba(197, 165, 90, 0.18)",
     borderRadius: isMobile ? 18 : 22,
     boxShadow: "0 18px 38px rgba(44,36,32,0.08), inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(181,160,138,0.16)",
-    padding: isMobile ? "2.9rem 1rem 2.6rem" : "3.8rem 2rem 3.5rem",
+    padding: isMobile ? "3rem 1.2rem 2.7rem" : "3.8rem 2rem 3.5rem",
     marginBottom: "1.7rem",
     overflow: "hidden"
   };
@@ -2650,61 +2815,58 @@ function InfoTab({ isMobile, reducedMotion }) {
       {/* Travel & Hotels */}
       <motion.div variants={itemVariants} style={plainSectionStyle}>
         {sectionTitle("Travel & Stay")}
-        <div style={{ lineHeight: 1.8, color: COLORS.mediumText, fontSize: isMobile ? "0.88rem" : "0.95rem" }}>
+        <div style={detailBodyStyle}>
 
-          <p style={{ marginBottom: "0.6rem" }}><strong style={{ color: COLORS.darkText }}>Getting There:</strong></p>
+          <p style={detailLabelStyle}><strong style={{ color: COLORS.darkText }}>Getting There:</strong></p>
           <p style={{ marginBottom: "1.8rem" }}>
             Charlottesville-Albemarle Airport (CHO) is 20 minutes from downtown.<br />
             Charlottesville Amtrak Station (CVS) is right in town with daily service from DC, NYC, and beyond.
           </p>
 
-          <p style={{ marginBottom: "0.6rem" }}><strong style={{ color: COLORS.darkText }}>Hotels with Room Blocks:</strong></p>
-          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.8rem" }}>
-            <li style={{ marginBottom: "0.6rem" }}>
-              <a href="https://be.synxis.com/?Hotel=48984&Chain=10237&arrive=2026-10-23&depart=2026-10-25&adult=1&child=0&group=1281" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
+          <p style={detailLabelStyle}><strong style={{ color: COLORS.darkText }}>Hotels with Room Blocks:</strong></p>
+          <ul style={detailListStyle}>
+            <li style={detailListItemStyle}>
+              <a href="https://be.synxis.com/?Hotel=48984&Chain=10237&arrive=2026-10-23&depart=2026-10-25&adult=1&child=0&group=1281" target="_blank" rel="noopener noreferrer" style={detailLinkStyle}>
                 <strong>Boars Head Resort</strong>
-              </a>
-              <br />
-              <span style={{ fontSize: "0.82rem" }}>
-                If you need a reservation for before or after these dates, or if you need to book more than two rooms, please call to speak with a Reservation agent and have them reference <strong>Collins-Reichert Wedding Room Block</strong>. Block code: <strong>1281</strong>.
-              </span>
+              </a>{" "}
+              — If you need a reservation for before or after these dates, or if you need to book more than two rooms, please call to speak with a Reservation agent and have them reference <strong style={{ color: COLORS.darkText }}>Collins-Reichert Wedding Room Block</strong>. Block code: <strong style={{ color: COLORS.darkText }}>1281</strong>.
             </li>
-            <li style={{ marginBottom: "0.4rem" }}>
-              <a href={DRAFTSMAN_URL} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
+            <li style={detailListItemStyle}>
+              <a href={DRAFTSMAN_URL} target="_blank" rel="noopener noreferrer" style={detailLinkStyle}>
                 <strong>The Draftsman</strong>
-              </a>
-              : Courtesy block available (10 rooms).
+              </a>{" "}
+              — Courtesy block available (10 rooms).
             </li>
             <li style={{ marginBottom: "0.4rem", display: "none" }}>
               <strong>The Draftsman</strong> — Courtesy block available (10 rooms). More details to follow.
             </li>
-            <li>
+            <li style={detailListItemStyle}>
               <strong>English Inn</strong> — Rooms available, details coming soon.
             </li>
           </ul>
 
-          <p style={{ marginBottom: "0.6rem" }}><strong style={{ color: COLORS.darkText }}>Other Hotel Options:</strong></p>
-          <p style={{ color: COLORS.lightText, marginBottom: "0.8rem", fontStyle: "italic" }}>
+          <p style={detailLabelStyle}><strong style={{ color: COLORS.darkText }}>Other Hotel Options:</strong></p>
+          <p style={detailMutedStyle}>
             Please note: we do not have a wedding block at these hotels. Book directly at general rates.
           </p>
-          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.8rem" }}>
-            <li style={{ marginBottom: "0.4rem" }}>
-              <a href="https://www.ihg.com/kimptonhotels/hotels/us/en/find-hotels/select-roomrate?fromRedirect=true&qSrt=sBR&qDest=Kimpton%20The%20Forum%20Hotel&qErm=false&qSlH=chodd&qRms=1&qAdlt=1&qChld=0&qCiD=26&qCiMy=072025&qCoD=29&qCoMy=072025&qCpid=100221153&qAAR=6CBARC&qRtP=6CBARC&setPMCookies=true&qSHBrC=KI&qpMbw=0&qpMn=1&srb_u=1&qRmFltr=" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
+          <ul style={detailListStyle}>
+            <li style={detailListItemStyle}>
+              <a href="https://www.ihg.com/kimptonhotels/hotels/us/en/find-hotels/select-roomrate?fromRedirect=true&qSrt=sBR&qDest=Kimpton%20The%20Forum%20Hotel&qErm=false&qSlH=chodd&qRms=1&qAdlt=1&qChld=0&qCiD=26&qCiMy=072025&qCoD=29&qCoMy=072025&qCpid=100221153&qAAR=6CBARC&qRtP=6CBARC&setPMCookies=true&qSHBrC=KI&qpMbw=0&qpMn=1&srb_u=1&qRmFltr=" target="_blank" rel="noopener noreferrer" style={detailLinkStyle}>
                 Kimpton The Forum Hotel
               </a> — 15% off with room block link.
             </li>
-            <li>
-              <a href="https://www.hilton.com/en/hotels/chogcgu-graduate-charlottesville/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
+            <li style={detailListItemStyle}>
+              <a href="https://www.hilton.com/en/hotels/chogcgu-graduate-charlottesville/" target="_blank" rel="noopener noreferrer" style={detailLinkStyle}>
                 The Graduate
-              </a>
+              </a>{" "}— Book directly at general rates.
             </li>
           </ul>
 
-          <p style={{ marginBottom: "0.6rem" }}><strong style={{ color: COLORS.darkText }}>VA Guest Houses:</strong></p>
+          <p style={detailLabelStyle}><strong style={{ color: COLORS.darkText }}>VA Guest Houses:</strong></p>
           <p style={{ marginBottom: "0.8rem" }}>
             Guesthouses accommodates wedding block holds across their entire portfolio of properties, allowing guests to book and pay directly. Here's how it works:
           </p>
-          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.2rem" }}>
+          <ul style={{ ...detailListStyle, marginBottom: "1.2rem" }}>
             <li>Minimum stay of 2 nights (select dates or properties require 3)</li>
             <li>10% deposit to hold properties</li>
             <li>Guests may call and book any held units</li>
@@ -2712,7 +2874,7 @@ function InfoTab({ isMobile, reducedMotion }) {
           <p style={{ marginBottom: "0.8rem" }}>
             Accommodations close to Rosemont Farm:
           </p>
-          <ul style={{ paddingLeft: "1.5rem", marginBottom: "1.2rem" }}>
+          <ul style={{ ...detailListStyle, marginBottom: "1.2rem" }}>
             <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/blue-mountain-haven" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Blue Mountain Haven</a> — 5 bedrooms, 4 bathrooms, sleeps 10</li>
             <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/farlea" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Farlea</a> — 4 bedrooms, 2.5 bathrooms, sleeps 8</li>
             <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/fox-cottage" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Fox Cottage</a> — 2 bedrooms, 2 bathrooms, sleeps 4</li>
@@ -2735,7 +2897,7 @@ function InfoTab({ isMobile, reducedMotion }) {
       {/* Shuttle Information */}
       <motion.div variants={itemVariants} style={plainSectionStyle}>
         {sectionTitle("Shuttle Information")}
-        <p style={{ textAlign: "center", fontSize: "1.1rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif" }}>
+        <p style={{ ...detailBodyStyle, textAlign: "center" }}>
           Coming Soon
         </p>
       </motion.div>
@@ -2746,7 +2908,7 @@ function InfoTab({ isMobile, reducedMotion }) {
       {/* Things to Do */}
       <motion.div variants={itemVariants} style={plainSectionStyle}>
         {sectionTitle("Things to Do in Charlottesville")}
-        <div style={{ lineHeight: 1.8, color: COLORS.mediumText, fontSize: isMobile ? "0.88rem" : "0.95rem" }}>
+        <div style={detailBodyStyle}>
           <p style={{ marginBottom: "1.2rem" }}>
             <strong style={{ color: COLORS.darkText }}>Dining</strong> — Don't miss Riverside for lunch by the water, Bodo's Bagels for the best bagels in town, and C&O Restaurant for a Charlottesville classic.
           </p>
