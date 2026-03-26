@@ -1879,6 +1879,8 @@ export default function App() {
   };
 
   const downloadCalendarEvent = () => {
+    const ceremonyVenue = "Christ Episcopal Church";
+    const ceremonyAddress = "120 W High St, Charlottesville, VA 22902";
     const ics = `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Ben & Emily Wedding//EN
@@ -1886,8 +1888,8 @@ BEGIN:VEVENT
 DTSTART;TZID=America/New_York:20261024T170000
 DTEND;TZID=America/New_York:20261024T180000
 SUMMARY:Ben & Emily Wedding Ceremony
-DESCRIPTION:Christ Episcopal Church at 5:00 PM on October 24, 2026.
-LOCATION:Christ Episcopal Church, 120 W High St, Charlottesville, VA 22902
+DESCRIPTION:${ceremonyVenue} at 5:00 PM on October 24, 2026. Address: ${ceremonyAddress}.
+LOCATION:${ceremonyVenue} - 120 W High St Charlottesville VA 22902
 URL:${window.location.href}
 STATUS:CONFIRMED
 END:VEVENT
