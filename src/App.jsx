@@ -2925,7 +2925,10 @@ function InfoTab({ isMobile, reducedMotion }) {
 
 function RegistryTab({ isMobile, reducedMotion }) {
   const registries = [
-    { name: "Registry details", icon: "C" }
+    { name: "Williams Sonoma", icon: "WS", url: "https://www.williams-sonoma.com/registry/b5qxm986n7/registry-list.html" },
+    { name: "Bloomingdale's", icon: "B", url: "https://www.bloomingdales.com/registry/Emily-Collins-Ben-Reichert/1414256" },
+    { name: "Simon Pearce", icon: "SP", url: "https://www.myregistry.com/wedding-registry/emily-collins-and-ben-reichert-new-york-ny/5388243" },
+    { name: "Scully and Scully", icon: "S&S", url: "https://www.scullyandscully.com/wedding-registry/emilycollinsandbenreichert" }
   ];
   const containerVariants = getStaggerContainerVariants(reducedMotion);
   const itemVariants = getStaggerItemVariants(reducedMotion);
@@ -2935,28 +2938,33 @@ function RegistryTab({ isMobile, reducedMotion }) {
       <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>Registry</motion.h2>
       <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Your presence is the greatest gift</motion.p>
 
-      <motion.div variants={itemVariants} style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : registries.length === 1 ? "minmax(0, 420px)" : "repeat(2, 1fr)", justifyContent: "center", gap: "1.2rem", marginBottom: "2rem" }}>
+      <motion.div variants={itemVariants} style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", justifyContent: "center", gap: "1.2rem", marginBottom: "2rem" }}>
         {registries.map((r) => (
-          <div
+          <a
             key={r.name}
+            href={r.url}
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               display: "block",
               ...getSectionCardStyle(isMobile),
               padding: "1.5rem 1rem",
               textAlign: "center",
               color: COLORS.darkText,
-              marginBottom: 0
+              marginBottom: 0,
+              textDecoration: "none",
+              cursor: "pointer"
             }}
           >
-            <div style={{ 
-              fontSize: "2rem", 
-              marginBottom: "0.8rem", 
-              width: 60, 
-              height: 60, 
-              borderRadius: "50%", 
-              background: COLORS.cream, 
-              display: "flex", 
-              alignItems: "center", 
+            <div style={{
+              fontSize: "1.1rem",
+              marginBottom: "0.8rem",
+              width: 60,
+              height: 60,
+              borderRadius: "50%",
+              background: COLORS.cream,
+              display: "flex",
+              alignItems: "center",
               justifyContent: "center",
               margin: "0 auto 0.8rem",
               fontFamily: "'Cormorant Garamond', serif",
@@ -2966,8 +2974,8 @@ function RegistryTab({ isMobile, reducedMotion }) {
               {r.icon}
             </div>
             <h3 style={{ fontSize: "1.2rem", marginBottom: "0.4rem", fontWeight: 500, fontFamily: "'Cormorant Garamond', serif" }}>{r.name}</h3>
-            <p style={{ fontSize: "0.85rem", color: COLORS.lightText }}>Coming soon</p>
-          </div>
+            <p style={{ fontSize: "0.85rem", color: COLORS.accent }}>View Registry →</p>
+          </a>
         ))}
       </motion.div>
 
