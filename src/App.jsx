@@ -391,15 +391,15 @@ const StatCell = ({ label, value, color, background = COLORS.cream, borderColor 
     style={{
       textAlign: "center",
       background,
-      padding: "clamp(0.3rem, 0.6vw, 0.6rem) clamp(0.2rem, 0.4vw, 0.4rem)",
+      padding: "clamp(0.18rem, 0.6vw, 0.6rem) clamp(0.12rem, 0.4vw, 0.4rem)",
       borderRadius: 10,
       border: `1px solid ${borderColor}`
     }}
   >
-    <div style={{ fontSize: "clamp(0.55rem, 0.7vw, 0.7rem)", color: labelColor, marginBottom: "0.1rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+    <div style={{ fontSize: "clamp(0.48rem, 0.7vw, 0.7rem)", color: labelColor, marginBottom: "0.1rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
       {label}
     </div>
-    <div style={{ fontSize: "clamp(0.75rem, 1vw, 1rem)", fontWeight: 600, color }}>{value}</div>
+    <div style={{ fontSize: "clamp(0.65rem, 1vw, 1rem)", fontWeight: 600, color }}>{value}</div>
   </div>
 );
 
@@ -858,36 +858,34 @@ const SparkleText = ({ text, onComplete, isMobile }) => {
           ✦
         </motion.span>
       ))}
-      {/* Tap to continue — appears after text is fully revealed */}
-      {done && (
+      {/* Tap to continue — always mounted to prevent layout snap */}
+      <motion.div
+        animate={{ opacity: done ? 1 : 0 }}
+        transition={{ duration: 0.5, delay: done ? 0.4 : 0 }}
+        onClick={done ? onComplete : undefined}
+        style={{
+          marginTop: "2rem",
+          textAlign: "center",
+          cursor: done ? "pointer" : "default",
+          pointerEvents: done ? "auto" : "none"
+        }}
+      >
+        <span style={{
+          fontSize: isMobile ? "0.72rem" : "0.8rem",
+          color: COLORS.lightText,
+          fontStyle: "italic",
+          letterSpacing: "0.05em"
+        }}>
+          Tap to continue
+        </span>
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          onClick={onComplete}
-          style={{
-            marginTop: "2rem",
-            textAlign: "center",
-            cursor: "pointer"
-          }}
+          animate={{ y: [0, 4, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
+          style={{ fontSize: "0.7rem", color: COLORS.lightText, marginTop: 4 }}
         >
-          <span style={{
-            fontSize: isMobile ? "0.72rem" : "0.8rem",
-            color: COLORS.lightText,
-            fontStyle: "italic",
-            letterSpacing: "0.05em"
-          }}>
-            Tap to continue
-          </span>
-          <motion.div
-            animate={{ y: [0, 4, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-            style={{ fontSize: "0.7rem", color: COLORS.lightText, marginTop: 4 }}
-          >
-            ▼
-          </motion.div>
+          ▼
         </motion.div>
-      )}
+      </motion.div>
     </div>
   );
 };
@@ -1230,8 +1228,11 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
                     />
                   </motion.button>
                 </div>
-                <span style={{ fontSize: isMobile ? "0.68rem" : "0.76rem", color: COLORS.lightText, letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                  Tap logo to start!
+                <span
+                  onClick={slideshowDone ? () => setPhase(PHASE_TRANSITION) : undefined}
+                  style={{ fontSize: isMobile ? "0.68rem" : "0.76rem", color: COLORS.lightText, letterSpacing: "0.05em", textTransform: "uppercase", cursor: slideshowDone ? "pointer" : "default" }}
+                >
+                  {!slideshowStarted ? "Tap logo to start!" : slideshowDone ? "Tap to continue →" : "Tap picture to advance"}
                 </span>
               </motion.div>
 
@@ -1295,32 +1296,6 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
                 </p>
               )}
 
-              {/* Tap to continue — after slideshow ends or no photos */}
-              {slideshowStarted && (slideshowDone || hoosierPhotos.length === 0) && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6, duration: 0.5 }}
-                  onClick={() => setPhase(PHASE_TRANSITION)}
-                  style={{ marginTop: "1.5rem", textAlign: "center", cursor: "pointer" }}
-                >
-                  <span style={{
-                    fontSize: isMobile ? "0.72rem" : "0.8rem",
-                    color: COLORS.lightText,
-                    fontStyle: "italic",
-                    letterSpacing: "0.05em"
-                  }}>
-                    Tap to continue
-                  </span>
-                  <motion.div
-                    animate={{ y: [0, 4, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.5 }}
-                    style={{ fontSize: "0.7rem", color: COLORS.lightText, marginTop: 4 }}
-                  >
-                    ▼
-                  </motion.div>
-                </motion.div>
-              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -2929,11 +2904,68 @@ function InfoTab({ isMobile, reducedMotion }) {
    ============================================ */
 
 function RegistryTab({ isMobile, reducedMotion }) {
+  const iconSvgProps = {
+    width: 30,
+    height: 30,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.3,
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  };
+  const SaucepanIcon = () => (
+    <svg {...iconSvgProps}>
+      {/* knob connected to lid dome */}
+      <path d="M11 9v-2h2v2" />
+      <path d="M5.5 11Q12 8 18.5 11" />
+      {/* pot body */}
+      <path d="M5.5 11v6.5a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3V11" />
+      {/* side handles */}
+      <path d="M5.5 13.5H2.5M18.5 13.5H21.5" />
+    </svg>
+  );
+  const BedIcon = () => (
+    <svg {...iconSvgProps} stroke="none" fill="currentColor">
+      <path d="M2 19V8a2 2 0 0 1 2-2H5.5A2 2 0 0 1 7.5 8V13H22a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
+      <rect x="3" y="19" width="2" height="2" rx="0.4" />
+      <rect x="20.5" y="19" width="2" height="2" rx="0.4" />
+      <rect x="8" y="13.8" width="6" height="3" rx="0.7" fill="rgba(255,255,255,0.4)" />
+    </svg>
+  );
+  const WineGlassIcon = () => (
+    <svg {...iconSvgProps}>
+      <path d="M8 4h8c0 5-1.6 8.5-4 9-2.4-.5-4-4-4-9z" />
+      <path d="M12 13v6.5" />
+      <path d="M8.5 19.5h7" />
+    </svg>
+  );
+  const PlateIcon = () => {
+    const trimDots = Array.from({ length: 12 }).map((_, i) => {
+      const angle = (i * 30 * Math.PI) / 180;
+      return <circle key={i} cx={10 + 5.8 * Math.cos(angle)} cy={12 + 5.8 * Math.sin(angle)} r={0.45} fill="currentColor" stroke="none" />;
+    });
+    return (
+      <svg {...iconSvgProps}>
+        {/* plate */}
+        <circle cx="10" cy="12" r="7" />
+        <circle cx="10" cy="12" r="4.5" />
+        {trimDots}
+        {/* fork */}
+        <path d="M19 5v14" />
+        <path d="M17.5 5v4M19 9v-4M20.5 5v4" />
+        <path d="M17.5 9Q19 10.5 19 9" />
+        {/* knife */}
+        <path d="M22.5 5v14" />
+        <path d="M22.5 5Q24.5 7 22.5 11" />
+      </svg>
+    );
+  };
   const registries = [
-    { name: "Williams Sonoma", icon: "WS", url: "https://www.williams-sonoma.com/registry/b5qxm986n7/registry-list.html" },
-    { name: "Bloomingdale's", icon: "B", url: "https://www.bloomingdales.com/registry/Emily-Collins-Ben-Reichert/1414256" },
-    { name: "Simon Pearce", icon: "SP", url: "https://www.myregistry.com/wedding-registry/emily-collins-and-ben-reichert-new-york-ny/5388243" },
-    { name: "Scully and Scully", icon: "S&S", url: "https://www.scullyandscully.com/wedding-registry/emilycollinsandbenreichert" }
+    { name: "Williams Sonoma", icon: <SaucepanIcon />, url: "https://www.williams-sonoma.com/registry/b5qxm986n7/registry-list.html" },
+    { name: "Bloomingdale's", icon: <BedIcon />, url: "https://www.bloomingdales.com/registry/Emily-Collins-Ben-Reichert/1414256" },
+    { name: "Simon Pearce", icon: <WineGlassIcon />, url: "https://www.myregistry.com/wedding-registry/emily-collins-and-ben-reichert-new-york-ny/5388243" },
+    { name: "Scully and Scully", icon: <PlateIcon />, url: "https://www.scullyandscully.com/wedding-registry/emilycollinsandbenreichert" }
   ];
   const containerVariants = getStaggerContainerVariants(reducedMotion);
   const itemVariants = getStaggerItemVariants(reducedMotion);
@@ -2962,7 +2994,6 @@ function RegistryTab({ isMobile, reducedMotion }) {
             }}
           >
             <div style={{
-              fontSize: "1.1rem",
               marginBottom: "0.8rem",
               width: 60,
               height: 60,
@@ -2972,9 +3003,7 @@ function RegistryTab({ isMobile, reducedMotion }) {
               alignItems: "center",
               justifyContent: "center",
               margin: "0 auto 0.8rem",
-              fontFamily: "'Cormorant Garamond', serif",
-              fontWeight: 600,
-              color: COLORS.primary
+              color: COLORS.accent
             }}>
               {r.icon}
             </div>
@@ -3025,7 +3054,7 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
     { frontName: "Jack Reichert", backName: "Jacko", relation: "Brother", photos: jackoPhotos, role: "Groomsman", maxBench: "185 lbs", fortyYard: "5.8s", handicap: "20.0", relationshipStatus: "Single", currentCity: "Washington DC", college: "University of Virginia", collegeLogo: uva, footballTeam: "Minnesota Vikings", footballLogo: vikes, comment: "The most controversial character in the lineup. No, you don't want to meet his boy. Look for Jacko on stage for the late night." },
     { frontName: "Cole Dickinson", backName: "Cole D", relation: "Dog", photos: colePhotos, role: "Groomsman", maxBench: "285 lbs", fortyYard: "4.9s", handicap: "9.5", relationshipStatus: "Married", currentCity: "Charleston, SC", college: "University of South Carolina", collegeLogo: sc, footballTeam: "Washington Football Team", footballLogo: fbt, comment: "It's too Cole for my Dickinson. Known for his quip and catch phrase 'my life is your vacation.' Try not to let this guy get under your skin." },
     { frontName: "Henry Kreienbaum", backName: "Henry Cignetti", relation: "Dog", photos: henryPhotos, role: "Groomsman", maxBench: "265 lbs", fortyYard: "5.3s", handicap: "15.0", relationshipStatus: "Taken", currentCity: "Atlanta, GA", college: "James Madison University", collegeLogo: dukes, collegeLogoScale: 1.5, footballTeam: "Washington Commanders", footballLogo: commies, comment: "Don't ask this guy about NASCAR, but do ask about Curt Cignetti. And definitely ask for a Juul rip." },
-    { frontName: "Oliver Herndon", backName: "Oli", relation: "Dog", photos: oliPhotos, role: "Groomsman", maxBench: "255 lbs", fortyYard: "4.6s", handicap: "22.0", relationshipStatus: "Engaged", currentCity: "New York, NY", college: "Washington & Lee University", collegeLogo: wl, footballTeam: "Washington Redskins", footballLogo: skins, comment: "Don give a piss bout nun but the Tide. Don't let this guy or his fiancée know that you have zyns." },
+    { frontName: "Oliver Herndon", backName: "Oli", relation: "Dog", photos: oliPhotos, role: "Groomsman", maxBench: "255 lbs", fortyYard: "4.6s", handicap: "22.0", relationshipStatus: "Engaged", currentCity: "New York, NY", college: "Washington & Lee University", collegeLogo: wl, footballTeam: "Washington Redskins", footballLogo: skins, comment: "Don give a piss bout nun but the Tide. And slow pitch softball. And zyns. Don't let this guy or his fiancée know that you have zyns." },
     { frontName: "Joel Gibbons V", backName: "Wood", relation: "Dog", photos: woodsPhotos, role: "Groomsman", maxBench: "155 lbs", fortyYard: "6.7s", handicap: "21.0", relationshipStatus: "Taken?", currentCity: "Washington DC", college: "Indiana University", collegeLogo: hoosierLogo, footballTeam: "Houston Texans", footballLogo: tex, comment: "While Wood is pretty smoked out, his exotic artwork will surely be worth millions one day. Don't mention politics around this guy, but do mention au pairs." },
     { frontName: "Wyatt Collins", backName: "Wyatt", relation: "Brother-in-law", photos: wyattPhotos, role: "Groomsman", maxBench: "225 lbs", fortyYard: "5.5s", handicap: "8.0", relationshipStatus: "Single", currentCity: "Knoxville, TN", college: "University of Tennessee", collegeLogo: ut, collegeLogoScale: 0.9, footballTeam: "The Vols", footballLogo: ut, footballLogoScale: 0.9, comment: "Known for his e4 openings as white and JUCO league thunder thighs. Don't trust your girlfriend around this guy." }
   ];
