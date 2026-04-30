@@ -10,11 +10,14 @@ import { clickCountRef, hoosierCountRef, deepTrackRef, deepTrackLikesRef, deepTr
 // Import team logos
 import bears from "./assets/bears.png";
 import brown from "./assets/brown.png";
-import vt from "./assets/hokies.webp";
+import commies from "./assets/commies.png";
+import fbt from "./assets/fbt.png";
 import dukes from "./assets/JMU.png";
 import nu from "./assets/NU.svg";
 import sc from "./assets/SC.png";
 import skins from "./assets/skins.png";
+import tex from "./assets/tex.png";
+import vikes from "./assets/vikes.png";
 import ut from "./assets/UT.png";
 import uva from "./assets/UVA.png";
 import w from "./assets/W.svg";
@@ -40,6 +43,7 @@ const jackoPhotos = globToArray(import.meta.glob("./assets/jacko/*", { eager: tr
 const colePhotos = globToArray(import.meta.glob("./assets/cole/*", { eager: true }));
 const henryPhotos = globToArray(import.meta.glob("./assets/henry/*", { eager: true }));
 const oliPhotos = globToArray(import.meta.glob("./assets/oli/*", { eager: true }));
+const woodsPhotos = globToArray(import.meta.glob("./assets/woods/*", { eager: true }));
 const wyattPhotos = globToArray(import.meta.glob("./assets/wyatt/*", { eager: true }));
 const laurenPhotos = globToArray(import.meta.glob("./assets/lauren/*", { eager: true }));
 const courtneyPhotos = globToArray(import.meta.glob("./assets/courtney/*", { eager: true }));
@@ -86,6 +90,7 @@ const PARTY_CARD_THEMES = {
 };
 
 import iuLogo from "./assets/IU.png";
+import hoosierLogo from "./assets/hoosier.png";
 const IU_LOGO_IMAGE = iuLogo;
 const GOLF_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc05xidXMl9XIGrUmGwN7IqLgqHv727BPUUq3r4118eVUyi-Q/viewform?usp=publish-editor";
 const DRAFTSMAN_URL = "https://app.marriott.com/reslink?id=1770319213584&key=GRP&app=resvlink";
@@ -2650,10 +2655,10 @@ function InfoTab({ isMobile, reducedMotion }) {
   };
   const schedulePaperStyle = {
     position: "relative",
-    background: "linear-gradient(180deg, #fdfbf7 0%, #faf7f1 45%, #f6f1e8 100%)",
-    border: "1px solid rgba(197, 165, 90, 0.18)",
+    background: "linear-gradient(180deg, #fafaf6 0%, #f6f5ef 100%)",
+    border: "1px solid rgba(170, 158, 138, 0.22)",
     borderRadius: isMobile ? 18 : 22,
-    boxShadow: "0 18px 38px rgba(44,36,32,0.08), inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(181,160,138,0.16)",
+    boxShadow: "0 12px 26px rgba(44,36,32,0.06)",
     padding: isMobile ? "2.8rem 1.45rem 2.45rem" : "3.8rem 2rem 3.5rem",
     marginBottom: "1.7rem",
     overflow: "hidden"
@@ -2711,39 +2716,37 @@ function InfoTab({ isMobile, reducedMotion }) {
           aria-hidden="true"
           style={{
             position: "absolute",
-            top: isMobile ? 14 : 20,
-            left: isMobile ? 24 : 34,
-            right: isMobile ? 24 : 34,
+            top: isMobile ? 18 : 26,
+            left: 0,
+            right: 0,
             display: "flex",
+            justifyContent: "center",
             alignItems: "center",
-            gap: isMobile ? "0.3rem" : "0.55rem",
+            gap: isMobile ? "0.4rem" : "0.6rem",
             pointerEvents: "none"
           }}
         >
-          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.border})` }} />
-          <div style={{ width: isMobile ? 6 : 8, height: isMobile ? 6 : 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
-          <div style={{ width: isMobile ? 14 : 26, height: 1, background: COLORS.accent, opacity: 0.7 }} />
-          <div style={{ width: isMobile ? 6 : 8, height: isMobile ? 6 : 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
-          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${COLORS.border}, transparent)` }} />
+          <div style={{ width: isMobile ? 5 : 7, height: isMobile ? 5 : 7, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)", opacity: 0.55 }} />
+          <div style={{ width: isMobile ? 28 : 44, height: 1, background: COLORS.accent, opacity: 0.45 }} />
+          <div style={{ width: isMobile ? 5 : 7, height: isMobile ? 5 : 7, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)", opacity: 0.55 }} />
         </div>
         <div
           aria-hidden="true"
           style={{
             position: "absolute",
-            bottom: isMobile ? 14 : 20,
-            left: isMobile ? 24 : 34,
-            right: isMobile ? 24 : 34,
+            bottom: isMobile ? 18 : 26,
+            left: 0,
+            right: 0,
             display: "flex",
+            justifyContent: "center",
             alignItems: "center",
-            gap: isMobile ? "0.3rem" : "0.55rem",
+            gap: isMobile ? "0.4rem" : "0.6rem",
             pointerEvents: "none"
           }}
         >
-          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.border})` }} />
-          <div style={{ width: isMobile ? 6 : 8, height: isMobile ? 6 : 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
-          <div style={{ width: isMobile ? 14 : 26, height: 1, background: COLORS.accent, opacity: 0.7 }} />
-          <div style={{ width: isMobile ? 6 : 8, height: isMobile ? 6 : 8, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)" }} />
-          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${COLORS.border}, transparent)` }} />
+          <div style={{ width: isMobile ? 5 : 7, height: isMobile ? 5 : 7, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)", opacity: 0.55 }} />
+          <div style={{ width: isMobile ? 28 : 44, height: 1, background: COLORS.accent, opacity: 0.45 }} />
+          <div style={{ width: isMobile ? 5 : 7, height: isMobile ? 5 : 7, border: `1px solid ${COLORS.accent}`, transform: "rotate(45deg)", opacity: 0.55 }} />
         </div>
         <div
           style={{
@@ -2835,7 +2838,9 @@ function InfoTab({ isMobile, reducedMotion }) {
               <strong>The Draftsman</strong> — Courtesy block available (10 rooms). More details to follow.
             </li>
             <li style={detailListItemStyle}>
-              <strong>English Inn</strong> — Rooms available, details coming soon.
+              <a href="https://englishinncharlottesville.com/" target="_blank" rel="noopener noreferrer" style={detailLinkStyle}>
+                <strong>The English Inn of Charlottesville</strong>
+              </a>{" "}— No online booking link for the room block. Call the front desk at <strong style={{ color: COLORS.darkText }}>434-971-9900 ext. 0</strong> and reference group code <strong style={{ color: COLORS.darkText }}>COLLINS-REICHERT WEDDING GROUP</strong>. Rate is $289/night plus tax and includes breakfast buffet, internet, and parking. Check-in 4:00 PM, check-out 11:00 AM. Room block releases 40 days before the wedding.
             </li>
           </ul>
 
@@ -3017,11 +3022,12 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
   const groomsmen = [
     { frontName: "Harry Reichert", backName: "Gresh", relation: "Brother", photos: harryPhotos, role: "Best Man", maxBench: "175 lbs", fortyYard: "4.95s", handicap: "19.0", relationshipStatus: "Taken", currentCity: "Williamsburg, NY", college: "Northwestern University", collegeLogo: nu, footballTeam: "Cleveland Browns", footballLogo: brown, comment: "Let's hope Harry shows up on time to the ceremony." },
     { frontName: "Charlie Reichert", backName: "Chuck", relation: "Brother", photos: chuckPhotos, role: "Groomsman", maxBench: "135 lbs", fortyYard: "5.4s", handicap: "13.5", relationshipStatus: "Taken", currentCity: "Chicago, IL", college: "University of Wisconsin", collegeLogo: w, footballTeam: "Chicago Bears", footballLogo: bears, comment: "Known for his inconsistency off the tee. Keep your eyes peeled when Chuck hits the dance floor." },
-    { frontName: "Jack Reichert", backName: "Jacko", relation: "Brother", photos: jackoPhotos, role: "Groomsman", maxBench: "185 lbs", fortyYard: "5.8s", handicap: "20.0", relationshipStatus: "Single", currentCity: "Washington DC", college: "University of Virginia", collegeLogo: uva, footballTeam: "The Hokies", footballLogo: vt, comment: "The most controversial character in the lineup. Look for Jacko on stage for the late night." },
-    { frontName: "Cole Dickinson", backName: "Cole D", relation: "Dog", photos: colePhotos, role: "Groomsman", maxBench: "285 lbs", fortyYard: "4.9s", handicap: "9.5", relationshipStatus: "Married", currentCity: "Charleston, SC", college: "University of South Carolina", collegeLogo: sc, footballTeam: "Washington Football Team", footballLogo: skins, comment: "It's too Cole for my Dickinson." },
-    { frontName: "Henry Kreienbaum", backName: "Henry Cignetti", relation: "Dog", photos: henryPhotos, role: "Groomsman", maxBench: "265 lbs", fortyYard: "5.3s", handicap: "15.0", relationshipStatus: "Taken", currentCity: "Atlanta, GA", college: "James Madison University", collegeLogo: dukes, footballTeam: "Washington Commanders", footballLogo: skins, comment: "Don't ask this guy about Nascar." },
+    { frontName: "Jack Reichert", backName: "Jacko", relation: "Brother", photos: jackoPhotos, role: "Groomsman", maxBench: "185 lbs", fortyYard: "5.8s", handicap: "20.0", relationshipStatus: "Single", currentCity: "Washington DC", college: "University of Virginia", collegeLogo: uva, footballTeam: "Minnesota Vikings", footballLogo: vikes, comment: "The most controversial character in the lineup. Look for Jacko on stage for the late night." },
+    { frontName: "Cole Dickinson", backName: "Cole D", relation: "Dog", photos: colePhotos, role: "Groomsman", maxBench: "285 lbs", fortyYard: "4.9s", handicap: "9.5", relationshipStatus: "Married", currentCity: "Charleston, SC", college: "University of South Carolina", collegeLogo: sc, footballTeam: "Washington Football Team", footballLogo: fbt, comment: "It's too Cole for my Dickinson." },
+    { frontName: "Henry Kreienbaum", backName: "Henry Cignetti", relation: "Dog", photos: henryPhotos, role: "Groomsman", maxBench: "265 lbs", fortyYard: "5.3s", handicap: "15.0", relationshipStatus: "Taken", currentCity: "Atlanta, GA", college: "James Madison University", collegeLogo: dukes, collegeLogoScale: 1.5, footballTeam: "Washington Commanders", footballLogo: commies, comment: "Don't ask this guy about Nascar." },
     { frontName: "Oliver Herndon", backName: "Oli", relation: "Dog", photos: oliPhotos, role: "Groomsman", maxBench: "255 lbs", fortyYard: "4.6s", handicap: "22.0", relationshipStatus: "Taken", currentCity: "New York, NY", college: "Washington & Lee University", collegeLogo: wl, footballTeam: "Washington Redskins", footballLogo: skins, comment: "Can I get a roll tide." },
-    { frontName: "Wyatt Collins", backName: "Wyatt", relation: "Brother-in-law", photos: wyattPhotos, role: "Groomsman", maxBench: "225 lbs", fortyYard: "5.5s", handicap: "8.0", relationshipStatus: "Single", currentCity: "Knoxville, TN", college: "University of Tennessee", collegeLogo: ut, footballTeam: "The Vols", footballLogo: ut, comment: "Pretty cool guy." }
+    { frontName: "Joel Gibbons V", backName: "Wood", relation: "Dog", photos: woodsPhotos, role: "Groomsman", maxBench: "155 lbs", fortyYard: "6.7s", handicap: "21.0", relationshipStatus: "Taken?", currentCity: "Washington DC", college: "Indiana University", collegeLogo: hoosierLogo, footballTeam: "TBD", footballLogo: tex, comment: "So smoked out he can barely see the dance floor — but ask him about his artwork, he swears it'll be worth millions one day." },
+    { frontName: "Wyatt Collins", backName: "Wyatt", relation: "Brother-in-law", photos: wyattPhotos, role: "Groomsman", maxBench: "225 lbs", fortyYard: "5.5s", handicap: "8.0", relationshipStatus: "Single", currentCity: "Knoxville, TN", college: "University of Tennessee", collegeLogo: ut, collegeLogoScale: 0.9, footballTeam: "The Vols", footballLogo: ut, comment: "Known for his e4 openings as white and thunder thighs that could squat a Volkswagen. Don't trust your girlfriend around this guy." }
   ];
 
   const bridesmaids = [
@@ -3228,7 +3234,7 @@ const GroomCard = React.memo(({ person }) => {
               <div style={{ fontSize: "clamp(0.58rem, 0.95vw, 0.72rem)", color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.08em" }}>City</div>
               <div style={{ fontSize: "clamp(0.8rem, 1.35vw, 0.96rem)", fontWeight: 600, color: COLORS.darkText, lineHeight: 1.4 }}>{person.currentCity}</div>
             </div>
-            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.64rem, 1.05vw, 0.78rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for more</p>
+            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.5rem, 0.82vw, 0.64rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for more</p>
           </div>
         </div>
 
@@ -3278,10 +3284,10 @@ const GroomCard = React.memo(({ person }) => {
             <StatCell label="Status" value={person.relationshipStatus} color={color} background={COLORS.cream} borderColor={COLORS.border} labelColor={COLORS.lightText} />
           </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(0.25rem, 0.75vw, 0.55rem)", fontSize: "clamp(0.6rem, 1vw, 0.8rem)", color: COLORS.mediumText, marginBottom: "clamp(0.25rem, 0.9vw, 0.7rem)", flexWrap: "wrap", textAlign: "center" }}>
-            {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: 14, height: 14, objectFit: "contain" }} />}
+            {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: 24 * (person.collegeLogoScale || 1), height: 24 * (person.collegeLogoScale || 1), objectFit: "contain" }} />}
             <span>{person.college}</span>
             <span style={{ color: COLORS.lightText }}>|</span>
-            {person.footballLogo && <img src={person.footballLogo} alt="" style={{ width: 14, height: 14, objectFit: "contain" }} />}
+            {person.footballLogo && <img src={person.footballLogo} alt="" style={{ width: 24, height: 24, objectFit: "contain" }} />}
             <span>{person.footballTeam}</span>
           </div>
           <p style={{
@@ -3437,7 +3443,7 @@ const BridesmaidCard = React.memo(({ person }) => {
               <div style={{ fontSize: "clamp(0.58rem, 0.95vw, 0.72rem)", color: COLORS.lightText, textTransform: "uppercase", letterSpacing: "0.08em" }}>City</div>
               <div style={{ fontSize: "clamp(0.8rem, 1.35vw, 0.96rem)", fontWeight: 600, color: COLORS.darkText, lineHeight: 1.4 }}>{person.currentCity}</div>
             </div>
-            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.64rem, 1.05vw, 0.78rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for more</p>
+            <p style={{ marginTop: "auto", paddingTop: "clamp(0.3rem, 0.6vw, 0.5rem)", fontSize: "clamp(0.5rem, 0.82vw, 0.64rem)", color: COLORS.lightText, fontStyle: "italic" }}>Tap for more</p>
           </div>
         </div>
 
