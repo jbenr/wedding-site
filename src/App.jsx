@@ -3020,14 +3020,14 @@ function RegistryTab({ isMobile, reducedMotion }) {
 
 function WeddingPartyTab({ isMobile, reducedMotion }) {
   const groomsmen = [
-    { frontName: "Harry Reichert", backName: "Gresh", relation: "Brother", photos: harryPhotos, role: "Best Man", maxBench: "175 lbs", fortyYard: "4.95s", handicap: "19.0", relationshipStatus: "Taken", currentCity: "Williamsburg, NY", college: "Northwestern University", collegeLogo: nu, footballTeam: "Cleveland Browns", footballLogo: brown, comment: "Let's hope Harry shows up on time to the ceremony." },
-    { frontName: "Charlie Reichert", backName: "Chuck", relation: "Brother", photos: chuckPhotos, role: "Groomsman", maxBench: "135 lbs", fortyYard: "5.4s", handicap: "13.5", relationshipStatus: "Taken", currentCity: "Chicago, IL", college: "University of Wisconsin", collegeLogo: w, footballTeam: "Chicago Bears", footballLogo: bears, comment: "Known for his inconsistency off the tee. Keep your eyes peeled when Chuck hits the dance floor." },
-    { frontName: "Jack Reichert", backName: "Jacko", relation: "Brother", photos: jackoPhotos, role: "Groomsman", maxBench: "185 lbs", fortyYard: "5.8s", handicap: "20.0", relationshipStatus: "Single", currentCity: "Washington DC", college: "University of Virginia", collegeLogo: uva, footballTeam: "Minnesota Vikings", footballLogo: vikes, comment: "The most controversial character in the lineup. Look for Jacko on stage for the late night." },
-    { frontName: "Cole Dickinson", backName: "Cole D", relation: "Dog", photos: colePhotos, role: "Groomsman", maxBench: "285 lbs", fortyYard: "4.9s", handicap: "9.5", relationshipStatus: "Married", currentCity: "Charleston, SC", college: "University of South Carolina", collegeLogo: sc, footballTeam: "Washington Football Team", footballLogo: fbt, comment: "It's too Cole for my Dickinson." },
-    { frontName: "Henry Kreienbaum", backName: "Henry Cignetti", relation: "Dog", photos: henryPhotos, role: "Groomsman", maxBench: "265 lbs", fortyYard: "5.3s", handicap: "15.0", relationshipStatus: "Taken", currentCity: "Atlanta, GA", college: "James Madison University", collegeLogo: dukes, collegeLogoScale: 1.5, footballTeam: "Washington Commanders", footballLogo: commies, comment: "Don't ask this guy about Nascar." },
-    { frontName: "Oliver Herndon", backName: "Oli", relation: "Dog", photos: oliPhotos, role: "Groomsman", maxBench: "255 lbs", fortyYard: "4.6s", handicap: "22.0", relationshipStatus: "Taken", currentCity: "New York, NY", college: "Washington & Lee University", collegeLogo: wl, footballTeam: "Washington Redskins", footballLogo: skins, comment: "Can I get a roll tide." },
-    { frontName: "Joel Gibbons V", backName: "Wood", relation: "Dog", photos: woodsPhotos, role: "Groomsman", maxBench: "155 lbs", fortyYard: "6.7s", handicap: "21.0", relationshipStatus: "Taken?", currentCity: "Washington DC", college: "Indiana University", collegeLogo: hoosierLogo, footballTeam: "TBD", footballLogo: tex, comment: "So smoked out he can barely see the dance floor — but ask him about his artwork, he swears it'll be worth millions one day." },
-    { frontName: "Wyatt Collins", backName: "Wyatt", relation: "Brother-in-law", photos: wyattPhotos, role: "Groomsman", maxBench: "225 lbs", fortyYard: "5.5s", handicap: "8.0", relationshipStatus: "Single", currentCity: "Knoxville, TN", college: "University of Tennessee", collegeLogo: ut, collegeLogoScale: 0.9, footballTeam: "The Vols", footballLogo: ut, comment: "Known for his e4 openings as white and thunder thighs that could squat a Volkswagen. Don't trust your girlfriend around this guy." }
+    { frontName: "Harry Reichert", backName: "Gresh", relation: "Brother", photos: harryPhotos, role: "Best Man", maxBench: "175 lbs", fortyYard: "4.95s", handicap: "19.0", relationshipStatus: "Taken", currentCity: "Williamsburg, NY", college: "Northwestern University", collegeLogo: nu, footballTeam: "Cleveland Browns", footballLogo: brown, comment: "Known for his subpar jumpshot and spending more time in the trees than in the fairway. Let's hope Harry shows up on time to the ceremony." },
+    { frontName: "Charlie Reichert", backName: "Chuck", relation: "Brother", photos: chuckPhotos, role: "Groomsman", maxBench: "135 lbs", fortyYard: "5.4s", handicap: "13.5", relationshipStatus: "Taken", currentCity: "Chicago, IL", college: "University of Wisconsin", collegeLogo: w, footballTeam: "Chicago Bears", footballLogo: bears, comment: "Known for his inconsistency off the tee and emotional instability at Bears games. Keep your eyes peeled when Chuck hits the dance floor." },
+    { frontName: "Jack Reichert", backName: "Jacko", relation: "Brother", photos: jackoPhotos, role: "Groomsman", maxBench: "185 lbs", fortyYard: "5.8s", handicap: "20.0", relationshipStatus: "Single", currentCity: "Washington DC", college: "University of Virginia", collegeLogo: uva, footballTeam: "Minnesota Vikings", footballLogo: vikes, comment: "The most controversial character in the lineup. No, you don't want to meet his boy. Look for Jacko on stage for the late night." },
+    { frontName: "Cole Dickinson", backName: "Cole D", relation: "Dog", photos: colePhotos, role: "Groomsman", maxBench: "285 lbs", fortyYard: "4.9s", handicap: "9.5", relationshipStatus: "Married", currentCity: "Charleston, SC", college: "University of South Carolina", collegeLogo: sc, footballTeam: "Washington Football Team", footballLogo: fbt, comment: "It's too Cole for my Dickinson. Known for his quip and catch phrase 'my life is your vacation.' Try not to let this guy get under your skin." },
+    { frontName: "Henry Kreienbaum", backName: "Henry Cignetti", relation: "Dog", photos: henryPhotos, role: "Groomsman", maxBench: "265 lbs", fortyYard: "5.3s", handicap: "15.0", relationshipStatus: "Taken", currentCity: "Atlanta, GA", college: "James Madison University", collegeLogo: dukes, collegeLogoScale: 1.5, footballTeam: "Washington Commanders", footballLogo: commies, comment: "Don't ask this guy about NASCAR, but do ask about Curt Cignetti. And definitely ask for a Juul rip." },
+    { frontName: "Oliver Herndon", backName: "Oli", relation: "Dog", photos: oliPhotos, role: "Groomsman", maxBench: "255 lbs", fortyYard: "4.6s", handicap: "22.0", relationshipStatus: "Engaged", currentCity: "New York, NY", college: "Washington & Lee University", collegeLogo: wl, footballTeam: "Washington Redskins", footballLogo: skins, comment: "Don give a piss bout nun but the Tide. Don't let this guy or his fiancée know that you have zyns." },
+    { frontName: "Joel Gibbons V", backName: "Wood", relation: "Dog", photos: woodsPhotos, role: "Groomsman", maxBench: "155 lbs", fortyYard: "6.7s", handicap: "21.0", relationshipStatus: "Taken?", currentCity: "Washington DC", college: "Indiana University", collegeLogo: hoosierLogo, footballTeam: "Houston Texans", footballLogo: tex, comment: "While Wood is pretty smoked out, his exotic artwork will surely be worth millions one day. Don't mention politics around this guy, but do mention au pairs." },
+    { frontName: "Wyatt Collins", backName: "Wyatt", relation: "Brother-in-law", photos: wyattPhotos, role: "Groomsman", maxBench: "225 lbs", fortyYard: "5.5s", handicap: "8.0", relationshipStatus: "Single", currentCity: "Knoxville, TN", college: "University of Tennessee", collegeLogo: ut, collegeLogoScale: 0.9, footballTeam: "The Vols", footballLogo: ut, footballLogoScale: 0.9, comment: "Known for his e4 openings as white and JUCO league thunder thighs. Don't trust your girlfriend around this guy." }
   ];
 
   const bridesmaids = [
@@ -3092,7 +3092,7 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
               transition={reducedMotion ? { duration: 0 } : { delay: 0.04 * index, duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
               style={{ position: "relative", overflow: "visible", margin: "0 -0.45rem" }}
             >
-              <GroomCard person={p} />
+              <GroomCard person={p} isMobile={isMobile} />
             </motion.div>
           ))}
         </div>
@@ -3105,7 +3105,7 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
    GROOM CARD - PHOTO MAINTAINS 4:5 ASPECT RATIO
    ============================================ */
 
-const GroomCard = React.memo(({ person }) => {
+const GroomCard = React.memo(({ person, isMobile }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isFlipAnimating, setIsFlipAnimating] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -3284,10 +3284,10 @@ const GroomCard = React.memo(({ person }) => {
             <StatCell label="Status" value={person.relationshipStatus} color={color} background={COLORS.cream} borderColor={COLORS.border} labelColor={COLORS.lightText} />
           </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(0.25rem, 0.75vw, 0.55rem)", fontSize: "clamp(0.6rem, 1vw, 0.8rem)", color: COLORS.mediumText, marginBottom: "clamp(0.25rem, 0.9vw, 0.7rem)", flexWrap: "wrap", textAlign: "center" }}>
-            {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: 24 * (person.collegeLogoScale || 1), height: 24 * (person.collegeLogoScale || 1), objectFit: "contain" }} />}
+            {person.collegeLogo && <img src={person.collegeLogo} alt="" style={{ width: 24 * (person.collegeLogoScale || 1) * (isMobile ? 0.9 : 1), height: 24 * (person.collegeLogoScale || 1) * (isMobile ? 0.9 : 1), objectFit: "contain" }} />}
             <span>{person.college}</span>
             <span style={{ color: COLORS.lightText }}>|</span>
-            {person.footballLogo && <img src={person.footballLogo} alt="" style={{ width: 24, height: 24, objectFit: "contain" }} />}
+            {person.footballLogo && <img src={person.footballLogo} alt="" style={{ width: 24 * (person.footballLogoScale || 1) * (isMobile ? 0.9 : 1), height: 24 * (person.footballLogoScale || 1) * (isMobile ? 0.9 : 1), objectFit: "contain" }} />}
             <span>{person.footballTeam}</span>
           </div>
           <p style={{
