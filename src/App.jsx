@@ -53,6 +53,7 @@ const mariaPhotos = globToArray(import.meta.glob("./assets/maria/*", { eager: tr
 const goofyPhotos = globToArray(import.meta.glob("./assets/goofy/*", { eager: true }));
 const hoosierPhotos = globToArray(import.meta.glob("./assets/hoosiers/*", { eager: true }));
 const maddiePhotos = globToArray(import.meta.glob("./assets/maddie/*", { eager: true }));
+const colemanPhotos = globToArray(import.meta.glob("./assets/coleman/*", { eager: true }));
 
 // Toggle RSVP form visibility (set to true when invites are sent)
 const RSVP_ENABLED = false;
@@ -3077,7 +3078,9 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
         funFact: "Emily and Maria met in third grade and became true friends in high school when they worked at the YMCA together" },
     { frontName: "Lilly Parker", backName: "Lilly", relation: "Friend", photos: lilyPhotos, role: "Bridesmaid", currentCity: "Chapel Hill, NC",
         college: "Wake Forest University | University of North Carolina", favoriteDrink: "Mojito", danceFloorSong: "UCLA",
-        funFact: "Emily and I were roommates in ATL, taught at the same school, and were foster moms to 4 animals together (one being a 15 year old cat named Baby Girl)!" }
+        funFact: "Emily and I were roommates in ATL, taught at the same school, and were foster moms to 4 animals together (one being a 15 year old cat named Baby Girl)!" },
+    { frontName: "Coleman Lucas", backName: "Coleman", relation: "Friend", photos: colemanPhotos, role: "Bridesmaid", currentCity: "New York, NY",
+        college: "Washington & Lee University" }
   ];
   const containerVariants = getStaggerContainerVariants(reducedMotion);
   const itemVariants = getStaggerItemVariants(reducedMotion);
