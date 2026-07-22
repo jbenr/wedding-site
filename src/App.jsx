@@ -3080,7 +3080,7 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
         college: "Wake Forest University | University of North Carolina", favoriteDrink: "Mojito", danceFloorSong: "UCLA",
         funFact: "Emily and I were roommates in ATL, taught at the same school, and were foster moms to 4 animals together (one being a 15 year old cat named Baby Girl)!" },
     { frontName: "Coleman Lucas", backName: "Coleman", relation: "Friend", photos: colemanPhotos, role: "Bridesmaid", currentCity: "New York, NY",
-        college: "Washington & Lee University" }
+        college: "Washington & Lee University",  favoriteDrink: "Margarita" }
   ];
   const containerVariants = getStaggerContainerVariants(reducedMotion);
   const itemVariants = getStaggerItemVariants(reducedMotion);
