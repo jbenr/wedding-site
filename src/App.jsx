@@ -2772,8 +2772,8 @@ function InfoTab({ isMobile, reducedMotion }) {
             </h4>
 
             <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location="Birdwood Golf Club" note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} isMobile={isMobile} />
-            <ScheduleRow time="5:30 PM" event="Rehearsal Dinner" location={renderVenueLocation("Farmington Country Club - The Jefferson Room", FARMINGTON_ADDRESS)} attire="Cocktail Attire" isMobile={isMobile} />
-            <ScheduleRow time="8:00 PM" event="Welcome Party" location={renderVenueLocation("Farmington Country Club - The Blue Ridge Room", FARMINGTON_ADDRESS)} attire="Cocktail Attire" note="Guests are on their own for transportation to this event, see Shuttle Info for details." isLast isMobile={isMobile} />
+            <ScheduleRow time="5:30 PM" event="Rehearsal Dinner" location={renderVenueLocation("Farmington Country Club", FARMINGTON_ADDRESS)} attire="Cocktail Attire" isMobile={isMobile} />
+            <ScheduleRow time="8:00 PM" event="Welcome Party" location={renderVenueLocation("Farmington Country Club", FARMINGTON_ADDRESS)} attire="Cocktail Attire" note="Guests are on their own for transportation to this event, see Shuttle Info for details." isLast isMobile={isMobile} />
 
             {dayDivider()}
 
