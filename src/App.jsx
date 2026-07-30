@@ -362,6 +362,13 @@ const renderSectionTitle = (isMobile, text) => (
   <h3 style={getSectionTitleStyle(isMobile)}>{text}</h3>
 );
 
+const renderVenueLocation = (name, address) => (
+  <>
+    {name}<br />
+    {address}
+  </>
+);
+
 const getTabPanelMotion = (reducedMotion) => ({
   initial: reducedMotion ? { opacity: 1 } : { opacity: 0, y: 18 },
   animate: reducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 },
@@ -2765,8 +2772,8 @@ function InfoTab({ isMobile, reducedMotion }) {
             </h4>
 
             <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location="Birdwood Golf Club" note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} isMobile={isMobile} />
-            <ScheduleRow time="5:30 PM" event="Rehearsal Dinner" location={`Farmington Country Club - The Jefferson Room, ${FARMINGTON_ADDRESS}`} attire="Cocktail Attire" isMobile={isMobile} />
-            <ScheduleRow time="8:00 PM" event="Welcome Party" location={`Farmington Country Club - The Blue Ridge Room, ${FARMINGTON_ADDRESS}`} attire="Cocktail Attire" note="Guests are on their own for transportation to this event, see Shuttle Info for details." isLast isMobile={isMobile} />
+            <ScheduleRow time="5:30 PM" event="Rehearsal Dinner" location={renderVenueLocation("Farmington Country Club - The Jefferson Room", FARMINGTON_ADDRESS)} attire="Cocktail Attire" isMobile={isMobile} />
+            <ScheduleRow time="8:00 PM" event="Welcome Party" location={renderVenueLocation("Farmington Country Club - The Blue Ridge Room", FARMINGTON_ADDRESS)} attire="Cocktail Attire" note="Guests are on their own for transportation to this event, see Shuttle Info for details." isLast isMobile={isMobile} />
 
             {dayDivider()}
 
@@ -2785,15 +2792,15 @@ function InfoTab({ isMobile, reducedMotion }) {
             <ScheduleRow
               time="4:30 PM"
               event="Ceremony"
-              location={`Christ Episcopal Church, ${CHRIST_CHURCH_ADDRESS}`}
+              location={renderVenueLocation("Christ Episcopal Church", CHRIST_CHURCH_ADDRESS)}
               attire="Black Tie Optional"
               note={<>Shuttles provided for guests staying at The Draftsman, Boars Head Resort, and The English Inn.<br />Driving in? Please arrive early - parking is limited downtown.</>}
               isMobile={isMobile}
             />
-            <ScheduleRow time="5:30 PM" event="Cocktail Hour" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} attire="Black Tie Optional" isMobile={isMobile} />
-            <ScheduleRow time="6:30 PM" event="Reception & Dinner" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} attire="Black Tie Optional" isMobile={isMobile} />
-            <ScheduleRow time="10:30 PM" event="Send Off" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} isMobile={isMobile} />
-            <ScheduleRow time="11:00 PM" event="Late Night" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} isLast isMobile={isMobile} />
+            <ScheduleRow time="5:30 PM" event="Cocktail Hour" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} attire="Black Tie Optional" isMobile={isMobile} />
+            <ScheduleRow time="6:30 PM" event="Reception & Dinner" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} attire="Black Tie Optional" isMobile={isMobile} />
+            <ScheduleRow time="10:30 PM" event="Send Off" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} isMobile={isMobile} />
+            <ScheduleRow time="11:00 PM" event="Late Night" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} isLast isMobile={isMobile} />
           </div>
         </div>
       </motion.div>
