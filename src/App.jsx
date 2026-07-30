@@ -96,6 +96,8 @@ const IU_LOGO_IMAGE = iuLogo;
 const GOLF_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc05xidXMl9XIGrUmGwN7IqLgqHv727BPUUq3r4118eVUyi-Q/viewform?usp=publish-editor";
 const DRAFTSMAN_URL = "https://app.marriott.com/reslink?id=1770319213584&key=GRP&app=resvlink";
 const ROSEMONT_FARM_ADDRESS = "241 Rosemont Farm Way, Charlottesville, VA 22903";
+const CHRIST_CHURCH_ADDRESS = "120 W High St, Charlottesville, VA 22902";
+const FARMINGTON_ADDRESS = "1625 Country Club Cir, Charlottesville, VA 22901";
 const CARD_FLIP_DURATION_MS = 650;
 const CELEBRATE_BUTTON_TEXT = "Can't Wait!";
 const HOLD_REVEAL_MS = 10000;
@@ -194,6 +196,7 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, is
           )}
           {note && (
             <div style={{
+              marginTop: "0.35rem",
               fontSize: "0.72rem",
               lineHeight: 1.45,
               color: COLORS.mediumText
@@ -262,7 +265,7 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, is
             )}
             {note && (
               <div style={{
-                marginTop: "0.2rem",
+                marginTop: "0.4rem",
                 fontSize: "0.76rem",
                 lineHeight: 1.35,
                 color: COLORS.mediumText
@@ -1414,7 +1417,7 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
           color: COLORS.darkText,
           fontWeight: 500
         }}>
-          Bemily — Unfiltered
+          Bemily - Unfiltered
         </h2>
         <button
           onClick={onClose}
@@ -1896,7 +1899,7 @@ export default function App() {
 
   const downloadCalendarEvent = () => {
     const ceremonyVenue = "Christ Episcopal Church";
-    const ceremonyAddress = "120 W High St, Charlottesville, VA 22902";
+    const ceremonyAddress = CHRIST_CHURCH_ADDRESS;
     const ics = `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Ben & Emily Wedding//EN
@@ -2517,7 +2520,7 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
       {/* Save the Date + Excitement */}
       <motion.div variants={itemVariants} style={{ textAlign: "center", padding: isMobile ? "1.5rem 1rem" : "2rem", borderTop: `1px solid ${COLORS.border}`, marginTop: "1rem", position: "relative", overflow: "visible" }}>
         <p style={{ fontSize: isMobile ? "0.78rem" : "0.85rem", color: COLORS.lightText, marginBottom: "1rem", letterSpacing: "0.05em" }}>
-          Save the date — add it to your calendar so you don't forget!
+          Save the date, add it to your calendar so you don't forget!
         </p>
         <button
           className="press-button"
@@ -2762,8 +2765,8 @@ function InfoTab({ isMobile, reducedMotion }) {
             </h4>
 
             <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location="Birdwood Golf Club" note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} isMobile={isMobile} />
-            <ScheduleRow time="5:30 PM" event="Rehearsal Dinner" location="Farmington Country Club - The Jefferson Room" attire="Cocktail Attire" isMobile={isMobile} />
-            <ScheduleRow time="8:00 PM" event="Welcome Party" location="Farmington Country Club - The Blue Ridge Room" attire="Cocktail Attire" note="Guests are on their own for transportation to this event — see Shuttle Info for details." isLast isMobile={isMobile} />
+            <ScheduleRow time="5:30 PM" event="Rehearsal Dinner" location={`Farmington Country Club - The Jefferson Room, ${FARMINGTON_ADDRESS}`} attire="Cocktail Attire" isMobile={isMobile} />
+            <ScheduleRow time="8:00 PM" event="Welcome Party" location={`Farmington Country Club - The Blue Ridge Room, ${FARMINGTON_ADDRESS}`} attire="Cocktail Attire" note="Guests are on their own for transportation to this event, see Shuttle Info for details." isLast isMobile={isMobile} />
 
             {dayDivider()}
 
@@ -2782,13 +2785,14 @@ function InfoTab({ isMobile, reducedMotion }) {
             <ScheduleRow
               time="4:30 PM"
               event="Ceremony"
-              location="Christ Episcopal Church"
+              location={`Christ Episcopal Church, ${CHRIST_CHURCH_ADDRESS}`}
               attire="Black Tie Optional"
-              note={<>Shuttles provided for guests staying at The Draftsman, Boars Head Resort, and The English Inn.<br />Driving in? Please arrive early — parking is limited downtown.</>}
+              note={<>Shuttles provided for guests staying at The Draftsman, Boars Head Resort, and The English Inn.<br />Driving in? Please arrive early - parking is limited downtown.</>}
               isMobile={isMobile}
             />
-            <ScheduleRow time="5:30 – 10:30 PM" event="Cocktails, Dinner & Dancing" location={`Rosemont Farm — ${ROSEMONT_FARM_ADDRESS}`} attire="Black Tie Optional" isMobile={isMobile} />
-            <ScheduleRow time="10:30 PM – 12:30 AM" event="After Party" location={`Rosemont Farm — ${ROSEMONT_FARM_ADDRESS}`} isLast isMobile={isMobile} />
+            <ScheduleRow time="5:30 PM" event="Cocktail Hour" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} attire="Black Tie Optional" isMobile={isMobile} />
+            <ScheduleRow time="6:30 – 10:30 PM" event="Reception & Dinner" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} attire="Black Tie Optional" isMobile={isMobile} />
+            <ScheduleRow time="10:30 PM – 12:30 AM" event="After Party" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} isLast isMobile={isMobile} />
           </div>
         </div>
       </motion.div>
@@ -2815,7 +2819,7 @@ function ShuttleTab({ isMobile, reducedMotion }) {
       <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Getting to and from the celebration</motion.p>
 
       <motion.div variants={itemVariants} style={plainSectionStyle}>
-        {renderSectionTitle(isMobile, "Friday — Welcome Party")}
+        {renderSectionTitle(isMobile, "Friday - Welcome Party")}
         <div style={detailBodyStyle}>
           <p>
             Formal transportation will not be provided for this event. Please plan to self-drive or use a car service. Plenty of parking is available at Farmington.
@@ -2826,7 +2830,7 @@ function ShuttleTab({ isMobile, reducedMotion }) {
       <div style={{ width: "60%", maxWidth: 300, height: 1, background: COLORS.border, margin: "1rem auto 2.5rem" }} />
 
       <motion.div variants={itemVariants} style={plainSectionStyle}>
-        {renderSectionTitle(isMobile, "Saturday — Ceremony")}
+        {renderSectionTitle(isMobile, "Saturday - Ceremony")}
         <div style={detailBodyStyle}>
           <p style={audienceLabelStyle}><strong style={{ color: COLORS.darkText }}>Hotel Guests</strong></p>
           <p style={paragraphStyle}>
@@ -2842,7 +2846,7 @@ function ShuttleTab({ isMobile, reducedMotion }) {
       <div style={{ width: "60%", maxWidth: 300, height: 1, background: COLORS.border, margin: "1rem auto 2.5rem" }} />
 
       <motion.div variants={itemVariants} style={plainSectionStyle}>
-        {renderSectionTitle(isMobile, "Saturday — Reception")}
+        {renderSectionTitle(isMobile, "Saturday - Reception")}
         <div style={detailBodyStyle}>
           <p style={audienceLabelStyle}><strong style={{ color: COLORS.darkText }}>Hotel Guests</strong></p>
           <p style={paragraphStyle}>
@@ -2903,18 +2907,18 @@ function HotelTab({ isMobile, reducedMotion }) {
               <a href="https://be.synxis.com/?Hotel=48984&Chain=10237&arrive=2026-10-23&depart=2026-10-25&adult=1&child=0&group=1281" target="_blank" rel="noopener noreferrer" style={detailLinkStyle}>
                 <strong>Boars Head Resort</strong>
               </a>{" "}
-              — If you need a reservation for before or after these dates, or if you need to book more than two rooms, please call to speak with a Reservation agent and have them reference <strong style={{ color: COLORS.darkText }}>Collins-Reichert Wedding Room Block</strong>. Block code: <strong style={{ color: COLORS.darkText }}>1281</strong>.
+              - If you need a reservation for before or after these dates, or if you need to book more than two rooms, please call to speak with a Reservation agent and have them reference <strong style={{ color: COLORS.darkText }}>Collins-Reichert Wedding Room Block</strong>. Block code: <strong style={{ color: COLORS.darkText }}>1281</strong>.
             </li>
             <li style={detailListItemStyle}>
               <a href={DRAFTSMAN_URL} target="_blank" rel="noopener noreferrer" style={detailLinkStyle}>
                 <strong>The Draftsman</strong>
               </a>{" "}
-              — Courtesy block available (10 rooms).
+              - Courtesy block available (10 rooms).
             </li>
             <li style={detailListItemStyle}>
               <a href="https://englishinncharlottesville.com/" target="_blank" rel="noopener noreferrer" style={detailLinkStyle}>
                 <strong>The English Inn of Charlottesville</strong>
-              </a>{" "}— No online booking link for the room block. Call the front desk at <strong style={{ color: COLORS.darkText }}>434-971-9900 ext. 0</strong> and reference group code <strong style={{ color: COLORS.darkText }}>COLLINS-REICHERT WEDDING GROUP</strong>. Rate is $289/night plus tax and includes breakfast buffet, internet, and parking. Check-in 4:00 PM, check-out 11:00 AM. Room block releases 40 days before the wedding.
+              </a>{" "}- No online booking link for the room block. Call the front desk at <strong style={{ color: COLORS.darkText }}>434-971-9900 ext. 0</strong> and reference group code <strong style={{ color: COLORS.darkText }}>COLLINS-REICHERT WEDDING GROUP</strong>. Rate is $289/night plus tax and includes breakfast buffet, internet, and parking. Check-in 4:00 PM, check-out 11:00 AM. Room block releases 40 days before the wedding.
             </li>
           </ul>
 
@@ -2926,12 +2930,12 @@ function HotelTab({ isMobile, reducedMotion }) {
             <li style={detailListItemStyle}>
               <a href="https://www.ihg.com/kimptonhotels/hotels/us/en/find-hotels/select-roomrate?fromRedirect=true&qSrt=sBR&qDest=Kimpton%20The%20Forum%20Hotel&qErm=false&qSlH=chodd&qRms=1&qAdlt=1&qChld=0&qCiD=26&qCiMy=072025&qCoD=29&qCoMy=072025&qCpid=100221153&qAAR=6CBARC&qRtP=6CBARC&setPMCookies=true&qSHBrC=KI&qpMbw=0&qpMn=1&srb_u=1&qRmFltr=" target="_blank" rel="noopener noreferrer" style={detailLinkStyle}>
                 Kimpton The Forum Hotel
-              </a> — 15% off with room block link.
+              </a> - 15% off with room block link.
             </li>
             <li style={detailListItemStyle}>
               <a href="https://www.hilton.com/en/hotels/chogcgu-graduate-charlottesville/" target="_blank" rel="noopener noreferrer" style={detailLinkStyle}>
                 The Graduate
-              </a>{" "}— Book directly at general rates.
+              </a>{" "}- Book directly at general rates.
             </li>
           </ul>
 
@@ -2948,15 +2952,15 @@ function HotelTab({ isMobile, reducedMotion }) {
             Accommodations close to Rosemont Farm:
           </p>
           <ul style={{ ...detailListStyle, marginBottom: "1.2rem" }}>
-            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/blue-mountain-haven" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Blue Mountain Haven</a> — 5 bedrooms, 4 bathrooms, sleeps 10</li>
-            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/farlea" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Farlea</a> — 4 bedrooms, 2.5 bathrooms, sleeps 8</li>
-            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/fox-cottage" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Fox Cottage</a> — 2 bedrooms, 2 bathrooms, sleeps 4</li>
-            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/ivy-cottages-all-cottages" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ivy Cottages</a> — 5 one-bedroom cottages, each sleeping 2–4 guests</li>
-            <li>Ramsay Estate Main House — 3 bedrooms, 5 bathrooms, sleeps 8 (not on website, but bookable for select groups)</li>
-            <li><a href="https://www.vaguesthouses.com/piedmont-place-suites" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Piedmont Place Suites</a> — 6 two-bedroom, 2 bathroom suites, each sleeps 4–6 guests</li>
-            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/ramsay-estate-carriage-house" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ramsay Estate Carriage House</a> — 1 bedroom, 1 bathroom, sleeps 2</li>
-            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/ramsay-estate-cottage" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ramsay Estate Cottage</a> — 3 bedrooms, 3 bathrooms, sleeps 6</li>
-            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/stockton-creek-farmhouse" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Stockton Creek Farmhouse</a> — 3 bedrooms, 2.5 bathrooms, sleeps 6</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/blue-mountain-haven" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Blue Mountain Haven</a> - 5 bedrooms, 4 bathrooms, sleeps 10</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/farlea" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Farlea</a> - 4 bedrooms, 2.5 bathrooms, sleeps 8</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/fox-cottage" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Fox Cottage</a> - 2 bedrooms, 2 bathrooms, sleeps 4</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/ivy-cottages-all-cottages" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ivy Cottages</a> - 5 one-bedroom cottages, each sleeping 2–4 guests</li>
+            <li>Ramsay Estate Main House - 3 bedrooms, 5 bathrooms, sleeps 8 (not on website, but bookable for select groups)</li>
+            <li><a href="https://www.vaguesthouses.com/piedmont-place-suites" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Piedmont Place Suites</a> - 6 two-bedroom, 2 bathroom suites, each sleeps 4–6 guests</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/ramsay-estate-carriage-house" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ramsay Estate Carriage House</a> - 1 bedroom, 1 bathroom, sleeps 2</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/ramsay-estate-cottage" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ramsay Estate Cottage</a> - 3 bedrooms, 3 bathrooms, sleeps 6</li>
+            <li><a href="https://www.vaguesthouses.com/charlottesville-vacation-rentals/stockton-creek-farmhouse" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Stockton Creek Farmhouse</a> - 3 bedrooms, 2.5 bathrooms, sleeps 6</li>
           </ul>
           <p>
             You can view a map of all properties on the <a href="https://www.vaguesthouses.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>VA Guesthouses website</a>.
@@ -2970,13 +2974,13 @@ function HotelTab({ isMobile, reducedMotion }) {
         {renderSectionTitle(isMobile, "Things to Do in Charlottesville")}
         <div style={detailBodyStyle}>
           <p style={{ marginBottom: "1.2rem" }}>
-            <strong style={{ color: COLORS.darkText }}>Dining</strong> — Don't miss Riverside for lunch by the water, Bodo's Bagels for the best bagels in town, and C&O Restaurant for a Charlottesville classic.
+            <strong style={{ color: COLORS.darkText }}>Dining</strong> - Don't miss Riverside for lunch by the water, Bodo's Bagels for the best bagels in town, and C&O Restaurant for a Charlottesville classic.
           </p>
           <p style={{ marginBottom: "1.2rem" }}>
-            <strong style={{ color: COLORS.darkText }}>Drinks & Wine</strong> — Charlottesville is wine country! King Family Vineyards, Pippin Hill Farm & Vineyards, and Early Mountain Vineyards are all beautiful. Check out <a href="https://raggedbranch.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ragged Branch Distillery</a> for Virginia bourbon, and <a href="https://www.prn.beer/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Pro Re Nata Brewery</a> for craft beer. In town, The Whiskey Jar and Coup Deville's are great for a casual drink.
+            <strong style={{ color: COLORS.darkText }}>Drinks & Wine</strong> - Charlottesville is wine country! King Family Vineyards, Pippin Hill Farm & Vineyards, and Early Mountain Vineyards are all beautiful. Check out <a href="https://raggedbranch.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Ragged Branch Distillery</a> for Virginia bourbon, and <a href="https://www.prn.beer/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Pro Re Nata Brewery</a> for craft beer. In town, The Whiskey Jar and Coup Deville's are great for a casual drink.
           </p>
           <p>
-            <strong style={{ color: COLORS.darkText }}>Shopping</strong> — Stroll the Downtown Mall, a charming pedestrian mall with boutiques and restaurants. Be sure to stop by <a href="https://quattrotizi.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Quattro Tizi</a> at the Dairy Market for men's and women's clothing.
+            <strong style={{ color: COLORS.darkText }}>Shopping</strong> - Stroll the Downtown Mall, a charming pedestrian mall with boutiques and restaurants. Be sure to stop by <a href="https://quattrotizi.com/" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>Quattro Tizi</a> at the Dairy Market for men's and women's clothing.
           </p>
         </div>
       </motion.div>
