@@ -95,6 +95,7 @@ import hoosierLogo from "./assets/hoosier.png";
 const IU_LOGO_IMAGE = iuLogo;
 const GOLF_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc05xidXMl9XIGrUmGwN7IqLgqHv727BPUUq3r4118eVUyi-Q/viewform?usp=publish-editor";
 const DRAFTSMAN_URL = "https://app.marriott.com/reslink?id=1770319213584&key=GRP&app=resvlink";
+const ROSEMONT_FARM_ADDRESS = "241 Rosemont Farm Way, Charlottesville, VA 22903";
 const CARD_FLIP_DURATION_MS = 650;
 const CELEBRATE_BUTTON_TEXT = "Can't Wait!";
 const HOLD_REVEAL_MS = 10000;
@@ -210,12 +211,11 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, is
       ) : (
         <div style={{
           display: "grid",
-          gridTemplateColumns: "92px minmax(0, 1fr)",
+          gridTemplateColumns: "minmax(92px, auto) minmax(0, 1fr)",
           gap: "0.75rem",
           alignItems: "start"
         }}>
           <div style={{
-            width: 92,
             flexShrink: 0,
             fontSize: "0.95rem",
             color: COLORS.lightText,
@@ -241,10 +241,7 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, is
                 marginTop: "0.18rem",
                 fontSize: "0.82rem",
                 lineHeight: 1.35,
-                color: COLORS.lightText,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis"
+                color: COLORS.lightText
               }}>
                 {location}
               </div>
@@ -268,10 +265,7 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, is
                 marginTop: "0.2rem",
                 fontSize: "0.76rem",
                 lineHeight: 1.35,
-                color: COLORS.mediumText,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis"
+                color: COLORS.mediumText
               }}>
                 {noteHref ? (
                   <a href={noteHref} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.darkText, textDecoration: "underline" }}>
@@ -323,6 +317,47 @@ const getSectionTitleStyle = (isMobile) => ({
   fontWeight: 400,
   fontFamily: "'Cormorant Garamond', serif"
 });
+
+const getDetailBodyStyle = (isMobile) => ({
+  lineHeight: isMobile ? 1.72 : 1.8,
+  color: COLORS.mediumText,
+  fontSize: isMobile ? "0.84rem" : "0.95rem"
+});
+
+const detailLabelStyle = {
+  marginBottom: "0.6rem"
+};
+
+const getDetailListStyle = (isMobile) => ({
+  paddingLeft: isMobile ? "1.1rem" : "1.5rem",
+  marginBottom: "1.8rem"
+});
+
+const getDetailListItemStyle = (isMobile) => ({
+  marginBottom: "0.55rem",
+  lineHeight: isMobile ? 1.68 : 1.75
+});
+
+const detailLinkStyle = {
+  color: COLORS.darkText,
+  textDecoration: "underline"
+};
+
+const getDetailMutedStyle = (isMobile) => ({
+  color: COLORS.lightText,
+  marginBottom: "0.8rem",
+  fontStyle: "italic",
+  fontSize: isMobile ? "0.78rem" : "0.85rem"
+});
+
+const getPlainSectionStyle = (isMobile) => ({
+  padding: isMobile ? "0.4rem 0 0.8rem" : "0.6rem 0 1rem",
+  marginBottom: "1.5rem"
+});
+
+const renderSectionTitle = (isMobile, text) => (
+  <h3 style={getSectionTitleStyle(isMobile)}>{text}</h3>
+);
 
 const getTabPanelMotion = (reducedMotion) => ({
   initial: reducedMotion ? { opacity: 1 } : { opacity: 0, y: 18 },
@@ -1866,10 +1901,10 @@ export default function App() {
 VERSION:2.0
 PRODID:-//Ben & Emily Wedding//EN
 BEGIN:VEVENT
-DTSTART;TZID=America/New_York:20261024T170000
-DTEND;TZID=America/New_York:20261024T180000
+DTSTART;TZID=America/New_York:20261024T163000
+DTEND;TZID=America/New_York:20261024T173000
 SUMMARY:Ben & Emily Wedding Ceremony
-DESCRIPTION:${ceremonyVenue} at 5:00 PM on October 24, 2026. Address: ${ceremonyAddress}.
+DESCRIPTION:${ceremonyVenue} at 4:30 PM on October 24, 2026. Address: ${ceremonyAddress}.
 LOCATION:${ceremonyVenue} - 120 W High St Charlottesville VA 22902
 URL:${window.location.href}
 STATUS:CONFIRMED
@@ -1905,6 +1940,10 @@ END:VCALENDAR`;
         return <RSVPTab isMobile={isMobile} reducedMotion={shouldReduceMotion} />;
       case "info":
         return <InfoTab isMobile={isMobile} reducedMotion={shouldReduceMotion} />;
+      case "shuttle":
+        return <ShuttleTab isMobile={isMobile} reducedMotion={shouldReduceMotion} />;
+      case "hotel":
+        return <HotelTab isMobile={isMobile} reducedMotion={shouldReduceMotion} />;
       case "party":
         return <WeddingPartyTab isMobile={isMobile} reducedMotion={shouldReduceMotion} />;
       case "registry":
@@ -2204,7 +2243,9 @@ END:VCALENDAR`;
               >
                 <TabButton id="main" label="Home" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
                 <TabButton id="rsvp" label="RSVP" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
-                <TabButton id="info" label="Details" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
+                <TabButton id="info" label="Weekend Schedule" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
+                <TabButton id="shuttle" label="Shuttle Info" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
+                <TabButton id="hotel" label="Hotel Info" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
                 <TabButton id="party" label="Wedding Party" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
                 <TabButton id="registry" label="Registry" tab={tab} setTab={setTab} isMobile={isMobile} shouldReduceMotion={shouldReduceMotion} />
               </div>
@@ -2598,37 +2639,6 @@ function RSVPTab({ isMobile, reducedMotion }) {
    ============================================ */
 
 function InfoTab({ isMobile, reducedMotion }) {
-  const cardStyle = getSectionCardStyle(isMobile);
-  const plainSectionStyle = {
-    padding: isMobile ? "0.4rem 0 0.8rem" : "0.6rem 0 1rem",
-    marginBottom: "1.5rem"
-  };
-  const detailBodyStyle = {
-    lineHeight: isMobile ? 1.72 : 1.8,
-    color: COLORS.mediumText,
-    fontSize: isMobile ? "0.84rem" : "0.95rem"
-  };
-  const detailLabelStyle = {
-    marginBottom: "0.6rem"
-  };
-  const detailListStyle = {
-    paddingLeft: isMobile ? "1.1rem" : "1.5rem",
-    marginBottom: "1.8rem"
-  };
-  const detailListItemStyle = {
-    marginBottom: "0.55rem",
-    lineHeight: isMobile ? 1.68 : 1.75
-  };
-  const detailLinkStyle = {
-    color: COLORS.darkText,
-    textDecoration: "underline"
-  };
-  const detailMutedStyle = {
-    color: COLORS.lightText,
-    marginBottom: "0.8rem",
-    fontStyle: "italic",
-    fontSize: isMobile ? "0.78rem" : "0.85rem"
-  };
   const schedulePaperStyle = {
     position: "relative",
     background: "linear-gradient(180deg, #fafaf6 0%, #f6f5ef 100%)",
@@ -2639,11 +2649,6 @@ function InfoTab({ isMobile, reducedMotion }) {
     marginBottom: "1.7rem",
     overflow: "hidden"
   };
-  const sectionTitle = (text) => (
-    <h3 style={getSectionTitleStyle(isMobile)}>
-      {text}
-    </h3>
-  );
   const containerVariants = getStaggerContainerVariants(reducedMotion);
   const itemVariants = getStaggerItemVariants(reducedMotion);
   const dayDivider = () => (
@@ -2660,7 +2665,7 @@ function InfoTab({ isMobile, reducedMotion }) {
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show">
-      <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>Wedding Details</motion.h2>
+      <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>Weekend Schedule</motion.h2>
       <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Everything you need to know</motion.p>
 
       {/* Weekend Schedule */}
@@ -2757,8 +2762,8 @@ function InfoTab({ isMobile, reducedMotion }) {
             </h4>
 
             <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location="Birdwood Golf Club" note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} isMobile={isMobile} />
-            <ScheduleRow time="5:00 PM" event="Rehearsal Dinner" location="Farmington Country Club - The Jefferson Room" attire="Cocktail Attire" isMobile={isMobile} />
-            <ScheduleRow time="8:00 PM" event="Welcome Party" location="Farmington Country Club - The Blue Ridge Room" attire="Cocktail Attire" isLast isMobile={isMobile} />
+            <ScheduleRow time="5:30 PM" event="Rehearsal Dinner" location="Farmington Country Club - The Jefferson Room" attire="Cocktail Attire" isMobile={isMobile} />
+            <ScheduleRow time="8:00 PM" event="Welcome Party" location="Farmington Country Club - The Blue Ridge Room" attire="Cocktail Attire" note="Guests are on their own for transportation to this event — see Shuttle Info for details." isLast isMobile={isMobile} />
 
             {dayDivider()}
 
@@ -2774,20 +2779,116 @@ function InfoTab({ isMobile, reducedMotion }) {
               Saturday, October 24
             </h4>
 
-            <ScheduleRow time="5:00 PM" event="Ceremony" location="Christ Episcopal Church" attire="Black Tie Optional" isMobile={isMobile} />
-            <ScheduleRow time="6:30 PM" event="Cocktail Hour" location="Rosemont Farm" attire="Black Tie Optional" isMobile={isMobile} />
-            <ScheduleRow time="7:30 PM" event="Reception & Dinner" location="Rosemont Farm" attire="Black Tie Optional" isMobile={isMobile} />
-            <ScheduleRow time="11:00 PM" event="Late Night" location="Rosemont Farm" attire="" isLast isMobile={isMobile} />
+            <ScheduleRow
+              time="4:30 PM"
+              event="Ceremony"
+              location="Christ Episcopal Church"
+              attire="Black Tie Optional"
+              note={<>Shuttles provided for guests staying at The Draftsman, Boars Head Resort, and The English Inn.<br />Driving in? Please arrive early — parking is limited downtown.</>}
+              isMobile={isMobile}
+            />
+            <ScheduleRow time="5:30 – 10:30 PM" event="Cocktails, Dinner & Dancing" location={`Rosemont Farm — ${ROSEMONT_FARM_ADDRESS}`} attire="Black Tie Optional" isMobile={isMobile} />
+            <ScheduleRow time="10:30 PM – 12:30 AM" event="After Party" location={`Rosemont Farm — ${ROSEMONT_FARM_ADDRESS}`} isLast isMobile={isMobile} />
           </div>
         </div>
       </motion.div>
 
-      {/* Divider before Travel */}
-      <div style={{ width: "60%", maxWidth: 300, height: 1, background: COLORS.border, margin: "1.5rem auto 2.5rem" }} />
+    </motion.div>
+  );
+}
 
-      {/* Travel & Hotels */}
+/* ============================================
+   SHUTTLE TAB
+   ============================================ */
+
+function ShuttleTab({ isMobile, reducedMotion }) {
+  const plainSectionStyle = getPlainSectionStyle(isMobile);
+  const detailBodyStyle = getDetailBodyStyle(isMobile);
+  const containerVariants = getStaggerContainerVariants(reducedMotion);
+  const itemVariants = getStaggerItemVariants(reducedMotion);
+  const audienceLabelStyle = { marginBottom: "0.4rem" };
+  const paragraphStyle = { marginBottom: "1.3rem" };
+
+  return (
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
+      <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>Shuttle Info</motion.h2>
+      <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Getting to and from the celebration</motion.p>
+
       <motion.div variants={itemVariants} style={plainSectionStyle}>
-        {sectionTitle("Travel & Stay")}
+        {renderSectionTitle(isMobile, "Friday — Welcome Party")}
+        <div style={detailBodyStyle}>
+          <p>
+            Formal transportation will not be provided for this event. Please plan to self-drive or use a car service. Plenty of parking is available at Farmington.
+          </p>
+        </div>
+      </motion.div>
+
+      <div style={{ width: "60%", maxWidth: 300, height: 1, background: COLORS.border, margin: "1rem auto 2.5rem" }} />
+
+      <motion.div variants={itemVariants} style={plainSectionStyle}>
+        {renderSectionTitle(isMobile, "Saturday — Ceremony")}
+        <div style={detailBodyStyle}>
+          <p style={audienceLabelStyle}><strong style={{ color: COLORS.darkText }}>Hotel Guests</strong></p>
+          <p style={paragraphStyle}>
+            Transportation will depart promptly from Boars Head Resort, The Draftsman, and The English Inn to Christ Episcopal Church at 3:45 PM.
+          </p>
+          <p style={audienceLabelStyle}><strong style={{ color: COLORS.darkText }}>Local Guests</strong></p>
+          <p>
+            If you are driving to the church, please arrive early to allow yourself enough time to park, as parking is limited downtown.
+          </p>
+        </div>
+      </motion.div>
+
+      <div style={{ width: "60%", maxWidth: 300, height: 1, background: COLORS.border, margin: "1rem auto 2.5rem" }} />
+
+      <motion.div variants={itemVariants} style={plainSectionStyle}>
+        {renderSectionTitle(isMobile, "Saturday — Reception")}
+        <div style={detailBodyStyle}>
+          <p style={audienceLabelStyle}><strong style={{ color: COLORS.darkText }}>Hotel Guests</strong></p>
+          <p style={paragraphStyle}>
+            Transportation will be provided from the church to Rosemont Farm for out-of-town guests. Return shuttles will run after dinner at 9:00 PM, 10:00 PM, and at the end of the evening (10:45–11:00 PM).
+          </p>
+          <p style={audienceLabelStyle}><strong style={{ color: COLORS.darkText }}>Local Guests</strong></p>
+          <p>
+            Parking will be available in the field at Rosemont Farm. Guests are welcome to drive and park overnight, and use a safe ride home as needed.
+          </p>
+        </div>
+      </motion.div>
+
+      <div style={{ width: "60%", maxWidth: 300, height: 1, background: COLORS.border, margin: "1rem auto 2.5rem" }} />
+
+      <motion.div variants={itemVariants} style={plainSectionStyle}>
+        {renderSectionTitle(isMobile, "After Party")}
+        <div style={{ ...detailBodyStyle, textAlign: "center" }}>
+          <p style={{ marginBottom: 0 }}>
+            Final shuttles will depart at 12:30 AM.
+          </p>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ============================================
+   HOTEL INFO & THINGS TO DO TAB
+   ============================================ */
+
+function HotelTab({ isMobile, reducedMotion }) {
+  const plainSectionStyle = getPlainSectionStyle(isMobile);
+  const detailBodyStyle = getDetailBodyStyle(isMobile);
+  const detailListStyle = getDetailListStyle(isMobile);
+  const detailListItemStyle = getDetailListItemStyle(isMobile);
+  const detailMutedStyle = getDetailMutedStyle(isMobile);
+  const containerVariants = getStaggerContainerVariants(reducedMotion);
+  const itemVariants = getStaggerItemVariants(reducedMotion);
+
+  return (
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
+      <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>Hotel Info & Things To Do</motion.h2>
+      <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Where to stay and what to do in Charlottesville</motion.p>
+
+      <motion.div variants={itemVariants} style={plainSectionStyle}>
+        {renderSectionTitle(isMobile, "Travel & Stay")}
         <div style={detailBodyStyle}>
 
           <p style={detailLabelStyle}><strong style={{ color: COLORS.darkText }}>Getting There:</strong></p>
@@ -2809,9 +2910,6 @@ function InfoTab({ isMobile, reducedMotion }) {
                 <strong>The Draftsman</strong>
               </a>{" "}
               — Courtesy block available (10 rooms).
-            </li>
-            <li style={{ marginBottom: "0.4rem", display: "none" }}>
-              <strong>The Draftsman</strong> — Courtesy block available (10 rooms). More details to follow.
             </li>
             <li style={detailListItemStyle}>
               <a href="https://englishinncharlottesville.com/" target="_blank" rel="noopener noreferrer" style={detailLinkStyle}>
@@ -2866,23 +2964,10 @@ function InfoTab({ isMobile, reducedMotion }) {
         </div>
       </motion.div>
 
-      {/* Divider before Shuttle */}
       <div style={{ width: "60%", maxWidth: 300, height: 1, background: COLORS.border, margin: "1rem auto 2.5rem" }} />
 
-      {/* Shuttle Information */}
       <motion.div variants={itemVariants} style={plainSectionStyle}>
-        {sectionTitle("Shuttle Information")}
-        <p style={{ ...detailBodyStyle, textAlign: "center" }}>
-          Coming Soon
-        </p>
-      </motion.div>
-
-      {/* Divider before Things to Do */}
-      <div style={{ width: "60%", maxWidth: 300, height: 1, background: COLORS.border, margin: "1rem auto 2.5rem" }} />
-
-      {/* Things to Do */}
-      <motion.div variants={itemVariants} style={plainSectionStyle}>
-        {sectionTitle("Things to Do in Charlottesville")}
+        {renderSectionTitle(isMobile, "Things to Do in Charlottesville")}
         <div style={detailBodyStyle}>
           <p style={{ marginBottom: "1.2rem" }}>
             <strong style={{ color: COLORS.darkText }}>Dining</strong> — Don't miss Riverside for lunch by the water, Bodo's Bagels for the best bagels in town, and C&O Restaurant for a Charlottesville classic.
@@ -2895,7 +2980,6 @@ function InfoTab({ isMobile, reducedMotion }) {
           </p>
         </div>
       </motion.div>
-
     </motion.div>
   );
 }
