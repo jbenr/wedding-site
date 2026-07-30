@@ -2791,8 +2791,9 @@ function InfoTab({ isMobile, reducedMotion }) {
               isMobile={isMobile}
             />
             <ScheduleRow time="5:30 PM" event="Cocktail Hour" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} attire="Black Tie Optional" isMobile={isMobile} />
-            <ScheduleRow time="6:30 – 10:30 PM" event="Reception & Dinner" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} attire="Black Tie Optional" isMobile={isMobile} />
-            <ScheduleRow time="10:30 PM – 12:30 AM" event="After Party" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} isLast isMobile={isMobile} />
+            <ScheduleRow time="6:30 PM" event="Reception & Dinner" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} attire="Black Tie Optional" isMobile={isMobile} />
+            <ScheduleRow time="10:30 PM" event="Send Off" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} isMobile={isMobile} />
+            <ScheduleRow time="11:00 PM" event="Late Night" location={`Rosemont Farm, ${ROSEMONT_FARM_ADDRESS}`} isLast isMobile={isMobile} />
           </div>
         </div>
       </motion.div>
