@@ -51,6 +51,21 @@
           ".validate": "newData.hasChildren(['text', 'ts']) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 280 && newData.child('ts').isNumber()"
         }
       }
+    },
+    "rsvps": {
+      "$householdId": {
+        ".read": false,
+        ".write": true,
+        ".validate": "newData.hasChildren(['submittedAt', 'guests'])",
+        "submittedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "guests": {
+          "$guestIndex": {
+            ".validate": "newData.hasChildren(['firstName', 'lastName', 'wedding']) && newData.child('firstName').isString() && newData.child('lastName').isString() && newData.child('wedding').isString()"
+          }
+        }
+      }
     }
   }
 }

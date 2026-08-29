@@ -5,7 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import heroImage from "./assets/hero.jpg";
-import { clickCountRef, hoosierCountRef, deepTrackRef, deepTrackLikesRef, deepTrackCommentsRef, onValue, runTransaction, push } from "./firebase";
+import { clickCountRef, hoosierCountRef, deepTrackRef, deepTrackLikesRef, deepTrackCommentsRef, rsvpRef, onValue, runTransaction, push, set } from "./firebase";
 
 // Import team logos
 import bears from "./assets/bears.png";
@@ -56,7 +56,7 @@ const maddiePhotos = globToArray(import.meta.glob("./assets/maddie/*", { eager: 
 const colemanPhotos = globToArray(import.meta.glob("./assets/coleman/*", { eager: true }));
 
 // Toggle RSVP form visibility (set to true when invites are sent)
-const RSVP_ENABLED = false;
+const RSVP_ENABLED = true;
 
 // COLORS — cream + gold (pairs well with school patterns)
 const COLORS = {
@@ -2593,9 +2593,226 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
    RSVP TAB
    ============================================ */
 
+// Order secondary events are shown in on the RSVP form, regardless of the
+// order the lookup API happens to return them in.
+const RSVP_EVENT_ORDER = ["rehearsal", "welcome"];
+const RSVP_ERROR_COLOR = "#B3564A";
+
+function createInitialRsvpResponses(members) {
+  return members.map(() => ({
+    wedding: "",
+    rehearsal: "",
+    rehearsalMeal: "",
+    dietary: "",
+    welcome: ""
+  }));
+}
+
+function RSVPInput({ style, ...rest }) {
+  return (
+    <input
+      style={{
+        width: "100%",
+        border: `1px solid ${COLORS.border}`,
+        borderRadius: 10,
+        padding: "0.75rem 1rem",
+        fontSize: "0.95rem",
+        background: COLORS.cardBg,
+        color: COLORS.darkText,
+        outline: "none",
+        boxSizing: "border-box",
+        fontFamily: "inherit",
+        ...style
+      }}
+      {...rest}
+    />
+  );
+}
+
+function RSVPChoice({ value, label, current, onSelect }) {
+  const active = current === value;
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(value)}
+      style={{
+        flex: 1,
+        border: `1px solid ${active ? COLORS.accent : COLORS.border}`,
+        background: active ? COLORS.accent : "transparent",
+        color: active ? "#fff" : COLORS.mediumText,
+        borderRadius: 10,
+        padding: "0.65rem 0.5rem",
+        fontSize: "0.85rem",
+        fontWeight: active ? 600 : 400,
+        cursor: "pointer",
+        transition: "all 0.2s ease"
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+function RSVPSubmitButton({ children, ...rest }) {
+  return (
+    <button
+      type="submit"
+      style={{
+        display: "block",
+        width: "100%",
+        background: COLORS.accent,
+        color: "white",
+        border: "none",
+        padding: "0.9rem",
+        fontSize: "0.95rem",
+        fontWeight: 500,
+        borderRadius: 50,
+        transition: "all 0.3s ease",
+        ...(rest.disabled ? { opacity: 0.7, cursor: "default" } : { cursor: "pointer" })
+      }}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+}
+
+function RSVPEventSection({ title, members, responseKey, responses, onChange, isMobile, extra }) {
+  return (
+    <div style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.3rem" : "2rem" }}>
+      <h3 style={{ ...getSectionTitleStyle(isMobile), marginBottom: "1.2rem" }}>{title}</h3>
+      {members.map((member, i) => (
+        <div
+          key={i}
+          style={{ padding: "1rem 0", borderTop: i > 0 ? `1px solid ${COLORS.border}` : "none" }}
+        >
+          <p style={{ fontSize: "0.95rem", fontWeight: 600, color: COLORS.darkText, marginBottom: "0.6rem" }}>
+            {member.firstName} {member.lastName}
+          </p>
+          <div style={{ display: "flex", gap: "0.6rem" }}>
+            <RSVPChoice value="accept" label="Joyfully Accepts" current={responses[i][responseKey]} onSelect={(v) => onChange(i, responseKey, v)} />
+            <RSVPChoice value="decline" label="Regretfully Declines" current={responses[i][responseKey]} onSelect={(v) => onChange(i, responseKey, v)} />
+          </div>
+          {extra && extra(member, i)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Debounced autocomplete: fetches up to 8 matching { firstName, lastName }
+// pairs from /api/rsvp-suggest as the guest types, without ever shipping the
+// full guest list to the browser.
+function useNameSuggestions(field, value) {
+  const [suggestions, setSuggestions] = useState([]);
+
+  useEffect(() => {
+    if (!value || value.trim().length < 2) {
+      setSuggestions([]);
+      return undefined;
+    }
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch("/api/rsvp-suggest", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ field, value })
+        });
+        if (!res.ok || cancelled) return;
+        const data = await res.json();
+        if (!cancelled) setSuggestions(data.suggestions || []);
+      } catch {
+        // Autocomplete is a nice-to-have — a network hiccup shouldn't block typing.
+      }
+    }, 200);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [field, value]);
+
+  return suggestions;
+}
+
+function RSVPNameField({ value, onChange, placeholder, autoComplete, suggestions, onPick }) {
+  const [focused, setFocused] = useState(false);
+  const showDropdown = focused && suggestions.length > 0;
+
+  return (
+    <div style={{ position: "relative" }}>
+      <RSVPInput
+        value={value}
+        onChange={onChange}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        required
+      />
+      {showDropdown && (
+        <div
+          style={{
+            position: "absolute",
+            top: "calc(100% + 4px)",
+            left: 0,
+            right: 0,
+            background: COLORS.cardBg,
+            border: `1px solid ${COLORS.border}`,
+            borderRadius: 10,
+            boxShadow: "0 4px 16px rgba(44,36,32,0.12)",
+            zIndex: 5,
+            overflow: "hidden"
+          }}
+        >
+          {suggestions.map((s, i) => (
+            <div
+              key={`${s.firstName}-${s.lastName}-${i}`}
+              // onMouseDown (not onClick) fires before the input's onBlur,
+              // so the pick registers before the dropdown would otherwise close.
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onPick(s);
+              }}
+              style={{
+                padding: "0.6rem 0.9rem",
+                fontSize: "0.88rem",
+                color: COLORS.darkText,
+                cursor: "pointer",
+                borderTop: i > 0 ? `1px solid ${COLORS.border}` : "none"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = COLORS.cream;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+              }}
+            >
+              {s.firstName} {s.lastName}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function RSVPTab({ isMobile, reducedMotion }) {
   const containerVariants = getStaggerContainerVariants(reducedMotion);
   const itemVariants = getStaggerItemVariants(reducedMotion);
+
+  const [phase, setPhase] = useState("lookup"); // lookup | form | success
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [lookupError, setLookupError] = useState("");
+  const [isLooking, setIsLooking] = useState(false);
+  const [household, setHousehold] = useState(null);
+  const [responses, setResponses] = useState([]);
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const firstNameSuggestions = useNameSuggestions("first", firstName);
+  const lastNameSuggestions = useNameSuggestions("last", lastName);
 
   if (!RSVP_ENABLED) {
     return (
@@ -2609,37 +2826,233 @@ function RSVPTab({ isMobile, reducedMotion }) {
     );
   }
 
+  const runLookup = async (first, last) => {
+    setLookupError("");
+    setIsLooking(true);
+    try {
+      const res = await fetch("/api/rsvp-lookup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstName: first, lastName: last })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setLookupError(data.error || "Something went wrong. Please try again.");
+        return;
+      }
+      const orderedEvents = RSVP_EVENT_ORDER.map((key) => data.events.find((ev) => ev.key === key)).filter(Boolean);
+      setHousehold({ ...data, events: orderedEvents });
+      setResponses(createInitialRsvpResponses(data.members));
+      setPhase("form");
+    } catch {
+      setLookupError("Something went wrong reaching our RSVP system. Please try again in a moment.");
+    } finally {
+      setIsLooking(false);
+    }
+  };
+
+  const handleLookup = (e) => {
+    e.preventDefault();
+    runLookup(firstName, lastName);
+  };
+
+  const handlePickSuggestion = (picked) => {
+    setFirstName(picked.firstName);
+    setLastName(picked.lastName);
+    runLookup(picked.firstName, picked.lastName);
+  };
+
+  const updateResponse = (memberIndex, field, value) => {
+    setResponses((prev) => {
+      const next = [...prev];
+      next[memberIndex] = { ...next[memberIndex], [field]: value };
+      if (field === "rehearsal" && value !== "accept") {
+        next[memberIndex].rehearsalMeal = "";
+        next[memberIndex].dietary = "";
+      }
+      return next;
+    });
+  };
+
+  const invitedTo = (key) => household.events.some((ev) => ev.key === key);
+
+  const handleSubmit = async () => {
+    setSubmitError("");
+
+    for (let i = 0; i < household.members.length; i++) {
+      const r = responses[i];
+      if (!r.wedding) {
+        setSubmitError("Please answer the Wedding RSVP for everyone listed.");
+        return;
+      }
+      if (invitedTo("rehearsal") && !r.rehearsal) {
+        setSubmitError("Please answer the Rehearsal Dinner RSVP for everyone listed.");
+        return;
+      }
+      if (invitedTo("rehearsal") && r.rehearsal === "accept" && !r.rehearsalMeal) {
+        setSubmitError("Please choose an entrée for everyone attending the Rehearsal Dinner.");
+        return;
+      }
+      if (invitedTo("welcome") && !r.welcome) {
+        setSubmitError("Please answer the Welcome Party RSVP for everyone listed.");
+        return;
+      }
+    }
+
+    setIsSubmitting(true);
+    try {
+      const guests = household.members.map((member, i) => {
+        const r = responses[i];
+        const entry = { firstName: member.firstName, lastName: member.lastName, wedding: r.wedding };
+        if (r.rehearsal) entry.rehearsal = r.rehearsal;
+        if (r.rehearsal === "accept") {
+          if (r.rehearsalMeal) entry.rehearsalMeal = r.rehearsalMeal;
+          if (r.dietary.trim()) entry.dietary = r.dietary.trim();
+        }
+        if (r.welcome) entry.welcome = r.welcome;
+        return entry;
+      });
+
+      await set(rsvpRef(household.householdId), { submittedAt: Date.now(), guests });
+      setPhase("success");
+    } catch {
+      setSubmitError("We couldn't save your RSVP. Please try again, or reach out to Ben & Emily directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show">
       <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>RSVP</motion.h2>
       <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Please let us know if you can join us</motion.p>
 
-      <motion.div variants={itemVariants} style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem", textAlign: "center" }}>
-        <p style={{ marginBottom: "1.5rem", fontSize: "1rem", color: COLORS.mediumText }}>
-          Click below to open our RSVP form:
-        </p>
-        <a
-          href="https://forms.gle/9U5nv3R1hasEXZYJA"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: "inline-block",
-            background: COLORS.accent,
-            color: "white",
-            padding: "0.9rem 2.5rem",
-            fontSize: "0.95rem",
-            fontWeight: 500,
-            borderRadius: 50,
-            textDecoration: "none",
-            transition: "all 0.3s ease"
-          }}
-        >
-          Open RSVP Form
-        </a>
-        <p style={{ marginTop: "1.5rem", fontSize: "0.9rem", color: COLORS.lightText }}>
-          Please respond by September 1, 2026
-        </p>
-      </motion.div>
+      {phase === "lookup" && (
+        <motion.div variants={itemVariants} style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem" }}>
+          <p style={{ textAlign: "center", marginBottom: "1.5rem", fontSize: "0.95rem", color: COLORS.mediumText }}>
+            Enter your name to find your invitation:
+          </p>
+          <form onSubmit={handleLookup} style={{ maxWidth: 380, margin: "0 auto" }}>
+            <div style={{ marginBottom: "0.9rem" }}>
+              <RSVPNameField
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="First name"
+                autoComplete="given-name"
+                suggestions={firstNameSuggestions}
+                onPick={handlePickSuggestion}
+              />
+            </div>
+            <div style={{ marginBottom: "1.3rem" }}>
+              <RSVPNameField
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last name"
+                autoComplete="family-name"
+                suggestions={lastNameSuggestions}
+                onPick={handlePickSuggestion}
+              />
+            </div>
+            {lookupError && (
+              <p style={{ color: RSVP_ERROR_COLOR, fontSize: "0.85rem", textAlign: "center", marginBottom: "1rem" }}>{lookupError}</p>
+            )}
+            <RSVPSubmitButton disabled={isLooking}>{isLooking ? "Searching..." : "Find My Invitation"}</RSVPSubmitButton>
+          </form>
+        </motion.div>
+      )}
+
+      {phase === "form" && household && (
+        <motion.div variants={itemVariants}>
+          <RSVPEventSection
+            title="Emily & Ben's Wedding"
+            members={household.members}
+            responseKey="wedding"
+            responses={responses}
+            onChange={updateResponse}
+            isMobile={isMobile}
+          />
+
+          {household.events.map((event) => (
+            <RSVPEventSection
+              key={event.key}
+              title={event.label}
+              members={household.members}
+              responseKey={event.key}
+              responses={responses}
+              onChange={updateResponse}
+              isMobile={isMobile}
+              extra={
+                event.key === "rehearsal"
+                  ? (member, i) =>
+                      responses[i].rehearsal === "accept" && (
+                        <div style={{ marginTop: "0.9rem" }}>
+                          <label style={{ display: "block", fontSize: "0.8rem", color: COLORS.lightText, marginBottom: "0.4rem" }}>
+                            Entrée choice
+                          </label>
+                          <select
+                            value={responses[i].rehearsalMeal}
+                            onChange={(e) => updateResponse(i, "rehearsalMeal", e.target.value)}
+                            style={{
+                              width: "100%",
+                              border: `1px solid ${COLORS.border}`,
+                              borderRadius: 10,
+                              padding: "0.65rem 0.8rem",
+                              fontSize: "0.9rem",
+                              background: COLORS.cardBg,
+                              color: COLORS.darkText,
+                              marginBottom: "0.9rem",
+                              fontFamily: "inherit"
+                            }}
+                          >
+                            <option value="" disabled>Select an entrée</option>
+                            {household.mealOptions.map((meal) => (
+                              <option key={meal} value={meal}>{meal}</option>
+                            ))}
+                          </select>
+                          <label style={{ display: "block", fontSize: "0.8rem", color: COLORS.lightText, marginBottom: "0.4rem" }}>
+                            Food allergies or dietary restrictions? If none, enter "None."
+                          </label>
+                          <RSVPInput
+                            value={responses[i].dietary}
+                            onChange={(e) => updateResponse(i, "dietary", e.target.value)}
+                            placeholder="None"
+                          />
+                        </div>
+                      )
+                  : undefined
+              }
+            />
+          ))}
+
+          {submitError && (
+            <p style={{ color: RSVP_ERROR_COLOR, fontSize: "0.85rem", textAlign: "center", marginBottom: "1rem" }}>{submitError}</p>
+          )}
+
+          <RSVPSubmitButton
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            style={{ maxWidth: 380, margin: "0 auto" }}
+          >
+            {isSubmitting ? "Submitting..." : "Submit RSVP"}
+          </RSVPSubmitButton>
+
+          <p style={{ marginTop: "1.5rem", fontSize: "0.9rem", color: COLORS.lightText, textAlign: "center" }}>
+            Please respond by September 1, 2026
+          </p>
+        </motion.div>
+      )}
+
+      {phase === "success" && (
+        <motion.div variants={itemVariants} style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem", textAlign: "center" }}>
+          <p style={{ fontSize: "1.1rem", color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
+            Thank you! Your RSVP has been received.
+          </p>
+          <p style={{ marginTop: "0.8rem", fontSize: "0.9rem", color: COLORS.mediumText }}>
+            We can't wait to celebrate with you.
+          </p>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, push, onValue, runTransaction } from "firebase/database";
+import { getDatabase, ref, push, set, onValue, runTransaction } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBnhDg0vB098g8JDx_QMY7Yfpxt0l41x7M",
@@ -23,6 +23,7 @@ const goofyLikesRef = (photoId) => ref(db, `goofyLikes/${photoId}`);
 const goofyCommentsRef = (photoId) => ref(db, `goofyComments/${photoId}`);
 const hoosierLikesRef = (photoId) => ref(db, `hoosierLikes/${photoId}`);
 const hoosierCommentsRef = (photoId) => ref(db, `hoosierComments/${photoId}`);
+const rsvpRef = (householdId) => ref(db, `rsvps/${householdId}`);
 
 export {
   db,
@@ -35,8 +36,10 @@ export {
   goofyCommentsRef,
   hoosierLikesRef,
   hoosierCommentsRef,
+  rsvpRef,
   ref,
   push,
+  set,
   onValue,
   runTransaction
 };
