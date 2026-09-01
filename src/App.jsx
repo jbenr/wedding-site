@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import heroImage from "./assets/hero.jpg";
-import { clickCountRef, hoosierCountRef, deepTrackRef, deepTrackLikesRef, deepTrackCommentsRef, rsvpRef, onValue, runTransaction, push, set } from "./firebase";
+import { clickCountRef, hoosierCountRef, deepTrackRef, deepTrackLikesRef, deepTrackCommentsRef, rsvpRef, rsvpMetaRef, onValue, runTransaction, push, set, get } from "./firebase";
 
 // Import team logos
 import bears from "./assets/bears.png";
@@ -2593,27 +2594,118 @@ function MainTab({ photoBuckets, buttonCount, handleButtonClick, downloadCalenda
    RSVP TAB
    ============================================ */
 
-// Order secondary events are shown in on the RSVP form, regardless of the
-// order the lookup API happens to return them in.
-const RSVP_EVENT_ORDER = ["rehearsal", "welcome"];
+const RSVP_DEADLINE = "October 3, 2026";
 const RSVP_ERROR_COLOR = "#B3564A";
+const ACCEPT = "accept";
+const DECLINE = "decline";
 
-function createInitialRsvpResponses(members) {
-  return members.map(() => ({
+// How an unnamed seat on an invitation is introduced while we ask for the
+// real name. Keys mirror `placeholderKind` in scripts/build-guest-data.mjs.
+const PLACEHOLDER_LABELS = {
+  "plus-one": "Your guest",
+  family: "Family member",
+  guest: "Guest"
+};
+
+// A single unnamed seat is just "Your guest", but an invitation with several
+// of them ("The X Family") would otherwise show three identical cards, so
+// they get numbered to match the order they're shown in.
+function placeholderSeatLabels(members) {
+  const total = members.filter((m) => m.placeholder).length;
+  let seen = 0;
+  return members.map((member) => {
+    if (!member.placeholder) return "";
+    seen += 1;
+    const base = PLACEHOLDER_LABELS[member.placeholderKind] || PLACEHOLDER_LABELS.guest;
+    return total > 1 ? `${base} ${seen}` : base;
+  });
+}
+
+// Firebase resolves a write only once the server acknowledges it. On a
+// flaky connection that promise can stay pending indefinitely, which would
+// leave a guest watching "Submitting..." forever with no idea what happened
+// — so stop waiting at some point and say so.
+const RSVP_WRITE_TIMEOUT_MS = 15000;
+// The "we already have your response" receipt is a nicety, so it gets a much
+// shorter leash than the write does.
+const RSVP_META_TIMEOUT_MS = 6000;
+
+function withTimeout(promise, ms) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("rsvp-timeout")), ms);
+    promise.then(resolve, reject).finally(() => clearTimeout(timer));
+  });
+}
+
+const rsvpStorageKey = (householdId) => `rsvp:${householdId}`;
+
+// A guest correcting their answers usually does it from the same phone they
+// first responded on. The RSVPs themselves are write-only in Firebase (see
+// firebase.database.rules.json), so this local copy is what lets us hand
+// them back their previous answers instead of a blank form.
+function loadSavedResponses(householdId) {
+  try {
+    const raw = window.localStorage.getItem(rsvpStorageKey(householdId));
+    const parsed = raw ? JSON.parse(raw) : null;
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveResponses(householdId, responses) {
+  try {
+    window.localStorage.setItem(rsvpStorageKey(householdId), JSON.stringify(responses));
+  } catch {
+    // Private browsing or a full quota — prefill is a convenience, not a
+    // requirement, and Firebase already has the real submission.
+  }
+}
+
+function createInitialResponses(members) {
+  return members.map((member) => ({
+    // Named guests come pre-filled and read-only; unnamed seats start blank
+    // for the guest to fill in. A "+1" is the one case where the household
+    // surname is a bad guess, so it starts empty too.
+    firstName: member.placeholder ? "" : member.firstName,
+    lastName: member.placeholder && member.placeholderKind === "plus-one" ? "" : member.lastName,
     wedding: "",
     rehearsal: "",
-    rehearsalMeal: "",
-    dietary: "",
-    welcome: ""
+    welcome: "",
+    weddingMeal: "",
+    dietary: ""
   }));
 }
 
-function RSVPInput({ style, ...rest }) {
+// Restores a previous local draft, but only when it still lines up with the
+// invitation we just fetched — the guest list can be re-imported between a
+// draft and a return visit.
+function mergeSavedResponses(initial, saved) {
+  if (!saved || saved.length !== initial.length) return initial;
+  return initial.map((base, i) => {
+    const prior = saved[i] || {};
+    const next = { ...base };
+    for (const key of Object.keys(base)) {
+      if (typeof prior[key] === "string") next[key] = prior[key];
+    }
+    return next;
+  });
+}
+
+function formatSubmittedAt(timestamp) {
+  try {
+    return new Date(timestamp).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  } catch {
+    return "";
+  }
+}
+
+function RSVPInput({ style, invalid, ...rest }) {
   return (
     <input
       style={{
         width: "100%",
-        border: `1px solid ${COLORS.border}`,
+        border: `1px solid ${invalid ? RSVP_ERROR_COLOR : COLORS.border}`,
         borderRadius: 10,
         padding: "0.75rem 1rem",
         fontSize: "0.95rem",
@@ -2629,11 +2721,19 @@ function RSVPInput({ style, ...rest }) {
   );
 }
 
+function RSVPFieldError({ children }) {
+  return (
+    <p style={{ color: RSVP_ERROR_COLOR, fontSize: "0.78rem", marginTop: "0.45rem" }}>{children}</p>
+  );
+}
+
 function RSVPChoice({ value, label, current, onSelect }) {
   const active = current === value;
   return (
     <button
       type="button"
+      role="radio"
+      aria-checked={active}
       onClick={() => onSelect(value)}
       style={{
         flex: 1,
@@ -2645,6 +2745,7 @@ function RSVPChoice({ value, label, current, onSelect }) {
         fontSize: "0.85rem",
         fontWeight: active ? 600 : 400,
         cursor: "pointer",
+        fontFamily: "inherit",
         transition: "all 0.2s ease"
       }}
     >
@@ -2653,7 +2754,7 @@ function RSVPChoice({ value, label, current, onSelect }) {
   );
 }
 
-function RSVPSubmitButton({ children, ...rest }) {
+function RSVPSubmitButton({ children, style, ...rest }) {
   return (
     <button
       type="submit"
@@ -2667,8 +2768,10 @@ function RSVPSubmitButton({ children, ...rest }) {
         fontSize: "0.95rem",
         fontWeight: 500,
         borderRadius: 50,
+        fontFamily: "inherit",
         transition: "all 0.3s ease",
-        ...(rest.disabled ? { opacity: 0.7, cursor: "default" } : { cursor: "pointer" })
+        ...(rest.disabled ? { opacity: 0.7, cursor: "default" } : { cursor: "pointer" }),
+        ...style
       }}
       {...rest}
     >
@@ -2677,33 +2780,221 @@ function RSVPSubmitButton({ children, ...rest }) {
   );
 }
 
-function RSVPEventSection({ title, members, responseKey, responses, onChange, isMobile, extra }) {
+// Understated text button for secondary actions ("Not you?", "Update our
+// response") that shouldn't compete with the gold submit button.
+function RSVPTextButton({ children, style, ...rest }) {
   return (
-    <div style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.3rem" : "2rem" }}>
-      <h3 style={{ ...getSectionTitleStyle(isMobile), marginBottom: "1.2rem" }}>{title}</h3>
-      {members.map((member, i) => (
-        <div
-          key={i}
-          style={{ padding: "1rem 0", borderTop: i > 0 ? `1px solid ${COLORS.border}` : "none" }}
-        >
-          <p style={{ fontSize: "0.95rem", fontWeight: 600, color: COLORS.darkText, marginBottom: "0.6rem" }}>
-            {member.firstName} {member.lastName}
-          </p>
-          <div style={{ display: "flex", gap: "0.6rem" }}>
-            <RSVPChoice value="accept" label="Joyfully Accepts" current={responses[i][responseKey]} onSelect={(v) => onChange(i, responseKey, v)} />
-            <RSVPChoice value="decline" label="Regretfully Declines" current={responses[i][responseKey]} onSelect={(v) => onChange(i, responseKey, v)} />
-          </div>
-          {extra && extra(member, i)}
-        </div>
-      ))}
+    <button
+      type="button"
+      style={{
+        background: "none",
+        border: "none",
+        padding: 0,
+        color: COLORS.mediumText,
+        fontSize: "0.82rem",
+        fontFamily: "inherit",
+        textDecoration: "underline",
+        cursor: "pointer",
+        ...style
+      }}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+}
+
+// One event's accept/decline question for one guest, with the date, time and
+// venue repeated inline so nobody has to leave the form to remember what
+// they're answering about.
+function RSVPEventQuestion({ event, guestLabel, value, onSelect, error, children }) {
+  return (
+    <div style={{ marginTop: "1.1rem" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+          gap: "0.5rem",
+          flexWrap: "wrap"
+        }}
+      >
+        <span style={{ fontSize: "0.92rem", fontWeight: 600, color: COLORS.darkText }}>{event.label}</span>
+        <span style={{ fontSize: "0.72rem", color: COLORS.lightText, letterSpacing: "0.02em" }}>
+          {event.date}
+          {event.time ? ` · ${event.time}` : ""}
+        </span>
+      </div>
+      {(event.venue || event.attire) && (
+        <p style={{ fontSize: "0.75rem", color: COLORS.lightText, margin: "0.25rem 0 0.6rem" }}>
+          {[event.venue, event.attire].filter(Boolean).join(" · ")}
+        </p>
+      )}
+      <div role="radiogroup" aria-label={`${event.label} — ${guestLabel}`} style={{ display: "flex", gap: "0.6rem" }}>
+        <RSVPChoice value={ACCEPT} label="Going" current={value} onSelect={onSelect} />
+        <RSVPChoice value={DECLINE} label="Not going" current={value} onSelect={onSelect} />
+      </div>
+      {error && <RSVPFieldError>{error}</RSVPFieldError>}
+      {children}
     </div>
   );
 }
 
+// The name block at the top of a guest card: fixed text for guests we have a
+// name for, a pair of inputs for the unnamed seats ("and Guest", "The X
+// Family") that make up most of the invitation list.
+function RSVPGuestName({ member, seatLabel, response, index, onChange, error, isMobile }) {
+  if (!member.placeholder) {
+    return (
+      <p
+        style={{
+          fontSize: isMobile ? "1.05rem" : "1.15rem",
+          fontWeight: 500,
+          color: COLORS.darkText,
+          fontFamily: "'Cormorant Garamond', serif"
+        }}
+      >
+        {member.firstName} {member.lastName}
+      </p>
+    );
+  }
+
+  const label = seatLabel || PLACEHOLDER_LABELS.guest;
+
+  return (
+    <div>
+      <p
+        style={{
+          fontSize: isMobile ? "1.05rem" : "1.15rem",
+          fontWeight: 500,
+          color: COLORS.darkText,
+          fontFamily: "'Cormorant Garamond', serif"
+        }}
+      >
+        {label}
+      </p>
+      <p style={{ fontSize: "0.78rem", color: COLORS.lightText, margin: "0.3rem 0 0.7rem", lineHeight: 1.55 }}>
+        We don&apos;t have a name for this spot yet. Add it if they&apos;re coming, or mark them not going.
+      </p>
+      <div style={{ display: "flex", gap: "0.6rem", flexDirection: isMobile ? "column" : "row" }}>
+        <RSVPInput
+          value={response.firstName}
+          onChange={(e) => onChange(index, "firstName", e.target.value)}
+          placeholder="First name"
+          aria-label={`${label} first name`}
+          invalid={Boolean(error)}
+          autoComplete="off"
+        />
+        <RSVPInput
+          value={response.lastName}
+          onChange={(e) => onChange(index, "lastName", e.target.value)}
+          placeholder="Last name"
+          aria-label={`${label} last name`}
+          invalid={Boolean(error)}
+          autoComplete="off"
+        />
+      </div>
+      {error && <RSVPFieldError>{error}</RSVPFieldError>}
+    </div>
+  );
+}
+
+// One card per guest rather than one per event: you finish a person
+// completely — their name, every event, and their dinner — before moving on.
+const RSVPGuestCard = React.forwardRef(function RSVPGuestCard(
+  { member, seatLabel, index, response, wedding, events, mealOptions, onChange, errors, isMobile },
+  ref
+) {
+  const guestLabel = member.placeholder
+    ? `${response.firstName || seatLabel} ${response.lastName}`.trim()
+    : `${member.firstName} ${member.lastName}`;
+
+  return (
+    <div ref={ref} style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.3rem" : "1.9rem" }}>
+      <RSVPGuestName
+        member={member}
+        seatLabel={seatLabel}
+        response={response}
+        index={index}
+        onChange={onChange}
+        error={errors[`${index}:name`]}
+        isMobile={isMobile}
+      />
+
+      <RSVPEventQuestion
+        event={wedding}
+        guestLabel={guestLabel}
+        value={response.wedding}
+        onSelect={(v) => onChange(index, "wedding", v)}
+        error={errors[`${index}:wedding`]}
+      >
+        {response.wedding === ACCEPT && (
+          <div style={{ marginTop: "0.9rem" }}>
+            <label
+              htmlFor={`rsvp-meal-${index}`}
+              style={{ display: "block", fontSize: "0.8rem", color: COLORS.lightText, marginBottom: "0.4rem" }}
+            >
+              Dinner choice
+            </label>
+            <select
+              id={`rsvp-meal-${index}`}
+              value={response.weddingMeal}
+              onChange={(e) => onChange(index, "weddingMeal", e.target.value)}
+              style={{
+                width: "100%",
+                border: `1px solid ${errors[`${index}:weddingMeal`] ? RSVP_ERROR_COLOR : COLORS.border}`,
+                borderRadius: 10,
+                padding: "0.65rem 0.8rem",
+                fontSize: "0.9rem",
+                background: COLORS.cardBg,
+                color: response.weddingMeal ? COLORS.darkText : COLORS.lightText,
+                fontFamily: "inherit"
+              }}
+            >
+              <option value="">Pick one</option>
+              {mealOptions.map((meal) => (
+                <option key={meal} value={meal}>
+                  {meal}
+                </option>
+              ))}
+            </select>
+            {errors[`${index}:weddingMeal`] && <RSVPFieldError>{errors[`${index}:weddingMeal`]}</RSVPFieldError>}
+
+            <label
+              htmlFor={`rsvp-dietary-${index}`}
+              style={{ display: "block", fontSize: "0.8rem", color: COLORS.lightText, margin: "0.9rem 0 0.4rem" }}
+            >
+              Allergies or dietary restrictions <span style={{ fontStyle: "italic" }}>(optional)</span>
+            </label>
+            <RSVPInput
+              id={`rsvp-dietary-${index}`}
+              value={response.dietary}
+              onChange={(e) => onChange(index, "dietary", e.target.value)}
+              placeholder="Allergies, restrictions, etc."
+              maxLength={200}
+            />
+          </div>
+        )}
+      </RSVPEventQuestion>
+
+      {events.map((event) => (
+        <RSVPEventQuestion
+          key={event.key}
+          event={event}
+          guestLabel={guestLabel}
+          value={response[event.key]}
+          onSelect={(v) => onChange(index, event.key, v)}
+          error={errors[`${index}:${event.key}`]}
+        />
+      ))}
+    </div>
+  );
+});
+
 // Debounced autocomplete: fetches up to 8 matching { firstName, lastName }
 // pairs from /api/rsvp-suggest as the guest types, without ever shipping the
 // full guest list to the browser.
-function useNameSuggestions(field, value) {
+function useNameSuggestions(value) {
   const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
@@ -2717,7 +3008,7 @@ function useNameSuggestions(field, value) {
         const res = await fetch("/api/rsvp-suggest", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ field, value })
+          body: JSON.stringify({ query: value })
         });
         if (!res.ok || cancelled) return;
         const data = await res.json();
@@ -2730,69 +3021,133 @@ function useNameSuggestions(field, value) {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [field, value]);
+  }, [value]);
 
   return suggestions;
 }
 
-function RSVPNameField({ value, onChange, placeholder, autoComplete, suggestions, onPick }) {
+function RSVPNameField({ value, onChange, placeholder, suggestions, onPick, ...inputProps }) {
   const [focused, setFocused] = useState(false);
+  const [highlight, setHighlight] = useState(-1);
+  const [rect, setRect] = useState(null);
+  const wrapperRef = useRef(null);
   const showDropdown = focused && suggestions.length > 0;
+  const listboxId = "rsvp-name-suggestions";
+
+  // Typing resets the highlight (below, in handleChange); this additionally
+  // guards the case where a debounced fetch lands a shorter list after the
+  // guest has already arrowed down into the old one.
+  const activeIndex = highlight < suggestions.length ? highlight : -1;
+
+  const handleChange = (e) => {
+    setHighlight(-1);
+    onChange(e);
+  };
+
+  // The RSVP tab lives inside a container that animates its height and
+  // clips overflow between tab switches. An absolutely-positioned dropdown
+  // doesn't count toward that container's measured height, so it gets
+  // sliced off with no way to scroll it into view. Rendering it through a
+  // portal into document.body — positioned to match the input — escapes
+  // that clipping entirely.
+  useLayoutEffect(() => {
+    if (!showDropdown || !wrapperRef.current) return undefined;
+    const updateRect = () => {
+      const r = wrapperRef.current.getBoundingClientRect();
+      setRect({ top: r.bottom, left: r.left, width: r.width });
+    };
+    updateRect();
+    window.addEventListener("scroll", updateRect, true);
+    window.addEventListener("resize", updateRect);
+    return () => {
+      window.removeEventListener("scroll", updateRect, true);
+      window.removeEventListener("resize", updateRect);
+    };
+  }, [showDropdown, suggestions.length]);
+
+  const handleKeyDown = (e) => {
+    if (!showDropdown) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlight((i) => (i + 1) % suggestions.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlight((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
+    } else if (e.key === "Enter" && activeIndex >= 0) {
+      // Only swallow Enter when a suggestion is highlighted; otherwise it
+      // should still submit the lookup form as typed.
+      e.preventDefault();
+      onPick(suggestions[activeIndex]);
+    } else if (e.key === "Escape") {
+      setFocused(false);
+    }
+  };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div ref={wrapperRef} style={{ position: "relative" }}>
       <RSVPInput
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
+        onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        autoComplete={autoComplete}
+        role="combobox"
+        aria-expanded={showDropdown}
+        aria-controls={listboxId}
+        aria-autocomplete="list"
+        aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined}
         required
+        {...inputProps}
       />
-      {showDropdown && (
-        <div
-          style={{
-            position: "absolute",
-            top: "calc(100% + 4px)",
-            left: 0,
-            right: 0,
-            background: COLORS.cardBg,
-            border: `1px solid ${COLORS.border}`,
-            borderRadius: 10,
-            boxShadow: "0 4px 16px rgba(44,36,32,0.12)",
-            zIndex: 5,
-            overflow: "hidden"
-          }}
-        >
-          {suggestions.map((s, i) => (
-            <div
-              key={`${s.firstName}-${s.lastName}-${i}`}
-              // onMouseDown (not onClick) fires before the input's onBlur,
-              // so the pick registers before the dropdown would otherwise close.
-              onMouseDown={(e) => {
-                e.preventDefault();
-                onPick(s);
-              }}
-              style={{
-                padding: "0.6rem 0.9rem",
-                fontSize: "0.88rem",
-                color: COLORS.darkText,
-                cursor: "pointer",
-                borderTop: i > 0 ? `1px solid ${COLORS.border}` : "none"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = COLORS.cream;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "transparent";
-              }}
-            >
-              {s.firstName} {s.lastName}
-            </div>
-          ))}
-        </div>
-      )}
+      {showDropdown &&
+        rect &&
+        createPortal(
+          <div
+            id={listboxId}
+            role="listbox"
+            style={{
+              position: "fixed",
+              top: rect.top + 4,
+              left: rect.left,
+              width: rect.width,
+              maxHeight: 260,
+              overflowY: "auto",
+              background: COLORS.cardBg,
+              border: `1px solid ${COLORS.border}`,
+              borderRadius: 10,
+              boxShadow: "0 4px 16px rgba(44,36,32,0.12)",
+              zIndex: 1000
+            }}
+          >
+            {suggestions.map((s, i) => (
+              <div
+                key={`${s.firstName}-${s.lastName}-${i}`}
+                id={`${listboxId}-${i}`}
+                role="option"
+                aria-selected={i === activeIndex}
+                // onMouseDown (not onClick) fires before the input's onBlur,
+                // so the pick registers before the dropdown would otherwise close.
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onPick(s);
+                }}
+                onMouseEnter={() => setHighlight(i)}
+                style={{
+                  padding: "0.6rem 0.9rem",
+                  fontSize: "0.88rem",
+                  color: COLORS.darkText,
+                  cursor: "pointer",
+                  background: i === activeIndex ? COLORS.cream : "transparent",
+                  borderTop: i > 0 ? `1px solid ${COLORS.border}` : "none"
+                }}
+              >
+                {s.firstName} {s.lastName}
+              </div>
+            ))}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
@@ -2801,24 +3156,38 @@ function RSVPTab({ isMobile, reducedMotion }) {
   const containerVariants = getStaggerContainerVariants(reducedMotion);
   const itemVariants = getStaggerItemVariants(reducedMotion);
 
-  const [phase, setPhase] = useState("lookup"); // lookup | form | success
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [phase, setPhase] = useState("lookup"); // lookup | choose | form | success
+  const [fullName, setFullName] = useState("");
   const [lookupError, setLookupError] = useState("");
   const [isLooking, setIsLooking] = useState(false);
+  const [choices, setChoices] = useState([]);
   const [household, setHousehold] = useState(null);
   const [responses, setResponses] = useState([]);
+  const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [previousSubmission, setPreviousSubmission] = useState(null);
 
-  const firstNameSuggestions = useNameSuggestions("first", firstName);
-  const lastNameSuggestions = useNameSuggestions("last", lastName);
+  const nameSuggestions = useNameSuggestions(fullName);
+  const guestRefs = useRef([]);
+  // Which invitation is on screen right now, so a slow receipt lookup can't
+  // attach itself to a household the guest has since navigated away from.
+  const activeHouseholdRef = useRef(null);
+
+  const panelTransition = reducedMotion
+    ? { duration: 0 }
+    : { duration: 0.28, ease: [0.22, 1, 0.36, 1] };
+  const panelMotion = {
+    initial: reducedMotion ? false : { opacity: 0, y: 16 },
+    animate: { opacity: 1, y: 0 },
+    transition: panelTransition
+  };
 
   if (!RSVP_ENABLED) {
     return (
       <motion.div variants={containerVariants} initial="hidden" animate="show">
         <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>RSVP</motion.h2>
-        <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Please let us know if you can join us</motion.p>
+        <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Let us know if you can make it</motion.p>
         <motion.p variants={itemVariants} style={{ textAlign: "center", fontSize: isMobile ? "1rem" : "1.15rem", color: COLORS.mediumText, fontFamily: "'Cormorant Garamond', serif" }}>
           Coming soon
         </motion.p>
@@ -2826,26 +3195,56 @@ function RSVPTab({ isMobile, reducedMotion }) {
     );
   }
 
-  const runLookup = async (first, last) => {
+  const openHousehold = (data) => {
+    setHousehold(data);
+    setResponses(mergeSavedResponses(createInitialResponses(data.members), loadSavedResponses(data.householdId)));
+    setErrors({});
+    setSubmitError("");
+    setChoices([]);
+    setPreviousSubmission(null);
+    activeHouseholdRef.current = data.householdId;
+    setPhase("form");
+
+    // /rsvps is write-only, so we can't read back the actual answers — but
+    // this receipt tells a guest on a new device that we already have a
+    // response for their invitation before they redo the whole thing.
+    //
+    // Deliberately NOT awaited: the form is already usable without it, and
+    // awaiting it here would hold the lookup in its "Searching..." state for
+    // as long as Firebase took to answer — forever, on a dropped connection.
+    withTimeout(get(rsvpMetaRef(data.householdId)), RSVP_META_TIMEOUT_MS)
+      .then((snapshot) => {
+        // The guest may have moved on to a different invitation by now.
+        if (activeHouseholdRef.current !== data.householdId) return;
+        if (snapshot.exists()) setPreviousSubmission(snapshot.val());
+      })
+      .catch(() => {});
+  };
+
+  const runLookup = async (body) => {
     setLookupError("");
     setIsLooking(true);
     try {
       const res = await fetch("/api/rsvp-lookup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName: first, lastName: last })
+        body: JSON.stringify(body)
       });
       const data = await res.json();
       if (!res.ok) {
-        setLookupError(data.error || "Something went wrong. Please try again.");
+        setLookupError(data.error || "Something went wrong. Try again.");
         return;
       }
-      const orderedEvents = RSVP_EVENT_ORDER.map((key) => data.events.find((ev) => ev.key === key)).filter(Boolean);
-      setHousehold({ ...data, events: orderedEvents });
-      setResponses(createInitialRsvpResponses(data.members));
-      setPhase("form");
+      // The same name can sit on two invitations (a couple listed separately,
+      // or two relatives who share a name) — let the guest say which is theirs.
+      if (data.choices) {
+        setChoices(data.choices);
+        setPhase("choose");
+        return;
+      }
+      openHousehold(data.household);
     } catch {
-      setLookupError("Something went wrong reaching our RSVP system. Please try again in a moment.");
+      setLookupError("Couldn't reach the RSVP system. Try again in a moment.");
     } finally {
       setIsLooking(false);
     }
@@ -2853,180 +3252,281 @@ function RSVPTab({ isMobile, reducedMotion }) {
 
   const handleLookup = (e) => {
     e.preventDefault();
-    runLookup(firstName, lastName);
+    runLookup({ name: fullName });
   };
 
   const handlePickSuggestion = (picked) => {
-    setFirstName(picked.firstName);
-    setLastName(picked.lastName);
-    runLookup(picked.firstName, picked.lastName);
+    const pickedFullName = `${picked.firstName} ${picked.lastName}`;
+    setFullName(pickedFullName);
+    runLookup({ name: pickedFullName });
+  };
+
+  const startOver = () => {
+    activeHouseholdRef.current = null;
+    setPhase("lookup");
+    setHousehold(null);
+    setChoices([]);
+    setResponses([]);
+    setErrors({});
+    setSubmitError("");
+    setLookupError("");
+    setPreviousSubmission(null);
+    setFullName("");
   };
 
   const updateResponse = (memberIndex, field, value) => {
     setResponses((prev) => {
       const next = [...prev];
       next[memberIndex] = { ...next[memberIndex], [field]: value };
-      if (field === "rehearsal" && value !== "accept") {
-        next[memberIndex].rehearsalMeal = "";
+      // Declining the wedding clears the dinner questions, so a changed mind
+      // can't leave a stale entrée attached to someone who isn't coming.
+      if (field === "wedding" && value !== ACCEPT) {
+        next[memberIndex].weddingMeal = "";
         next[memberIndex].dietary = "";
       }
       return next;
     });
+    setErrors((prev) => {
+      if (!Object.keys(prev).length) return prev;
+      const next = { ...prev };
+      delete next[`${memberIndex}:${field === "firstName" || field === "lastName" ? "name" : field}`];
+      return next;
+    });
   };
 
-  const invitedTo = (key) => household.events.some((ev) => ev.key === key);
+  const acceptEverything = () => {
+    setResponses((prev) =>
+      prev.map((r) => {
+        const next = { ...r, wedding: ACCEPT };
+        for (const event of household.events) next[event.key] = ACCEPT;
+        return next;
+      })
+    );
+    setErrors({});
+  };
+
+  const validate = () => {
+    const found = {};
+    responses.forEach((r, i) => {
+      const member = household.members[i];
+      const attendingSomething = [r.wedding, ...household.events.map((e) => r[e.key])].includes(ACCEPT);
+
+      // An unnamed seat only needs a name if somebody is actually using it.
+      if (member.placeholder && attendingSomething && (!r.firstName.trim() || !r.lastName.trim())) {
+        found[`${i}:name`] = "Add their first and last name.";
+      }
+      if (!r.wedding) found[`${i}:wedding`] = "Pick one.";
+      if (r.wedding === ACCEPT && !r.weddingMeal) found[`${i}:weddingMeal`] = "Pick a dinner option.";
+      for (const event of household.events) {
+        if (!r[event.key]) found[`${i}:${event.key}`] = "Pick one.";
+      }
+    });
+    return found;
+  };
 
   const handleSubmit = async () => {
     setSubmitError("");
+    const found = validate();
 
-    for (let i = 0; i < household.members.length; i++) {
-      const r = responses[i];
-      if (!r.wedding) {
-        setSubmitError("Please answer the Wedding RSVP for everyone listed.");
-        return;
-      }
-      if (invitedTo("rehearsal") && !r.rehearsal) {
-        setSubmitError("Please answer the Rehearsal Dinner RSVP for everyone listed.");
-        return;
-      }
-      if (invitedTo("rehearsal") && r.rehearsal === "accept" && !r.rehearsalMeal) {
-        setSubmitError("Please choose an entrée for everyone attending the Rehearsal Dinner.");
-        return;
-      }
-      if (invitedTo("welcome") && !r.welcome) {
-        setSubmitError("Please answer the Welcome Party RSVP for everyone listed.");
-        return;
-      }
+    if (Object.keys(found).length > 0) {
+      setErrors(found);
+      const firstIndex = Math.min(...Object.keys(found).map((key) => Number(key.split(":")[0])));
+      guestRefs.current[firstIndex]?.scrollIntoView({
+        behavior: reducedMotion ? "auto" : "smooth",
+        block: "center"
+      });
+      return;
     }
 
+    setErrors({});
     setIsSubmitting(true);
     try {
       const guests = household.members.map((member, i) => {
         const r = responses[i];
-        const entry = { firstName: member.firstName, lastName: member.lastName, wedding: r.wedding };
-        if (r.rehearsal) entry.rehearsal = r.rehearsal;
-        if (r.rehearsal === "accept") {
-          if (r.rehearsalMeal) entry.rehearsalMeal = r.rehearsalMeal;
+        const typedFirst = r.firstName.trim();
+        const typedLast = r.lastName.trim();
+        // An unused seat keeps its placeholder name so the couple can still
+        // see which invitation line declined.
+        const entry = {
+          firstName: typedFirst || member.firstName,
+          lastName: typedLast || member.lastName,
+          wedding: r.wedding
+        };
+        if (member.placeholder) entry.namedByGuest = Boolean(typedFirst);
+        if (r.wedding === ACCEPT) {
+          entry.weddingMeal = r.weddingMeal;
           if (r.dietary.trim()) entry.dietary = r.dietary.trim();
         }
-        if (r.welcome) entry.welcome = r.welcome;
+        for (const event of household.events) {
+          if (r[event.key]) entry[event.key] = r[event.key];
+        }
         return entry;
       });
 
-      await set(rsvpRef(household.householdId), { submittedAt: Date.now(), guests });
+      const submittedAt = Date.now();
+      await withTimeout(set(rsvpRef(household.householdId), { submittedAt, guests }), RSVP_WRITE_TIMEOUT_MS);
+
+      saveResponses(household.householdId, responses);
+      setPreviousSubmission({ submittedAt });
       setPhase("success");
-    } catch {
-      setSubmitError("We couldn't save your RSVP. Please try again, or reach out to Ben & Emily directly.");
+
+      // Everything below is best-effort. Firebase above is the source of
+      // truth, so neither the readable receipt nor the spreadsheet mirror
+      // failing (or simply not being configured yet) should stop a guest
+      // from seeing their RSVP succeed.
+      set(rsvpMetaRef(household.householdId), {
+        submittedAt,
+        guestCount: guests.filter((g) => g.wedding === ACCEPT).length
+      }).catch(() => {});
+
+      fetch("/api/rsvp-sheet-sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ householdId: household.householdId, submittedAt, guests })
+      }).catch(() => {});
+    } catch (err) {
+      setSubmitError(
+        err?.message === "rsvp-timeout"
+          ? "Couldn't confirm that saved. Check your connection and try again."
+          : "Couldn't save your RSVP. Try again, or let Ben or Emily know."
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const errorCount = Object.keys(errors).length;
+  const questionCount = household ? household.members.length * (1 + household.events.length) : 0;
+  const seatLabels = household ? placeholderSeatLabels(household.members) : [];
+
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show">
       <motion.h2 variants={itemVariants} style={getTabTitleStyle(isMobile)}>RSVP</motion.h2>
-      <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Please let us know if you can join us</motion.p>
+      <motion.p variants={itemVariants} style={getTabSubtitleStyle(isMobile)}>Let us know if you can make it</motion.p>
 
       {phase === "lookup" && (
-        <motion.div variants={itemVariants} style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem" }}>
+        <motion.div {...panelMotion} style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem" }}>
           <p style={{ textAlign: "center", marginBottom: "1.5rem", fontSize: "0.95rem", color: COLORS.mediumText }}>
-            Enter your name to find your invitation:
+            Enter your name to find your invite:
           </p>
           <form onSubmit={handleLookup} style={{ maxWidth: 380, margin: "0 auto" }}>
-            <div style={{ marginBottom: "0.9rem" }}>
-              <RSVPNameField
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                placeholder="First name"
-                autoComplete="given-name"
-                suggestions={firstNameSuggestions}
-                onPick={handlePickSuggestion}
-              />
-            </div>
             <div style={{ marginBottom: "1.3rem" }}>
               <RSVPNameField
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                placeholder="Last name"
-                autoComplete="family-name"
-                suggestions={lastNameSuggestions}
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Full name"
+                name="rsvp-guest-search"
+                aria-label="Your full name"
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
+                suggestions={nameSuggestions}
                 onPick={handlePickSuggestion}
               />
             </div>
-            {lookupError && (
-              <p style={{ color: RSVP_ERROR_COLOR, fontSize: "0.85rem", textAlign: "center", marginBottom: "1rem" }}>{lookupError}</p>
-            )}
-            <RSVPSubmitButton disabled={isLooking}>{isLooking ? "Searching..." : "Find My Invitation"}</RSVPSubmitButton>
+            <div aria-live="polite">
+              {lookupError && (
+                <p style={{ color: RSVP_ERROR_COLOR, fontSize: "0.85rem", textAlign: "center", marginBottom: "1rem" }}>{lookupError}</p>
+              )}
+            </div>
+            <RSVPSubmitButton disabled={isLooking}>{isLooking ? "Searching..." : "Find my invite"}</RSVPSubmitButton>
           </form>
+          <p style={{ marginTop: "1.4rem", fontSize: "0.8rem", color: COLORS.lightText, textAlign: "center" }}>
+            Please reply by {RSVP_DEADLINE}
+          </p>
+        </motion.div>
+      )}
+
+      {phase === "choose" && (
+        <motion.div {...panelMotion} style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem" }}>
+          <p style={{ textAlign: "center", marginBottom: "1.4rem", fontSize: "0.95rem", color: COLORS.mediumText }}>
+            More than one invite has that name. Which one is yours?
+          </p>
+          <div style={{ maxWidth: 420, margin: "0 auto", display: "flex", flexDirection: "column", gap: "0.7rem" }}>
+            {choices.map((choice) => (
+              <button
+                key={choice.householdId}
+                type="button"
+                onClick={() => runLookup({ householdId: choice.householdId })}
+                disabled={isLooking}
+                style={{
+                  border: `1px solid ${COLORS.border}`,
+                  background: "transparent",
+                  color: COLORS.darkText,
+                  borderRadius: 10,
+                  padding: "0.85rem 1rem",
+                  fontSize: "0.9rem",
+                  fontFamily: "inherit",
+                  textAlign: "left",
+                  cursor: isLooking ? "default" : "pointer"
+                }}
+              >
+                {choice.label}
+              </button>
+            ))}
+          </div>
+          <div style={{ textAlign: "center", marginTop: "1.4rem" }}>
+            <RSVPTextButton onClick={startOver}>None of these — search again</RSVPTextButton>
+          </div>
         </motion.div>
       )}
 
       {phase === "form" && household && (
-        <motion.div variants={itemVariants}>
-          <RSVPEventSection
-            title="Emily & Ben's Wedding"
-            members={household.members}
-            responseKey="wedding"
-            responses={responses}
-            onChange={updateResponse}
-            isMobile={isMobile}
-          />
+        <motion.div {...panelMotion}>
+          <div style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.2rem" : "1.6rem", textAlign: "center" }}>
+            <p style={{ fontSize: "0.8rem", letterSpacing: "0.14em", textTransform: "uppercase", color: COLORS.lightText, marginBottom: "0.5rem" }}>
+              Your invite
+            </p>
+            <p style={{ fontSize: isMobile ? "1.05rem" : "1.2rem", color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif" }}>
+              {household.members.length === 1
+                ? "1 spot on this invite"
+                : `${household.members.length} spots on this invite`}
+            </p>
+            {previousSubmission && (
+              <p style={{ marginTop: "0.9rem", fontSize: "0.83rem", color: COLORS.mediumText, lineHeight: 1.6 }}>
+                You already RSVP&apos;d on {formatSubmittedAt(previousSubmission.submittedAt)}. Submitting again
+                replaces it.
+              </p>
+            )}
+            <div style={{ marginTop: "0.9rem", display: "flex", gap: "1.2rem", justifyContent: "center", flexWrap: "wrap" }}>
+              <RSVPTextButton onClick={startOver}>Not you? Search again</RSVPTextButton>
+              {questionCount >= 4 && (
+                <RSVPTextButton onClick={acceptEverything}>Going to everything? Mark all yes</RSVPTextButton>
+              )}
+            </div>
+          </div>
 
-          {household.events.map((event) => (
-            <RSVPEventSection
-              key={event.key}
-              title={event.label}
-              members={household.members}
-              responseKey={event.key}
-              responses={responses}
+          {household.members.map((member, i) => (
+            <RSVPGuestCard
+              key={i}
+              ref={(el) => {
+                guestRefs.current[i] = el;
+              }}
+              member={member}
+              seatLabel={seatLabels[i]}
+              index={i}
+              response={responses[i]}
+              wedding={household.wedding}
+              events={household.events}
+              mealOptions={household.mealOptions}
               onChange={updateResponse}
+              errors={errors}
               isMobile={isMobile}
-              extra={
-                event.key === "rehearsal"
-                  ? (member, i) =>
-                      responses[i].rehearsal === "accept" && (
-                        <div style={{ marginTop: "0.9rem" }}>
-                          <label style={{ display: "block", fontSize: "0.8rem", color: COLORS.lightText, marginBottom: "0.4rem" }}>
-                            Entrée choice
-                          </label>
-                          <select
-                            value={responses[i].rehearsalMeal}
-                            onChange={(e) => updateResponse(i, "rehearsalMeal", e.target.value)}
-                            style={{
-                              width: "100%",
-                              border: `1px solid ${COLORS.border}`,
-                              borderRadius: 10,
-                              padding: "0.65rem 0.8rem",
-                              fontSize: "0.9rem",
-                              background: COLORS.cardBg,
-                              color: COLORS.darkText,
-                              marginBottom: "0.9rem",
-                              fontFamily: "inherit"
-                            }}
-                          >
-                            <option value="" disabled>Select an entrée</option>
-                            {household.mealOptions.map((meal) => (
-                              <option key={meal} value={meal}>{meal}</option>
-                            ))}
-                          </select>
-                          <label style={{ display: "block", fontSize: "0.8rem", color: COLORS.lightText, marginBottom: "0.4rem" }}>
-                            Food allergies or dietary restrictions? If none, enter "None."
-                          </label>
-                          <RSVPInput
-                            value={responses[i].dietary}
-                            onChange={(e) => updateResponse(i, "dietary", e.target.value)}
-                            placeholder="None"
-                          />
-                        </div>
-                      )
-                  : undefined
-              }
             />
           ))}
 
-          {submitError && (
-            <p style={{ color: RSVP_ERROR_COLOR, fontSize: "0.85rem", textAlign: "center", marginBottom: "1rem" }}>{submitError}</p>
-          )}
+          <div aria-live="polite">
+            {errorCount > 0 && (
+              <p style={{ color: RSVP_ERROR_COLOR, fontSize: "0.85rem", textAlign: "center", marginBottom: "1rem" }}>
+                {errorCount === 1
+                  ? "1 answer missing — highlighted above."
+                  : `${errorCount} answers missing — highlighted above.`}
+              </p>
+            )}
+            {submitError && (
+              <p style={{ color: RSVP_ERROR_COLOR, fontSize: "0.85rem", textAlign: "center", marginBottom: "1rem" }}>{submitError}</p>
+            )}
+          </div>
 
           <RSVPSubmitButton
             type="button"
@@ -3034,22 +3534,63 @@ function RSVPTab({ isMobile, reducedMotion }) {
             disabled={isSubmitting}
             style={{ maxWidth: 380, margin: "0 auto" }}
           >
-            {isSubmitting ? "Submitting..." : "Submit RSVP"}
+            {isSubmitting ? "Submitting..." : previousSubmission ? "Update RSVP" : "Submit RSVP"}
           </RSVPSubmitButton>
 
           <p style={{ marginTop: "1.5rem", fontSize: "0.9rem", color: COLORS.lightText, textAlign: "center" }}>
-            Please respond by September 1, 2026
+            Please reply by {RSVP_DEADLINE}
           </p>
         </motion.div>
       )}
 
-      {phase === "success" && (
-        <motion.div variants={itemVariants} style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem", textAlign: "center" }}>
-          <p style={{ fontSize: "1.1rem", color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
-            Thank you! Your RSVP has been received.
-          </p>
-          <p style={{ marginTop: "0.8rem", fontSize: "0.9rem", color: COLORS.mediumText }}>
-            We can't wait to celebrate with you.
+      {phase === "success" && household && (
+        <motion.div {...panelMotion}>
+          <div style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.5rem" : "2.5rem", textAlign: "center" }}>
+            <p style={{ fontSize: "1.15rem", color: COLORS.darkText, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
+              You&apos;re all set.
+            </p>
+            <p style={{ marginTop: "0.8rem", fontSize: "0.9rem", color: COLORS.mediumText }}>
+              Thanks for letting us know.
+            </p>
+          </div>
+
+          <div style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.3rem" : "1.9rem" }}>
+            <h3 style={{ ...getSectionTitleStyle(isMobile), marginBottom: "1rem" }}>Your answers</h3>
+            {responses.map((r, i) => {
+              const member = household.members[i];
+              const name = `${r.firstName.trim() || member.firstName} ${r.lastName.trim() || member.lastName}`.trim();
+              const lines = [
+                { label: household.wedding.label, value: r.wedding },
+                ...household.events.map((event) => ({ label: event.label, value: r[event.key] }))
+              ];
+              return (
+                <div key={i} style={{ padding: "0.85rem 0", borderTop: i > 0 ? `1px solid ${COLORS.border}` : "none" }}>
+                  <p style={{ fontSize: "0.95rem", fontWeight: 600, color: COLORS.darkText, marginBottom: "0.4rem" }}>{name}</p>
+                  {lines.map((line) => (
+                    <p key={line.label} style={{ fontSize: "0.83rem", color: COLORS.mediumText, lineHeight: 1.7 }}>
+                      {line.label}: <span style={{ color: line.value === ACCEPT ? COLORS.darkText : COLORS.lightText }}>
+                        {line.value === ACCEPT ? "Going" : "Not going"}
+                      </span>
+                    </p>
+                  ))}
+                  {r.wedding === ACCEPT && r.weddingMeal && (
+                    <p style={{ fontSize: "0.83rem", color: COLORS.mediumText, lineHeight: 1.7 }}>
+                      Dinner: <span style={{ color: COLORS.darkText }}>{r.weddingMeal}</span>
+                      {r.dietary.trim() ? ` · ${r.dietary.trim()}` : ""}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ textAlign: "center", display: "flex", gap: "1.4rem", justifyContent: "center", flexWrap: "wrap" }}>
+            <RSVPTextButton onClick={() => setPhase("form")}>Edit your answers</RSVPTextButton>
+            <RSVPTextButton onClick={startOver}>RSVP for someone else</RSVPTextButton>
+          </div>
+
+          <p style={{ marginTop: "1.3rem", fontSize: "0.8rem", color: COLORS.lightText, textAlign: "center" }}>
+            You can change this any time before {RSVP_DEADLINE}.
           </p>
         </motion.div>
       )}

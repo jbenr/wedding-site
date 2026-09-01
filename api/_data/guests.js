@@ -10,11 +10,36 @@
 // console output for the full list — fix names directly below as you learn
 // them, or update the sheet and re-run the script.
 
-export const EVENT_DEFINITIONS = {
-  rehearsal: { label: "Rehearsal Dinner" },
-  welcome: { label: "Welcome Party" }
+// The wedding itself is not listed in any household's `events` — every
+// invitation includes it — but it is defined here so the RSVP form can show
+// the same date/time/venue detail for it as for the Friday events.
+export const WEDDING_EVENT = {
+  key: "wedding",
+  label: "Wedding Ceremony & Reception",
+  date: "Saturday, October 24, 2026",
+  time: "4:30 PM",
+  venue: "Christ Episcopal Church, then Rosemont Farm",
+  attire: "Black Tie Optional"
 };
 
+export const EVENT_DEFINITIONS = {
+  rehearsal: {
+    label: "Rehearsal Dinner",
+    date: "Friday, October 23, 2026",
+    time: "5:30 PM",
+    venue: "Farmington Country Club",
+    attire: "Cocktail Attire"
+  },
+  welcome: {
+    label: "Welcome Party",
+    date: "Friday, October 23, 2026",
+    time: "8:00 PM",
+    venue: "Farmington Country Club",
+    attire: "Cocktail Attire"
+  }
+};
+
+// Entrée choices for the Saturday reception dinner at Rosemont Farm.
 export const MEAL_OPTIONS = ["Beef Tenderloin", "Seared Salmon", "Vegetarian Entrée"];
 
 export const GUESTS = [
@@ -35,19 +60,27 @@ export const GUESTS = [
     "members": [
       {
         "firstName": "Guest 1",
-        "lastName": "Barnes"
+        "lastName": "Barnes",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Barnes"
+        "lastName": "Barnes",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 3",
-        "lastName": "Barnes"
+        "lastName": "Barnes",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 4",
-        "lastName": "Barnes"
+        "lastName": "Barnes",
+        "placeholder": true,
+        "placeholderKind": "family"
       }
     ],
     "events": [
@@ -76,7 +109,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Bermudez"
+        "lastName": "Bermudez",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -92,7 +127,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Berry"
+        "lastName": "Berry",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -108,7 +145,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Berry"
+        "lastName": "Berry",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -136,7 +175,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Billings"
+        "lastName": "Billings",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [
@@ -152,7 +193,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Billings"
+        "lastName": "Billings",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [
@@ -168,15 +211,21 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest 1",
-        "lastName": "Bladt"
+        "lastName": "Bladt",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Bladt"
+        "lastName": "Bladt",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 3",
-        "lastName": "Bladt"
+        "lastName": "Bladt",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -192,7 +241,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Bodman"
+        "lastName": "Bodman",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -224,11 +275,15 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest 1",
-        "lastName": "Brebach"
+        "lastName": "Brebach",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Brebach"
+        "lastName": "Brebach",
+        "placeholder": true,
+        "placeholderKind": "family"
       }
     ],
     "events": [
@@ -245,7 +300,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Brebach"
+        "lastName": "Brebach",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -275,7 +332,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Brookshire"
+        "lastName": "Brookshire",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -291,7 +350,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Brookshire"
+        "lastName": "Brookshire",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -308,7 +369,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Brown"
+        "lastName": "Brown",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -324,7 +387,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Calzaretta"
+        "lastName": "Calzaretta",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -356,7 +421,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Carpenter Jr"
+        "lastName": "Carpenter Jr",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -393,7 +460,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Collins"
+        "lastName": "Collins",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -410,7 +479,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Collins"
+        "lastName": "Collins",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -426,19 +497,27 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest 1",
-        "lastName": "Collins"
+        "lastName": "Collins",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Collins"
+        "lastName": "Collins",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 3",
-        "lastName": "Collins"
+        "lastName": "Collins",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 4",
-        "lastName": "Collins"
+        "lastName": "Collins",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -455,7 +534,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Danzi"
+        "lastName": "Danzi",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -479,11 +560,15 @@ export const GUESTS = [
     "members": [
       {
         "firstName": "Guest 1",
-        "lastName": "Davis"
+        "lastName": "Davis",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Davis"
+        "lastName": "Davis",
+        "placeholder": true,
+        "placeholderKind": "family"
       }
     ],
     "events": [
@@ -564,7 +649,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Dickinson"
+        "lastName": "Dickinson",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -581,7 +668,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Dickinson"
+        "lastName": "Dickinson",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -609,7 +698,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Dillard"
+        "lastName": "Dillard",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [
@@ -641,7 +732,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Dosey"
+        "lastName": "Dosey",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -657,7 +750,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Drometer"
+        "lastName": "Drometer",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -673,7 +768,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Eissler"
+        "lastName": "Eissler",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -701,7 +798,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Fecsko"
+        "lastName": "Fecsko",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -717,11 +816,15 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest 1",
-        "lastName": "Fife"
+        "lastName": "Fife",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Fife"
+        "lastName": "Fife",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -737,7 +840,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Franz"
+        "lastName": "Franz",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -777,7 +882,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Geismer"
+        "lastName": "Geismer",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -805,7 +912,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Gibbons"
+        "lastName": "Gibbons",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -833,7 +942,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Goldstern"
+        "lastName": "Goldstern",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -849,7 +960,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Greene"
+        "lastName": "Greene",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -905,7 +1018,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Groome"
+        "lastName": "Groome",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -921,7 +1036,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Hamilton Jr"
+        "lastName": "Hamilton Jr",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -937,15 +1054,21 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest 1",
-        "lastName": "Hamilton"
+        "lastName": "Hamilton",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Hamilton"
+        "lastName": "Hamilton",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 3",
-        "lastName": "Hamilton"
+        "lastName": "Hamilton",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -986,7 +1109,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Harris III"
+        "lastName": "Harris III",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1002,7 +1127,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Heald"
+        "lastName": "Heald",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1018,7 +1145,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Hegemier"
+        "lastName": "Hegemier",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1063,7 +1192,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Holmes"
+        "lastName": "Holmes",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [
@@ -1079,7 +1210,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Horak"
+        "lastName": "Horak",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1095,15 +1228,21 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest 1",
-        "lastName": "Hurley"
+        "lastName": "Hurley",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Hurley"
+        "lastName": "Hurley",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 3",
-        "lastName": "Hurley"
+        "lastName": "Hurley",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1119,7 +1258,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Johan"
+        "lastName": "Johan",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1135,7 +1276,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Johan"
+        "lastName": "Johan",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1151,7 +1294,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Johan"
+        "lastName": "Johan",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [
@@ -1167,7 +1312,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Johnston"
+        "lastName": "Johnston",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1183,7 +1330,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Jones"
+        "lastName": "Jones",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1199,7 +1348,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Kessinger"
+        "lastName": "Kessinger",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1215,7 +1366,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Kilgallon"
+        "lastName": "Kilgallon",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1231,7 +1384,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Kilgallon"
+        "lastName": "Kilgallon",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [
@@ -1247,7 +1402,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Kochard"
+        "lastName": "Kochard",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1275,11 +1432,15 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest 1",
-        "lastName": "Kreienbaum"
+        "lastName": "Kreienbaum",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Kreienbaum"
+        "lastName": "Kreienbaum",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1312,15 +1473,21 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest 1",
-        "lastName": "Laing"
+        "lastName": "Laing",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Laing"
+        "lastName": "Laing",
+        "placeholder": true,
+        "placeholderKind": "guest"
       },
       {
         "firstName": "Guest 3",
-        "lastName": "Laing"
+        "lastName": "Laing",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1336,7 +1503,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Lesemann"
+        "lastName": "Lesemann",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1352,7 +1521,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Louis"
+        "lastName": "Louis",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1368,7 +1539,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Lowe"
+        "lastName": "Lowe",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1416,7 +1589,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Maurer"
+        "lastName": "Maurer",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1444,7 +1619,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "McNeese"
+        "lastName": "McNeese",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1461,7 +1638,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Meadow"
+        "lastName": "Meadow",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1477,7 +1656,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Miller"
+        "lastName": "Miller",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1489,23 +1670,33 @@ export const GUESTS = [
     "members": [
       {
         "firstName": "Guest 1",
-        "lastName": "Miller"
+        "lastName": "Miller",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Miller"
+        "lastName": "Miller",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 3",
-        "lastName": "Miller"
+        "lastName": "Miller",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 4",
-        "lastName": "Miller"
+        "lastName": "Miller",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 5",
-        "lastName": "Miller"
+        "lastName": "Miller",
+        "placeholder": true,
+        "placeholderKind": "family"
       }
     ],
     "events": [
@@ -1521,7 +1712,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Montgomery"
+        "lastName": "Montgomery",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1537,7 +1730,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Myers"
+        "lastName": "Myers",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1569,7 +1764,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Nicholson"
+        "lastName": "Nicholson",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1585,7 +1782,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Northington"
+        "lastName": "Northington",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1617,7 +1816,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Oken"
+        "lastName": "Oken",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1661,7 +1862,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Parker"
+        "lastName": "Parker",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1678,7 +1881,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Plumb"
+        "lastName": "Plumb",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1706,7 +1911,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Reichert"
+        "lastName": "Reichert",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1722,7 +1929,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Reichert"
+        "lastName": "Reichert",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1739,7 +1948,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Reichert"
+        "lastName": "Reichert",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1895,7 +2106,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Reiter"
+        "lastName": "Reiter",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1923,7 +2136,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Romness"
+        "lastName": "Romness",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -1955,7 +2170,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Romness"
+        "lastName": "Romness",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [
@@ -1971,7 +2188,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Romness"
+        "lastName": "Romness",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [
@@ -1995,27 +2214,39 @@ export const GUESTS = [
     "members": [
       {
         "firstName": "Guest 1",
-        "lastName": "Schaeffer"
+        "lastName": "Schaeffer",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Schaeffer"
+        "lastName": "Schaeffer",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 3",
-        "lastName": "Schaeffer"
+        "lastName": "Schaeffer",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 4",
-        "lastName": "Schaeffer"
+        "lastName": "Schaeffer",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 5",
-        "lastName": "Schaeffer"
+        "lastName": "Schaeffer",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 6",
-        "lastName": "Schaeffer"
+        "lastName": "Schaeffer",
+        "placeholder": true,
+        "placeholderKind": "family"
       }
     ],
     "events": [
@@ -2031,7 +2262,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Schotta"
+        "lastName": "Schotta",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [
@@ -2083,7 +2316,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Sezon"
+        "lastName": "Sezon",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2127,7 +2362,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Stalfort"
+        "lastName": "Stalfort",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2171,7 +2408,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Thompson"
+        "lastName": "Thompson",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2201,15 +2440,21 @@ export const GUESTS = [
     "members": [
       {
         "firstName": "Guest 1",
-        "lastName": "Turnbull"
+        "lastName": "Turnbull",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 2",
-        "lastName": "Turnbull"
+        "lastName": "Turnbull",
+        "placeholder": true,
+        "placeholderKind": "family"
       },
       {
         "firstName": "Guest 3",
-        "lastName": "Turnbull"
+        "lastName": "Turnbull",
+        "placeholder": true,
+        "placeholderKind": "family"
       }
     ],
     "events": [
@@ -2225,7 +2470,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Venable"
+        "lastName": "Venable",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2241,7 +2488,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Walsh"
+        "lastName": "Walsh",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2257,7 +2506,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Warren"
+        "lastName": "Warren",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2285,7 +2536,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Williamson"
+        "lastName": "Williamson",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2317,7 +2570,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Wright"
+        "lastName": "Wright",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2333,7 +2588,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Xiang"
+        "lastName": "Xiang",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2349,7 +2606,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Yarborough"
+        "lastName": "Yarborough",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2366,7 +2625,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Young"
+        "lastName": "Young",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2382,7 +2643,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Young"
+        "lastName": "Young",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2398,7 +2661,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Young"
+        "lastName": "Young",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2426,7 +2691,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Young"
+        "lastName": "Young",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2463,7 +2730,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Crawford"
+        "lastName": "Crawford",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2479,7 +2748,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Wood"
+        "lastName": "Wood",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2507,7 +2778,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Hanggi"
+        "lastName": "Hanggi",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2523,7 +2796,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Breeden"
+        "lastName": "Breeden",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2539,7 +2814,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Smith"
+        "lastName": "Smith",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2567,7 +2844,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Bays"
+        "lastName": "Bays",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2583,7 +2862,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Bond"
+        "lastName": "Bond",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2611,7 +2892,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Hunt"
+        "lastName": "Hunt",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2627,7 +2910,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "Howard"
+        "lastName": "Howard",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2643,7 +2928,9 @@ export const GUESTS = [
       },
       {
         "firstName": "Guest",
-        "lastName": "McNeese"
+        "lastName": "McNeese",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [

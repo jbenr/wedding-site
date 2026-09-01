@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, push, set, onValue, runTransaction } from "firebase/database";
+import { getDatabase, ref, push, set, get, onValue, runTransaction } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBnhDg0vB098g8JDx_QMY7Yfpxt0l41x7M",
@@ -24,6 +24,10 @@ const goofyCommentsRef = (photoId) => ref(db, `goofyComments/${photoId}`);
 const hoosierLikesRef = (photoId) => ref(db, `hoosierLikes/${photoId}`);
 const hoosierCommentsRef = (photoId) => ref(db, `hoosierComments/${photoId}`);
 const rsvpRef = (householdId) => ref(db, `rsvps/${householdId}`);
+// Write-only receipt alongside the (unreadable) RSVP itself — just a
+// timestamp and a headcount, so a returning guest can be told we already
+// have their response. See firebase.database.rules.json.
+const rsvpMetaRef = (householdId) => ref(db, `rsvpMeta/${householdId}`);
 
 export {
   db,
@@ -37,9 +41,11 @@ export {
   hoosierLikesRef,
   hoosierCommentsRef,
   rsvpRef,
+  rsvpMetaRef,
   ref,
   push,
   set,
+  get,
   onValue,
   runTransaction
 };

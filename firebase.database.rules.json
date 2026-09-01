@@ -1,16 +1,34 @@
+// Realtime Database security rules for the wedding site.
+// Deploy with:  firebase deploy --only database
+//
+// IMPORTANT — read access CASCADES. A `.read` granted at a node applies to
+// everything beneath it and CANNOT be revoked by a deeper rule. That is why
+// the root stays closed here and every publicly-viewable node opts in on its
+// own: with `".read": true` at the root, the `".read": false` under
+// rsvps/$householdId had no effect whatsoever, and every guest's attendance
+// and dietary notes were readable by anyone who opened the site (the
+// database URL ships in the client bundle).
 {
   "rules": {
-    ".read": true,
+    ".read": false,
     ".write": false,
+
+    // ---- Public, non-personal site interactions -------------------------
+
     "clickCount": {
+      ".read": true,
       ".write": true,
       ".validate": "newData.isNumber() && newData.val() >= 0"
     },
+
     "goHoosiersCount": {
+      ".read": true,
       ".write": true,
       ".validate": "newData.isNumber() && newData.val() >= 0"
     },
+
     "deepTracks": {
+      ".read": true,
       "$photoId": {
         "likes": {
           ".write": true,
@@ -24,13 +42,17 @@
         }
       }
     },
+
     "goofyLikes": {
+      ".read": true,
       "$photoId": {
         ".write": true,
         ".validate": "newData.isNumber() && newData.val() >= 0"
       }
     },
+
     "goofyComments": {
+      ".read": true,
       "$photoId": {
         "$commentId": {
           ".write": true,
@@ -38,13 +60,17 @@
         }
       }
     },
+
     "hoosierLikes": {
+      ".read": true,
       "$photoId": {
         ".write": true,
         ".validate": "newData.isNumber() && newData.val() >= 0"
       }
     },
+
     "hoosierComments": {
+      ".read": true,
       "$photoId": {
         "$commentId": {
           ".write": true,
@@ -52,19 +78,53 @@
         }
       }
     },
+
+    // ---- RSVPs: write-only from the browser -----------------------------
+    // Guests submit and may correct their own response, but nobody can read
+    // the responses back. Ben & Emily read them in the Firebase console and
+    // in the mirrored "RSVPs" tab of the guest tracker sheet.
+
     "rsvps": {
       "$householdId": {
-        ".read": false,
         ".write": true,
         ".validate": "newData.hasChildren(['submittedAt', 'guests'])",
+
         "submittedAt": {
           ".validate": "newData.isNumber()"
         },
+
         "guests": {
           "$guestIndex": {
-            ".validate": "newData.hasChildren(['firstName', 'lastName', 'wedding']) && newData.child('firstName').isString() && newData.child('lastName').isString() && newData.child('wedding').isString()"
+            ".validate": "newData.hasChildren(['firstName', 'lastName', 'wedding'])",
+            "firstName": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 60" },
+            "lastName": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 60" },
+            "wedding": { ".validate": "newData.val() === 'accept' || newData.val() === 'decline'" },
+            "rehearsal": { ".validate": "newData.val() === 'accept' || newData.val() === 'decline'" },
+            "welcome": { ".validate": "newData.val() === 'accept' || newData.val() === 'decline'" },
+            "weddingMeal": { ".validate": "newData.isString() && newData.val().length <= 80" },
+            "dietary": { ".validate": "newData.isString() && newData.val().length <= 200" },
+            "namedByGuest": { ".validate": "newData.isBoolean()" },
+            "$other": { ".validate": false }
           }
-        }
+        },
+
+        "$other": { ".validate": false }
+      }
+    },
+
+    // ---- RSVP receipts: deliberately readable ---------------------------
+    // Only a timestamp and a headcount — no names, answers or dietary notes.
+    // This is what lets a guest returning on another device be told "we
+    // already have your response" without exposing anybody's answers.
+
+    "rsvpMeta": {
+      ".read": true,
+      "$householdId": {
+        ".write": true,
+        ".validate": "newData.hasChildren(['submittedAt'])",
+        "submittedAt": { ".validate": "newData.isNumber()" },
+        "guestCount": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+        "$other": { ".validate": false }
       }
     }
   }

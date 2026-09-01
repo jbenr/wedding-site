@@ -1,19 +1,54 @@
-// Vercel serverless function: POST { field: "first"|"last", value } -> up to
-// 8 matching { firstName, lastName } pairs from the guest list, for
-// autocomplete as someone types their name. Only real named guests are
-// offered (generated "Guest"/"Guest 1" placeholders for unnamed plus-ones
-// are excluded) — nobody can enumerate the full guest list through this,
-// just get suggestions for names close to what they've already typed.
+// Vercel serverless function: POST { query } -> up to 8 matching
+// { firstName, lastName } pairs from the guest list, for autocomplete as
+// someone types their full name.
+//
+// Only real named guests are offered — the generated "Guest"/"Guest 1"
+// placeholders for unnamed plus-ones are excluded — so nobody can enumerate
+// the full guest list through this, just get suggestions close to what they
+// have already typed.
+//
+// Matching is folded through the same helpers as rsvp-lookup, so anything
+// this offers is guaranteed to resolve when the guest picks it.
 
 import { GUESTS } from "./_data/guests.js";
+import { fold, tokenize, nameTokens, fullName, isPlaceholder } from "./_lib/names.js";
 
-function normalize(value) {
-  return (value || "").trim().toLowerCase();
+const MAX_SUGGESTIONS = 8;
+
+// Precomputed once per cold start rather than per request.
+const NAMED_MEMBERS = [];
+const seenNames = new Set();
+for (const household of GUESTS) {
+  for (const member of household.members) {
+    if (isPlaceholder(member)) continue;
+    const key = fold(fullName(member));
+    // The same person can sit on two invitations; offer them once and let
+    // the lookup step sort out which invitation they meant.
+    if (seenNames.has(key)) continue;
+    seenNames.add(key);
+    NAMED_MEMBERS.push({
+      firstName: member.firstName,
+      lastName: member.lastName,
+      tokens: nameTokens(fullName(member)),
+      folded: key
+    });
+  }
 }
 
-const NAMED_MEMBERS = GUESTS.flatMap((household) => household.members).filter(
-  (m) => !/^guest(\s|$)/i.test(m.firstName)
-);
+// Every word typed must prefix-match some word of the name, so "Jack Kil"
+// matches "Jack Kilgallon", and "Kilgallon" alone matches too, regardless of
+// the order the words were typed in.
+function matchesQuery(entry, queryTokens) {
+  return queryTokens.every((qt) => entry.tokens.some((nt) => nt.startsWith(qt)));
+}
+
+// Lower sorts first: a name the guest has essentially finished typing beats
+// one that merely shares a surname.
+function rank(entry, queryTokens, foldedQuery) {
+  if (entry.folded === foldedQuery) return 0;
+  if (entry.tokens[0]?.startsWith(queryTokens[0])) return 1;
+  return 2;
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -21,25 +56,26 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { field, value } = req.body || {};
-  const query = normalize(value);
+  const { query } = req.body || {};
+  const foldedQuery = fold(query);
+  const queryTokens = tokenize(query);
 
-  if ((field !== "first" && field !== "last") || query.length < 2) {
+  if (foldedQuery.length < 2 || queryTokens.length === 0) {
     return res.status(200).json({ suggestions: [] });
   }
 
-  const seen = new Set();
-  const matches = [];
-  for (const member of NAMED_MEMBERS) {
-    const target = field === "first" ? member.firstName : member.lastName;
-    if (!normalize(target).startsWith(query)) continue;
-    const key = `${member.firstName}|${member.lastName}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    matches.push(member);
-  }
+  const matches = NAMED_MEMBERS.filter((entry) => matchesQuery(entry, queryTokens));
 
-  matches.sort((a, b) => a.lastName.localeCompare(b.lastName) || a.firstName.localeCompare(b.firstName));
+  matches.sort(
+    (a, b) =>
+      rank(a, queryTokens, foldedQuery) - rank(b, queryTokens, foldedQuery) ||
+      // A middle name folded into firstName ("Mary Jo") still sorts sensibly
+      // as part of that same string.
+      a.firstName.localeCompare(b.firstName) ||
+      a.lastName.localeCompare(b.lastName)
+  );
 
-  return res.status(200).json({ suggestions: matches.slice(0, 8) });
+  return res.status(200).json({
+    suggestions: matches.slice(0, MAX_SUGGESTIONS).map(({ firstName, lastName }) => ({ firstName, lastName }))
+  });
 }
