@@ -8,7 +8,7 @@
 // The full guest list in ./_data/guests.js never reaches the browser — only
 // the one matched household is returned.
 
-import { EVENT_DEFINITIONS, MEAL_OPTIONS, WEDDING_EVENT, GUESTS } from "./_data/guests.js";
+import { EVENT_DEFINITIONS, MEAL_OPTIONS, TOAST_OPTIONS, WEDDING_EVENT, GUESTS } from "./_data/guests.js";
 import { matchStrength, describeHousehold, isPlaceholder, nameTokens } from "./_lib/names.js";
 
 // Order the Friday events are presented in, regardless of the order they
@@ -35,7 +35,8 @@ function serializeHousehold(household) {
     })),
     wedding: WEDDING_EVENT,
     events,
-    mealOptions: MEAL_OPTIONS
+    mealOptions: MEAL_OPTIONS,
+    toastOptions: TOAST_OPTIONS
   };
 }
 

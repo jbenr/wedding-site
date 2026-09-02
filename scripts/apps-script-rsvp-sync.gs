@@ -51,6 +51,7 @@ function doPost(e) {
       "Name Source",
       "Wedding RSVP",
       "Entrée Choice",
+      "Toast Choice",
       "Dietary Restrictions",
       "Rehearsal Dinner RSVP",
       "Welcome Party RSVP"
@@ -89,6 +90,7 @@ function doPost(e) {
         g.namedByGuest ? "Guest" : "Invite",
         g.wedding || "",
         g.weddingMeal || "",
+        g.weddingToast || "",
         g.dietary || "",
         g.rehearsal || "",
         g.welcome || ""

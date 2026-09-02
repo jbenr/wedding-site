@@ -23,6 +23,7 @@ const valid = {
       lastName: "Check",
       wedding: "accept",
       weddingMeal: "Beef Tenderloin",
+      weddingToast: "Bourbon",
       dietary: "None",
       rehearsal: "decline",
       welcome: "accept",
@@ -65,6 +66,14 @@ check("full RSVP payload", await put(`rsvps/${TEST_ID}`, valid), "allowed");
 check("minimal RSVP payload", await put(`rsvps/${TEST_ID}`, minimal), "allowed");
 check("resubmitting replaces the same household", await put(`rsvps/${TEST_ID}`, valid), "allowed");
 check("rsvpMeta receipt", await put(`rsvpMeta/${TEST_ID}`, { submittedAt: Date.now(), guestCount: 2 }), "allowed");
+check(
+  "toast choice (added after the first deploy)",
+  await put(`rsvps/${TEST_ID}`, {
+    submittedAt: Date.now(),
+    guests: [{ firstName: "A", lastName: "B", wedding: "accept", weddingMeal: "Beef Tenderloin", weddingToast: "Bourbon" }]
+  }),
+  "allowed"
+);
 
 // --- Writes that must be rejected -------------------------------------------
 check(
@@ -94,7 +103,8 @@ check(
   "rejected"
 );
 check("RSVP without a submittedAt", await put(`rsvps/${TEST_ID}`, { guests: minimal.guests }), "rejected");
-check("answers stored outside /rsvps", await put(`somewhereElse/${TEST_ID}`, { a: 1 }), "rejected");
+const strayWrite = await put(`somewhereElse/${TEST_ID}`, { a: 1 });
+check("answers stored outside /rsvps", strayWrite, "rejected");
 
 // --- Reads -------------------------------------------------------------------
 check("reading anyone's RSVP answers", await read("rsvps"), "rejected");
@@ -103,10 +113,13 @@ check("reading rsvpMeta receipts", await read("rsvpMeta"), "allowed");
 check("reading the public click counter", await read("clickCount"), "allowed");
 
 // --- Cleanup -----------------------------------------------------------------
-// `somewhereElse` is included because that probe succeeds (and so leaves a
-// node behind) whenever the rules are still wide open — which is exactly the
-// case this script exists to catch.
-for (const path of [`rsvps/${TEST_ID}`, `rsvpMeta/${TEST_ID}`, `somewhereElse/${TEST_ID}`, "somewhereElse"]) {
+// Only clean up what actually got written. The `somewhereElse` probe leaves
+// a node behind only when the rules are still wide open — which is exactly
+// the case this script exists to catch — so it is conditional.
+const toClean = [`rsvps/${TEST_ID}`, `rsvpMeta/${TEST_ID}`];
+if (strayWrite === 200) toClean.push(`somewhereElse/${TEST_ID}`, "somewhereElse");
+
+for (const path of toClean) {
   const res = await fetch(`${DB}/${path}.json`, { method: "DELETE" });
   if (!res.ok) console.log(`  ! could not clean up ${path} (HTTP ${res.status}) — remove it in the console`);
 }

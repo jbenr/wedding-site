@@ -54,6 +54,7 @@ export default async function handler(req, res) {
       namedByGuest: Boolean(g?.namedByGuest),
       wedding: text(g?.wedding, 10),
       weddingMeal: text(g?.weddingMeal, 80),
+      weddingToast: text(g?.weddingToast, 80),
       dietary: text(g?.dietary, 200),
       rehearsal: text(g?.rehearsal, 10),
       welcome: text(g?.welcome, 10)

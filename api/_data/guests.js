@@ -42,6 +42,9 @@ export const EVENT_DEFINITIONS = {
 // Entrée choices for the Saturday reception dinner at Rosemont Farm.
 export const MEAL_OPTIONS = ["Beef Tenderloin", "Seared Salmon", "Vegetarian Entrée"];
 
+// What each guest wants poured for the toast at the reception.
+export const TOAST_OPTIONS = ["Bourbon", "Champagne", "Apple Cider"];
+
 export const GUESTS = [
   {
     "id": "atwell-bridget",

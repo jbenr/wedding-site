@@ -2673,6 +2673,7 @@ function createInitialResponses(members) {
     rehearsal: "",
     welcome: "",
     weddingMeal: "",
+    weddingToast: "",
     dietary: ""
   }));
 }
@@ -2718,6 +2719,44 @@ function RSVPInput({ style, invalid, ...rest }) {
       }}
       {...rest}
     />
+  );
+}
+
+function RSVPSelectField({ id, label, value, options, onChange, error, style }) {
+  return (
+    <div style={style}>
+      <label
+        htmlFor={id}
+        style={{ display: "block", fontSize: "0.8rem", color: COLORS.lightText, marginBottom: "0.4rem" }}
+      >
+        {label}
+      </label>
+      <select
+        id={id}
+        value={value}
+        onChange={onChange}
+        style={{
+          width: "100%",
+          border: `1px solid ${error ? RSVP_ERROR_COLOR : COLORS.border}`,
+          borderRadius: 10,
+          padding: "0.65rem 0.8rem",
+          fontSize: "0.9rem",
+          background: COLORS.cardBg,
+          // Grey while it still reads "Pick one", so an unanswered select
+          // looks unanswered rather than chosen.
+          color: value ? COLORS.darkText : COLORS.lightText,
+          fontFamily: "inherit"
+        }}
+      >
+        <option value="">Pick one</option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+      {error && <RSVPFieldError>{error}</RSVPFieldError>}
+    </div>
   );
 }
 
@@ -2810,23 +2849,15 @@ function RSVPTextButton({ children, style, ...rest }) {
 function RSVPEventQuestion({ event, guestLabel, value, onSelect, error, children }) {
   return (
     <div style={{ marginTop: "1.1rem" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "baseline",
-          gap: "0.5rem",
-          flexWrap: "wrap"
-        }}
-      >
-        <span style={{ fontSize: "0.92rem", fontWeight: 600, color: COLORS.darkText }}>{event.label}</span>
-        <span style={{ fontSize: "0.72rem", color: COLORS.lightText, letterSpacing: "0.02em" }}>
-          {event.date}
-          {event.time ? ` · ${event.time}` : ""}
-        </span>
-      </div>
+      <p style={{ fontSize: "0.95rem", fontWeight: 600, color: COLORS.darkText, marginBottom: "0.2rem" }}>
+        {event.label}
+      </p>
+      <p style={{ fontSize: "0.9rem", fontWeight: 500, color: COLORS.darkText, marginBottom: "0.15rem" }}>
+        {event.date}
+        {event.time ? ` · ${event.time}` : ""}
+      </p>
       {(event.venue || event.attire) && (
-        <p style={{ fontSize: "0.75rem", color: COLORS.lightText, margin: "0.25rem 0 0.6rem" }}>
+        <p style={{ fontSize: "0.8rem", color: COLORS.mediumText, marginBottom: "0.7rem" }}>
           {[event.venue, event.attire].filter(Boolean).join(" · ")}
         </p>
       )}
@@ -2902,7 +2933,7 @@ function RSVPGuestName({ member, seatLabel, response, index, onChange, error, is
 // One card per guest rather than one per event: you finish a person
 // completely — their name, every event, and their dinner — before moving on.
 const RSVPGuestCard = React.forwardRef(function RSVPGuestCard(
-  { member, seatLabel, index, response, wedding, events, mealOptions, onChange, errors, isMobile },
+  { member, seatLabel, index, response, wedding, events, mealOptions, toastOptions, onChange, errors, isMobile },
   ref
 ) {
   const guestLabel = member.placeholder
@@ -2930,35 +2961,24 @@ const RSVPGuestCard = React.forwardRef(function RSVPGuestCard(
       >
         {response.wedding === ACCEPT && (
           <div style={{ marginTop: "0.9rem" }}>
-            <label
-              htmlFor={`rsvp-meal-${index}`}
-              style={{ display: "block", fontSize: "0.8rem", color: COLORS.lightText, marginBottom: "0.4rem" }}
-            >
-              Dinner choice
-            </label>
-            <select
+            <RSVPSelectField
               id={`rsvp-meal-${index}`}
+              label="Dinner choice"
               value={response.weddingMeal}
+              options={mealOptions}
               onChange={(e) => onChange(index, "weddingMeal", e.target.value)}
-              style={{
-                width: "100%",
-                border: `1px solid ${errors[`${index}:weddingMeal`] ? RSVP_ERROR_COLOR : COLORS.border}`,
-                borderRadius: 10,
-                padding: "0.65rem 0.8rem",
-                fontSize: "0.9rem",
-                background: COLORS.cardBg,
-                color: response.weddingMeal ? COLORS.darkText : COLORS.lightText,
-                fontFamily: "inherit"
-              }}
-            >
-              <option value="">Pick one</option>
-              {mealOptions.map((meal) => (
-                <option key={meal} value={meal}>
-                  {meal}
-                </option>
-              ))}
-            </select>
-            {errors[`${index}:weddingMeal`] && <RSVPFieldError>{errors[`${index}:weddingMeal`]}</RSVPFieldError>}
+              error={errors[`${index}:weddingMeal`]}
+            />
+
+            <RSVPSelectField
+              id={`rsvp-toast-${index}`}
+              label="Toast choice"
+              value={response.weddingToast}
+              options={toastOptions}
+              onChange={(e) => onChange(index, "weddingToast", e.target.value)}
+              error={errors[`${index}:weddingToast`]}
+              style={{ marginTop: "0.9rem" }}
+            />
 
             <label
               htmlFor={`rsvp-dietary-${index}`}
@@ -3282,6 +3302,7 @@ function RSVPTab({ isMobile, reducedMotion }) {
       // can't leave a stale entrée attached to someone who isn't coming.
       if (field === "wedding" && value !== ACCEPT) {
         next[memberIndex].weddingMeal = "";
+        next[memberIndex].weddingToast = "";
         next[memberIndex].dietary = "";
       }
       return next;
@@ -3317,6 +3338,7 @@ function RSVPTab({ isMobile, reducedMotion }) {
       }
       if (!r.wedding) found[`${i}:wedding`] = "Pick one.";
       if (r.wedding === ACCEPT && !r.weddingMeal) found[`${i}:weddingMeal`] = "Pick a dinner option.";
+      if (r.wedding === ACCEPT && !r.weddingToast) found[`${i}:weddingToast`] = "Pick a toast option.";
       for (const event of household.events) {
         if (!r[event.key]) found[`${i}:${event.key}`] = "Pick one.";
       }
@@ -3355,6 +3377,7 @@ function RSVPTab({ isMobile, reducedMotion }) {
         if (member.placeholder) entry.namedByGuest = Boolean(typedFirst);
         if (r.wedding === ACCEPT) {
           entry.weddingMeal = r.weddingMeal;
+          entry.weddingToast = r.weddingToast;
           if (r.dietary.trim()) entry.dietary = r.dietary.trim();
         }
         for (const event of household.events) {
@@ -3509,6 +3532,7 @@ function RSVPTab({ isMobile, reducedMotion }) {
               wedding={household.wedding}
               events={household.events}
               mealOptions={household.mealOptions}
+              toastOptions={household.toastOptions}
               onChange={updateResponse}
               errors={errors}
               isMobile={isMobile}
@@ -3577,6 +3601,11 @@ function RSVPTab({ isMobile, reducedMotion }) {
                     <p style={{ fontSize: "0.83rem", color: COLORS.mediumText, lineHeight: 1.7 }}>
                       Dinner: <span style={{ color: COLORS.darkText }}>{r.weddingMeal}</span>
                       {r.dietary.trim() ? ` · ${r.dietary.trim()}` : ""}
+                    </p>
+                  )}
+                  {r.wedding === ACCEPT && r.weddingToast && (
+                    <p style={{ fontSize: "0.83rem", color: COLORS.mediumText, lineHeight: 1.7 }}>
+                      Toast: <span style={{ color: COLORS.darkText }}>{r.weddingToast}</span>
                     </p>
                   )}
                 </div>
