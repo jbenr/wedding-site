@@ -53,7 +53,13 @@ const RAW_ROWS = [
   ["Carpenter", "Mr. Charles Carpenter and Ms. Elizabeth Berner", 2, false],
   ["Carpenter", "Mr. and Mrs. Edmund Mogford Carpenter Jr", 2, false],
   ["Collins", "Dr. Christine and Mr. Stephen Collins", 2, true],
-  ["Collins", "Dr. Mary Jo and Mr. Andrew Collins", 3, true],
+  ["Collins", "Dr. Mary Jo and Mr. Andrew Collins", 3, true, {
+    members: [
+      { firstName: "Mary Jo", lastName: "Collins" },
+      { firstName: "Andrew", lastName: "Collins" },
+      { firstName: "Wyatt", lastName: "Collins" }
+    ]
+  }],
   ["Collins", "Mr. and Mrs. Patrick Collins", 2, false],
   ["Collins", "Mr. and Mrs. Stephen Collins", 5, true],
   ["Danzi", "Mr. and Mrs. Mark Danzi", 2, false],

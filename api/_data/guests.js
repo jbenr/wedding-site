@@ -459,10 +459,8 @@ export const GUESTS = [
         "lastName": "Collins"
       },
       {
-        "firstName": "Guest",
-        "lastName": "Collins",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Wyatt",
+        "lastName": "Collins"
       }
     ],
     "events": [
