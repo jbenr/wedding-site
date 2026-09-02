@@ -6,7 +6,7 @@
 // To refresh later: update RAW_ROWS below from the sheet (or wire this up to
 // read a downloaded CSV export instead — see parseRawRows()), then re-run.
 //
-// Each row is [lastName, inviteLine, guestsOnInvite, rehearsalInvited].
+// Each row is [lastName, inviteLine, guestsOnInvite, rehearsalInvited, options].
 // The sheet has no separate "Welcome Party" column, so every household is
 // assumed invited to the Welcome Party (WELCOME_PARTY_FOR_ALL below) —
 // only the Rehearsal Dinner is a real subset. Flip that constant if wrong.
@@ -62,7 +62,13 @@ const RAW_ROWS = [
   ["Eissler", "Mr. and Mrs. Mark Eissler", 2, false],
   ["Emerson", "Mr. Ezekiel Emerson", 1, false],
   ["Fecsko", "Mr. and Mrs. Joseph Fecsko", 2, false],
-  ["Fife", "Mr. and Mrs. David Fife", 3, false],
+  ["Fife", "Mr. and Mrs. David Fife", 3, false, {
+    members: [
+      { firstName: "David", lastName: "Fife" },
+      { firstName: "Marian", lastName: "Fife" },
+      { firstName: "Jack", lastName: "Fife" }
+    ]
+  }],
   ["Franz", "Mr. and Mrs. Thomas Franz", 2, false],
   ["Freedman", "Ms. Wendy Freedman", 1, false],
   ["Garnett", "Future Mr. and Ms. Emerson Garnett", 1, false],
@@ -167,8 +173,8 @@ const RAW_ROWS = [
   ["Wright", "Mr. and Mrs. Spencer Wright", 2, false],
   ["Xiang", "Future Mr. and Mrs. Justin Xiang", 2, false],
   ["Yarborough", "Mr. and Mrs. Matthew Yarborough", 2, true],
-  ["Young", "Mr. and Mrs. Matthew Young", 2, false],
-  ["Young", "Mr. and Mrs. Matthew Young", 2, false],
+  ["Young", "Mr. and Mrs. Matthew Young", 2, false, { qualifier: "FL" }],
+  ["Young", "Mr. and Mrs. Matthew Young", 2, false, { qualifier: "OH" }],
   ["Young", "Mr. and Mrs. Oliver Young", 2, false],
   ["Young", "Ms. Chloe Young", 1, false],
   ["Young", "Mr. and Mrs. Stephen Young", 2, false],
@@ -338,8 +344,10 @@ const usedIds = new Map();
 const households = [];
 const flagged = [];
 
-for (const [lastName, invite, guestsOnInvite, rehearsal] of RAW_ROWS) {
-  const { members, unparsed } = parseInvite(lastName, invite, guestsOnInvite);
+for (const [lastName, invite, guestsOnInvite, rehearsal, options = {}] of RAW_ROWS) {
+  const { members, unparsed } = options.members
+    ? { members: withCount(options.members, guestsOnInvite, lastName, "unnamed extra", "guest") }
+    : parseInvite(lastName, invite, guestsOnInvite);
   const baseId = slugify(`${lastName}-${members[0]?.firstName || "guest"}`);
   const count = usedIds.get(baseId) || 0;
   usedIds.set(baseId, count + 1);
@@ -348,11 +356,14 @@ for (const [lastName, invite, guestsOnInvite, rehearsal] of RAW_ROWS) {
   const events = rehearsal ? ["rehearsal"] : [];
   if (WELCOME_PARTY_FOR_ALL) events.push("welcome");
 
-  households.push({
+  const household = {
     id,
     members: members.map(({ note, ...m }) => m),
     events
-  });
+  };
+  if (options.qualifier) household.qualifier = options.qualifier;
+
+  households.push(household);
 
   if (unparsed || members.some((m) => m.placeholder)) {
     flagged.push({ id, invite, members, unparsed });
@@ -401,10 +412,10 @@ export const EVENT_DEFINITIONS = {
 };
 
 // Entrée choices for the Saturday reception dinner at Rosemont Farm.
-export const MEAL_OPTIONS = ["Beef Tenderloin", "Seared Salmon", "Vegetarian Entrée"];
+export const MEAL_OPTIONS = ["Steak", "Salmon", "Vegetarian"];
 
 // What each guest wants poured for the toast at the reception.
-export const TOAST_OPTIONS = ["Bourbon", "Champagne", "Apple Cider"];
+export const TOAST_OPTIONS = ["Bourbon", "Champagne", "Non Alcoholic Apple Cider"];
 
 export const GUESTS = ${JSON.stringify(households, null, 2)};
 `;
@@ -416,8 +427,8 @@ writeFileSync(join(__dirname, "..", "api", "_data", "guests.js"), fileBody);
 // two identical invitations to choose between. Surface it rather than
 // silently dropping a row — only the couple can say which is correct.
 const rowKeys = new Map();
-for (const [lastName, invite, guestsOnInvite, rehearsal] of RAW_ROWS) {
-  const key = `${lastName}|${invite}|${guestsOnInvite}|${rehearsal}`.toLowerCase();
+for (const [lastName, invite, guestsOnInvite, rehearsal, options = {}] of RAW_ROWS) {
+  const key = `${lastName}|${invite}|${guestsOnInvite}|${rehearsal}|${options.qualifier || ""}`.toLowerCase();
   rowKeys.set(key, (rowKeys.get(key) || 0) + 1);
 }
 const duplicateRows = [...rowKeys.entries()].filter(([, n]) => n > 1);

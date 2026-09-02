@@ -40,10 +40,10 @@ export const EVENT_DEFINITIONS = {
 };
 
 // Entrée choices for the Saturday reception dinner at Rosemont Farm.
-export const MEAL_OPTIONS = ["Beef Tenderloin", "Seared Salmon", "Vegetarian Entrée"];
+export const MEAL_OPTIONS = ["Steak", "Salmon", "Vegetarian"];
 
 // What each guest wants poured for the toast at the reception.
-export const TOAST_OPTIONS = ["Bourbon", "Champagne", "Apple Cider"];
+export const TOAST_OPTIONS = ["Bourbon", "Champagne", "Non Alcoholic Apple Cider"];
 
 export const GUESTS = [
   {
@@ -818,16 +818,12 @@ export const GUESTS = [
         "lastName": "Fife"
       },
       {
-        "firstName": "Guest 1",
-        "lastName": "Fife",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Marian",
+        "lastName": "Fife"
       },
       {
-        "firstName": "Guest 2",
-        "lastName": "Fife",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Jack",
+        "lastName": "Fife"
       }
     ],
     "events": [
@@ -2635,7 +2631,8 @@ export const GUESTS = [
     ],
     "events": [
       "welcome"
-    ]
+    ],
+    "qualifier": "FL"
   },
   {
     "id": "young-matthew-2",
@@ -2653,7 +2650,8 @@ export const GUESTS = [
     ],
     "events": [
       "welcome"
-    ]
+    ],
+    "qualifier": "OH"
   },
   {
     "id": "young-oliver",

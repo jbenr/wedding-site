@@ -22,7 +22,7 @@ const valid = {
       firstName: "Rules",
       lastName: "Check",
       wedding: "accept",
-      weddingMeal: "Beef Tenderloin",
+      weddingMeal: "Steak",
       weddingToast: "Bourbon",
       dietary: "None",
       rehearsal: "decline",
@@ -70,7 +70,7 @@ check(
   "toast choice (added after the first deploy)",
   await put(`rsvps/${TEST_ID}`, {
     submittedAt: Date.now(),
-    guests: [{ firstName: "A", lastName: "B", wedding: "accept", weddingMeal: "Beef Tenderloin", weddingToast: "Bourbon" }]
+    guests: [{ firstName: "A", lastName: "B", wedding: "accept", weddingMeal: "Steak", weddingToast: "Bourbon" }]
   }),
   "allowed"
 );

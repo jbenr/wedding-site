@@ -72,5 +72,8 @@ export function describeHousehold(household) {
     const suffix = `${unnamed} guest${unnamed === 1 ? "" : "s"}`;
     label = label ? `${label} + ${suffix}` : `${household.members[0].lastName} household (${suffix})`;
   }
+  if (household.qualifier) {
+    label = `${label} (${household.qualifier})`;
+  }
   return label;
 }
