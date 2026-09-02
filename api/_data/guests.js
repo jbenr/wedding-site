@@ -1915,10 +1915,8 @@ export const GUESTS = [
         "lastName": "Reichert"
       },
       {
-        "firstName": "Guest",
-        "lastName": "Reichert",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Beth",
+        "lastName": "Reichert"
       }
     ],
     "events": [

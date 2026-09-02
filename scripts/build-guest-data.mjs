@@ -180,7 +180,12 @@ const RAW_ROWS = [
   ["Plumb", "Mr. and Mrs. William Plumb", 2, false],
   ["Rardin", "Ms. Amy Rardin", 1, false],
   ["Reichert", "Mr. and Mrs. Gage Reichert", 2, false],
-  ["Reichert", "Mr. and Mrs. Hunter Reichert", 2, true],
+  ["Reichert", "Mr. and Mrs. Hunter Reichert", 2, true, {
+    members: [
+      { firstName: "Hunter", lastName: "Reichert" },
+      { firstName: "Beth", lastName: "Reichert" }
+    ]
+  }],
   ["Reichert", "Mr. and Mrs. Kyle Reichert", 2, true, {
     members: [
       { firstName: "Kyle", lastName: "Reichert" },
