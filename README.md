@@ -48,6 +48,29 @@ spreadsheet's "Name Source" column as *Guest* rather than *Invite*.
 
 Resubmitting replaces a household's previous answers in all three.
 
+### Checking RSVP status
+
+Use the command-line status report for quick totals and household follow-up
+lists:
+
+```bash
+npm run rsvp:status           # summary, RSVP'd households, pending households
+npm run rsvp:summary          # counts and latest 5 RSVPs
+npm run rsvp:pending          # who has not RSVP'd
+npm run rsvp:rsvped           # who has RSVP'd
+npm run rsvp:rd               # rehearsal dinner invite list + RSVP status
+npm run rsvp:pending -- --rd  # rehearsal dinner households not yet RSVP'd
+npm run rsvp:rsvped -- --rd   # rehearsal dinner households who have RSVP'd
+npm run rsvp:status -- --csv  # spreadsheet-friendly household rows
+npm run rsvp:status -- --json # full machine-readable report
+```
+
+This reads Firebase `rsvpMeta`, so it can safely show who has submitted,
+household/seat totals, pending households, rehearsal dinner invite status,
+wedding accepts so far, and the latest five RSVP timestamps. Full answers,
+meal choices, dietary notes, and Friday-event answers remain in Firebase
+`rsvps/<householdId>` and the mirrored `RSVPs` sheet.
+
 ## Updating the guest list
 
 `api/_data/guests.js` is generated — don't hand-edit it.

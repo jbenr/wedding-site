@@ -31,7 +31,10 @@ function serializeHousehold(household) {
       lastName: m.lastName,
       // Unnamed seats ("and Guest", "The X Family") come through flagged so
       // the form can ask whoever is responding to fill in the real name.
-      ...(isPlaceholder(m) ? { placeholder: true, placeholderKind: m.placeholderKind || "guest" } : {})
+      ...(isPlaceholder(m) ? { placeholder: true, placeholderKind: m.placeholderKind || "guest" } : {}),
+      ...(Array.isArray(m.eventExclusions) && m.eventExclusions.length > 0
+        ? { eventExclusions: m.eventExclusions }
+        : {})
     })),
     wedding: WEDDING_EVENT,
     events,

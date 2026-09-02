@@ -811,7 +811,7 @@ const formatCommentTimestamp = (timestamp) => {
 };
 
 // Word-by-word sparkle text — words stay together, letters animate in, sparkles track new letters
-const SparkleText = ({ text, onComplete, isMobile }) => {
+const SparkleText = ({ text, onComplete, isMobile, expandedTapTarget = false }) => {
   const chars = text.split("");
   const [visibleCount, setVisibleCount] = useState(0);
   const [sparkles, setSparkles] = useState([]);
@@ -842,9 +842,29 @@ const SparkleText = ({ text, onComplete, isMobile }) => {
   // Split into words, render each word as a nowrap span
   const words = text.split(" ");
   let charIndex = 0;
+  const canTapToComplete = done && typeof onComplete === "function";
 
   return (
-    <div style={{ position: "relative", display: "block", width: "100%", maxWidth: "100%", textAlign: "center" }}>
+    <div
+      onClick={expandedTapTarget && canTapToComplete ? onComplete : undefined}
+      style={{
+        position: expandedTapTarget ? "fixed" : "relative",
+        inset: expandedTapTarget ? 0 : undefined,
+        zIndex: expandedTapTarget ? 3 : undefined,
+        display: expandedTapTarget ? "flex" : "block",
+        flexDirection: expandedTapTarget ? "column" : undefined,
+        alignItems: expandedTapTarget ? "center" : undefined,
+        justifyContent: expandedTapTarget ? "center" : undefined,
+        width: expandedTapTarget ? "100vw" : "100%",
+        maxWidth: expandedTapTarget ? "none" : "100%",
+        minHeight: expandedTapTarget ? "100dvh" : undefined,
+        padding: expandedTapTarget ? "2rem" : undefined,
+        textAlign: "center",
+        cursor: expandedTapTarget && canTapToComplete ? "pointer" : "default",
+        pointerEvents: expandedTapTarget && !canTapToComplete ? "none" : undefined,
+        WebkitTapHighlightColor: "transparent"
+      }}
+    >
       <span style={{
         fontFamily: "'Cormorant Garamond', serif",
         display: "inline-flex",
@@ -909,12 +929,13 @@ const SparkleText = ({ text, onComplete, isMobile }) => {
       <motion.div
         animate={{ opacity: done ? 1 : 0 }}
         transition={{ duration: 0.5, delay: done ? 0.4 : 0 }}
-        onClick={done ? onComplete : undefined}
+        onClick={!expandedTapTarget && canTapToComplete ? onComplete : undefined}
         style={{
           marginTop: "2rem",
+          padding: expandedTapTarget ? "1rem 3rem 7rem" : 0,
           textAlign: "center",
-          cursor: done ? "pointer" : "default",
-          pointerEvents: done ? "auto" : "none"
+          cursor: canTapToComplete ? "pointer" : "default",
+          pointerEvents: expandedTapTarget || canTapToComplete ? "auto" : "none"
         }}
       >
         <span style={{
@@ -1022,9 +1043,31 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
 
   if (!isVisible) return null;
 
-  // Tap left/right to navigate hoosier slideshow
+  const stopHoosierTimer = () => {
+    if (hoosierTimerRef.current) {
+      clearInterval(hoosierTimerRef.current);
+      hoosierTimerRef.current = null;
+    }
+  };
+
+  const proceedFromHoosierSlideshow = () => {
+    stopHoosierTimer();
+    setSlideshowDone(true);
+    setPhase(PHASE_TRANSITION);
+  };
+
+  const canProceedFromHoosierSlideshow =
+    slideshowDone || (slideshowStarted && hoosierPhotos.length > 0 && hoosierSlideIndex >= hoosierPhotos.length - 1);
+
+  // Tap left/right to navigate hoosier slideshow. Once the last photo is up,
+  // any tap on the photo moves into the next secret-page step.
   const handleHoosierPhotoTap = (e) => {
-    if (hoosierTimerRef.current) clearInterval(hoosierTimerRef.current);
+    if (canProceedFromHoosierSlideshow) {
+      proceedFromHoosierSlideshow();
+      return;
+    }
+
+    stopHoosierTimer();
     const rect = e.currentTarget.getBoundingClientRect();
     const clientX = e.clientX || (e.touches && e.touches[0]?.clientX) || 0;
     const tapRight = (clientX - rect.left) > rect.width * 0.5;
@@ -1132,6 +1175,7 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
             : COLORS.bg,
           backgroundSize: "100% 100%, 40px 100%",
           transition: "background 0.6s ease",
+          justifyContent: goHoosiersVisible ? "flex-start" : "center",
           overflowY: "auto"
         }}
       >
@@ -1149,6 +1193,7 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
                 text="Congratulations, you've discovered our secret stash...!"
                 isMobile={isMobile}
                 onComplete={handleSecretComplete}
+                expandedTapTarget
               />
             </motion.div>
           )}
@@ -1170,7 +1215,7 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
                 alignItems: "center",
                 width: "100%",
                 maxWidth: 540,
-                padding: "0 1rem"
+                padding: isMobile ? "1rem 1rem 5.5rem" : "1.2rem 1rem 6rem"
               }}
             >
               {/* Let's Go / HOOSIERS! */}
@@ -1275,12 +1320,28 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
                     />
                   </motion.button>
                 </div>
-                <span
-                  onClick={slideshowDone ? () => setPhase(PHASE_TRANSITION) : undefined}
-                  style={{ fontSize: isMobile ? "0.68rem" : "0.76rem", color: COLORS.lightText, letterSpacing: "0.05em", textTransform: "uppercase", cursor: slideshowDone ? "pointer" : "default" }}
+                <button
+                  type="button"
+                  onClick={canProceedFromHoosierSlideshow ? proceedFromHoosierSlideshow : undefined}
+                  disabled={!canProceedFromHoosierSlideshow}
+                  style={{
+                    border: "none",
+                    background: "transparent",
+                    color: COLORS.lightText,
+                    fontFamily: "inherit",
+                    fontSize: isMobile ? "0.68rem" : "0.76rem",
+                    letterSpacing: "0.05em",
+                    textTransform: "uppercase",
+                    padding: "0.65rem 1rem",
+                    margin: "-0.35rem 0",
+                    appearance: "none",
+                    WebkitTapHighlightColor: "transparent",
+                    cursor: canProceedFromHoosierSlideshow ? "pointer" : "default",
+                    opacity: 1
+                  }}
                 >
-                  {!slideshowStarted ? "Tap logo to start!" : slideshowDone ? "Tap to continue →" : "Tap picture to advance"}
-                </span>
+                  {!slideshowStarted ? "Tap logo to start!" : canProceedFromHoosierSlideshow ? "Tap to continue →" : "Tap picture to advance"}
+                </button>
               </motion.div>
 
               {/* Hoosier slideshow */}
@@ -1367,6 +1428,7 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
                   text="Now that we're on the same page..."
                   isMobile={isMobile}
                   onComplete={() => setTransitionStep(1)}
+                  expandedTapTarget
                 />
               </motion.div>
             )}
@@ -1376,6 +1438,7 @@ function HoosiersOverlay({ isVisible, isMobile, hoosierCount, onClose, onRevealH
                   text="Enjoy some deep tracks of Bemily...!"
                   isMobile={isMobile}
                   onComplete={() => setPhase(PHASE_FEED)}
+                  expandedTapTarget
                 />
               </motion.div>
             )}
@@ -2621,6 +2684,11 @@ function placeholderSeatLabels(members) {
   });
 }
 
+function eventsForMember(events, member) {
+  const exclusions = new Set(Array.isArray(member.eventExclusions) ? member.eventExclusions : []);
+  return events.filter((event) => !exclusions.has(event.key));
+}
+
 // Firebase resolves a write only once the server acknowledges it. On a
 // flaky connection that promise can stay pending indefinitely, which would
 // leave a guest watching "Submitting..." forever with no idea what happened
@@ -2905,7 +2973,7 @@ function RSVPGuestName({ member, seatLabel, response, index, onChange, error, is
         {label}
       </p>
       <p style={{ fontSize: "0.78rem", color: COLORS.lightText, margin: "0.3rem 0 0.7rem", lineHeight: 1.55 }}>
-        We don&apos;t have a name for this spot yet. Add it if they&apos;re coming, or mark them not going.
+        Add this guest&apos;s name if they&apos;re attending, or mark this spot not going.
       </p>
       <div style={{ display: "flex", gap: "0.6rem", flexDirection: isMobile ? "column" : "row" }}>
         <RSVPInput
@@ -2931,7 +2999,7 @@ function RSVPGuestName({ member, seatLabel, response, index, onChange, error, is
 }
 
 // One card per guest rather than one per event: you finish a person
-// completely — their name, every event, and their dinner — before moving on.
+// completely, with events shown chronologically.
 const RSVPGuestCard = React.forwardRef(function RSVPGuestCard(
   { member, seatLabel, index, response, wedding, events, mealOptions, toastOptions, onChange, errors, isMobile },
   ref
@@ -2951,6 +3019,17 @@ const RSVPGuestCard = React.forwardRef(function RSVPGuestCard(
         error={errors[`${index}:name`]}
         isMobile={isMobile}
       />
+
+      {events.map((event) => (
+        <RSVPEventQuestion
+          key={event.key}
+          event={event}
+          guestLabel={guestLabel}
+          value={response[event.key]}
+          onSelect={(v) => onChange(index, event.key, v)}
+          error={errors[`${index}:${event.key}`]}
+        />
+      ))}
 
       <RSVPEventQuestion
         event={wedding}
@@ -2996,17 +3075,6 @@ const RSVPGuestCard = React.forwardRef(function RSVPGuestCard(
           </div>
         )}
       </RSVPEventQuestion>
-
-      {events.map((event) => (
-        <RSVPEventQuestion
-          key={event.key}
-          event={event}
-          guestLabel={guestLabel}
-          value={response[event.key]}
-          onSelect={(v) => onChange(index, event.key, v)}
-          error={errors[`${index}:${event.key}`]}
-        />
-      ))}
     </div>
   );
 });
@@ -3317,9 +3385,9 @@ function RSVPTab({ isMobile, reducedMotion }) {
 
   const acceptEverything = () => {
     setResponses((prev) =>
-      prev.map((r) => {
+      prev.map((r, i) => {
         const next = { ...r, wedding: ACCEPT };
-        for (const event of household.events) next[event.key] = ACCEPT;
+        for (const event of eventsForMember(household.events, household.members[i])) next[event.key] = ACCEPT;
         return next;
       })
     );
@@ -3330,7 +3398,8 @@ function RSVPTab({ isMobile, reducedMotion }) {
     const found = {};
     responses.forEach((r, i) => {
       const member = household.members[i];
-      const attendingSomething = [r.wedding, ...household.events.map((e) => r[e.key])].includes(ACCEPT);
+      const memberEvents = eventsForMember(household.events, member);
+      const attendingSomething = [r.wedding, ...memberEvents.map((e) => r[e.key])].includes(ACCEPT);
 
       // An unnamed seat only needs a name if somebody is actually using it.
       if (member.placeholder && attendingSomething && (!r.firstName.trim() || !r.lastName.trim())) {
@@ -3339,7 +3408,7 @@ function RSVPTab({ isMobile, reducedMotion }) {
       if (!r.wedding) found[`${i}:wedding`] = "Pick one.";
       if (r.wedding === ACCEPT && !r.weddingMeal) found[`${i}:weddingMeal`] = "Pick a dinner option.";
       if (r.wedding === ACCEPT && !r.weddingToast) found[`${i}:weddingToast`] = "Pick a toast option.";
-      for (const event of household.events) {
+      for (const event of memberEvents) {
         if (!r[event.key]) found[`${i}:${event.key}`] = "Pick one.";
       }
     });
@@ -3380,7 +3449,7 @@ function RSVPTab({ isMobile, reducedMotion }) {
           entry.weddingToast = r.weddingToast;
           if (r.dietary.trim()) entry.dietary = r.dietary.trim();
         }
-        for (const event of household.events) {
+        for (const event of eventsForMember(household.events, member)) {
           if (r[event.key]) entry[event.key] = r[event.key];
         }
         return entry;
@@ -3419,7 +3488,9 @@ function RSVPTab({ isMobile, reducedMotion }) {
   };
 
   const errorCount = Object.keys(errors).length;
-  const questionCount = household ? household.members.length * (1 + household.events.length) : 0;
+  const questionCount = household
+    ? household.members.reduce((total, member) => total + 1 + eventsForMember(household.events, member).length, 0)
+    : 0;
   const seatLabels = household ? placeholderSeatLabels(household.members) : [];
 
   return (
@@ -3530,7 +3601,7 @@ function RSVPTab({ isMobile, reducedMotion }) {
               index={i}
               response={responses[i]}
               wedding={household.wedding}
-              events={household.events}
+              events={eventsForMember(household.events, member)}
               mealOptions={household.mealOptions}
               toastOptions={household.toastOptions}
               onChange={updateResponse}
@@ -3584,8 +3655,8 @@ function RSVPTab({ isMobile, reducedMotion }) {
               const member = household.members[i];
               const name = `${r.firstName.trim() || member.firstName} ${r.lastName.trim() || member.lastName}`.trim();
               const lines = [
-                { label: household.wedding.label, value: r.wedding },
-                ...household.events.map((event) => ({ label: event.label, value: r[event.key] }))
+                ...eventsForMember(household.events, member).map((event) => ({ label: event.label, value: r[event.key] })),
+                { label: household.wedding.label, value: r.wedding }
               ];
               return (
                 <div key={i} style={{ padding: "0.85rem 0", borderTop: i > 0 ? `1px solid ${COLORS.border}` : "none" }}>

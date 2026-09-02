@@ -7,6 +7,8 @@
 // read a downloaded CSV export instead — see parseRawRows()), then re-run.
 //
 // Each row is [lastName, inviteLine, guestsOnInvite, rehearsalInvited, options].
+// When a household is invited to an event but one member is not, add
+// `eventExclusions: ["rehearsal"]` to that member.
 // The sheet has no separate "Welcome Party" column, so every household is
 // assumed invited to the Welcome Party (WELCOME_PARTY_FOR_ALL below) —
 // only the Rehearsal Dinner is a real subset. Flip that constant if wrong.
@@ -29,7 +31,12 @@ const RAW_ROWS = [
   ["Billings", "Mrs. Lisa Billings and Guest", 2, false],
   ["Billings", "Mr. Nicholas Billings and Guest", 2, false],
   ["Bladt", "Mr. and Mrs. William Bladt", 4, false],
-  ["Bodman", "Future Mr. and Ms. Charlie Bodman", 2, false],
+  ["Bodman", "Future Mr. and Ms. Charlie Bodman", 2, true, {
+    members: [
+      { firstName: "Charlie", lastName: "Bodman" },
+      { firstName: "Perri", lastName: "Bodman" }
+    ]
+  }],
   ["Boedecker", "Ms. Ingrid Boedecker", 1, false],
   ["Brebach", "Drs. Greg and Elissa Brebach and family", 4, true],
   ["Brebach", "Mr. and Mrs. Gresham Brebach", 2, true],
@@ -52,12 +59,22 @@ const RAW_ROWS = [
   ["Devito", "Mr. Cooper Devito", 1, false],
   ["Devito", "Mr. Tate Devito", 1, false],
   ["Devito", "Mrs. Lesli Devito", 1, false],
-  ["Dickinson", "Mr. and Mrs. Cole Dickinson", 2, true],
-  ["Dickinson", "Mr. and Mrs. T.M. Dickinson", 2, false],
+  ["Dickinson", "Mr. and Mrs. Cole Dickinson", 2, true, {
+    members: [
+      { firstName: "Cole", lastName: "Dickinson" },
+      { firstName: "Ellie", lastName: "Dickinson" }
+    ]
+  }],
+  ["Dickinson", "Mr. and Mrs. T.M. Dickinson", 2, true],
   ["Dickinson", "Mr. Tee Dickinson", 1, false],
   ["Dillard", "Mr. Ian Dillard and Guest", 2, false],
   ["Dilliard", "Drs. Reggie and Jennifer Dilliard", 2, false],
-  ["Dosey", "Future Mr. and Ms. Jordan Dosey", 2, false],
+  ["Dosey", "Future Mr. and Ms. Jordan Dosey", 2, true, {
+    members: [
+      { firstName: "Jordan", lastName: "Dosey" },
+      { firstName: "Grace", lastName: "Dosey" }
+    ]
+  }],
   ["Drometer", "Mr and Mrs. Todd Drometer", 2, false],
   ["Eissler", "Mr. and Mrs. Mark Eissler", 2, false],
   ["Emerson", "Mr. Ezekiel Emerson", 1, false],
@@ -74,9 +91,19 @@ const RAW_ROWS = [
   ["Garnett", "Future Mr. and Ms. Emerson Garnett", 1, false],
   ["Geismer", "Mr. and Mrs. Michael Geismer", 2, false],
   ["Geraghty", "Mr. George Geraghty", 1, false],
-  ["Gibbons", "Mr. and Mrs. Joel Gibbons", 2, false],
-  ["Gibbons", "Mr. Woods Gibbons", 1, false],
-  ["Goldstern", "Future Mr. and Mrs. Joshua A Goldstern", 2, false],
+  ["Gibbons", "Mr. and Mrs. Joel Gibbons", 2, true, {
+    members: [
+      { firstName: "Joel", lastName: "Gibbons" },
+      { firstName: "Bunny", lastName: "Gibbons" }
+    ]
+  }],
+  ["Gibbons", "Mr. Woods Gibbons", 1, true],
+  ["Goldstern", "Future Mr. and Mrs. Joshua A Goldstern", 2, false, {
+    members: [
+      { firstName: "Joshua A", lastName: "Goldstern" },
+      { firstName: "Anna", lastName: "Goldstern" }
+    ]
+  }],
   ["Greene", "Mr. and Mrs. Landon Greene", 2, false],
   ["Greene", "Mr. Cameron Greene", 1, false],
   ["Greene", "Mr. Davis Greene", 1, false],
@@ -104,7 +131,13 @@ const RAW_ROWS = [
   ["Kilgallon", "Mr. Jack Kilgallon and guest", 2, false],
   ["Kochard", "Mr. and Mrs. Larry Kochard", 2, false],
   ["Krakower", "Mr. Adam Krakower", 1, false],
-  ["Kreienbaum", "Mr. and Mrs. Tony Kreienbaum", 3, false],
+  ["Kreienbaum", "Mr. and Mrs. Tony Kreienbaum", 3, true, {
+    members: [
+      { firstName: "Tony", lastName: "Kreienbaum" },
+      { firstName: "Katy", lastName: "Kreienbaum" },
+      { firstName: "Anna", lastName: "Kreienbaum", eventExclusions: ["rehearsal"] }
+    ]
+  }],
   ["Kreienbaum", "Mr. Henry Kreienbaum and Ms. Greer Saunders", 2, true],
   ["Laing", "Mr. and Mrs. Chris Laing & family", 4, false],
   ["Lesemann", "Mr. and Mrs. Reenst Lesemann", 2, false],
@@ -145,7 +178,12 @@ const RAW_ROWS = [
   ["Reiss", "Mr. Josh Reiss and Ms. Maggie Lavoie", 2, false],
   ["Reiter", "Mr. and Mrs. Garrett Reiter", 2, false],
   ["Rittinger", "Ms. Kristy Rittinger", 1, false],
-  ["Romness", "Dr. and Mrs. Mark Romness", 2, false],
+  ["Romness", "Dr. and Mrs. Mark Romness", 2, false, {
+    members: [
+      { firstName: "Mark", lastName: "Romness" },
+      { firstName: "Christine", lastName: "Romness" }
+    ]
+  }],
   ["Romness", "Mr. Brandon Watt and Ms. Anna Romness", 2, false],
   ["Romness", "Mr. William Romness and Guest", 2, false],
   ["Romness", "Ms. Jane Romness and Guest", 2, false],
