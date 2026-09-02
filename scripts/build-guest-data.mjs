@@ -39,7 +39,12 @@ const RAW_ROWS = [
   }],
   ["Boedecker", "Ms. Ingrid Boedecker", 1, false],
   ["Brebach", "Drs. Greg and Elissa Brebach and family", 4, true],
-  ["Brebach", "Mr. and Mrs. Gresham Brebach", 2, true],
+  ["Brebach", "Mr. and Mrs. Gresham Brebach", 2, true, {
+    members: [
+      { firstName: "Gresham", lastName: "Brebach" },
+      { firstName: "Judy", lastName: "Brebach" }
+    ]
+  }],
   ["Brebach", "Mr. Mark Brebach", 1, true],
   ["Brookshire", "Mr. and Mrs. Matt Brookshire", 2, false],
   ["Brookshire", "Ms. Madeline Brookshire", 2, true],
@@ -65,7 +70,7 @@ const RAW_ROWS = [
       { firstName: "Ellie", lastName: "Dickinson" }
     ]
   }],
-  ["Dickinson", "Mr. and Mrs. T.M. Dickinson", 2, true],
+  ["Dickinson", "Mr. and Mrs. T.M. Dickinson", 2, false],
   ["Dickinson", "Mr. Tee Dickinson", 1, false],
   ["Dillard", "Mr. Ian Dillard and Guest", 2, false],
   ["Dilliard", "Drs. Reggie and Jennifer Dilliard", 2, false],
@@ -170,7 +175,12 @@ const RAW_ROWS = [
   ["Rardin", "Ms. Amy Rardin", 1, false],
   ["Reichert", "Mr. and Mrs. Gage Reichert", 2, false],
   ["Reichert", "Mr. and Mrs. Hunter Reichert", 2, true],
-  ["Reichert", "Mr. and Mrs. Kyle Reichert", 2, true],
+  ["Reichert", "Mr. and Mrs. Kyle Reichert", 2, true, {
+    members: [
+      { firstName: "Kyle", lastName: "Reichert" },
+      { firstName: "Sarah", lastName: "Reichert" }
+    ]
+  }],
   ["Reichert", "Mr. Jonathan Charles Reichert and Ms. Elise Calzaretta", 2, true],
   ["Reichert", "Mr. Angus Reichert", 1, false],
   ["Reichert", "Mr. Griffin Reichert", 1, false],
@@ -192,7 +202,7 @@ const RAW_ROWS = [
   ["Romness", "Mr. Brandon Watt and Ms. Anna Romness", 2, false],
   ["Romness", "Mr. William Romness and Guest", 2, false],
   ["Romness", "Ms. Jane Romness and Guest", 2, false],
-  ["Rutledge", "Ms. Doesy Rutledge", 1, false],
+  ["Rutledge", "Ms. Doesy Rutledge", 1, true],
   ["Schaeffer", "The Schaeffer Family", 6, false],
   ["Schotta", "Mr. John Schotta and Guest", 2, false],
   ["Schotta", "Mr. Rob Schotta", 1, false],

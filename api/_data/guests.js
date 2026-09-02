@@ -301,10 +301,8 @@ export const GUESTS = [
         "lastName": "Brebach"
       },
       {
-        "firstName": "Guest",
-        "lastName": "Brebach",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Judy",
+        "lastName": "Brebach"
       }
     ],
     "events": [
@@ -674,7 +672,6 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
       "welcome"
     ]
   },
@@ -1939,10 +1936,8 @@ export const GUESTS = [
         "lastName": "Reichert"
       },
       {
-        "firstName": "Guest",
-        "lastName": "Reichert",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Sarah",
+        "lastName": "Reichert"
       }
     ],
     "events": [
@@ -2196,6 +2191,7 @@ export const GUESTS = [
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
