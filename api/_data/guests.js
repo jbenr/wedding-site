@@ -938,7 +938,7 @@ export const GUESTS = [
       },
       {
         "firstName": "Anna",
-        "lastName": "Goldstern"
+        "lastName": "Rosing"
       }
     ],
     "events": [
@@ -1120,10 +1120,8 @@ export const GUESTS = [
         "lastName": "Heald"
       },
       {
-        "firstName": "Guest",
-        "lastName": "Heald",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Rebekah",
+        "lastName": "Doochin"
       }
     ],
     "events": [

@@ -101,7 +101,7 @@ const RAW_ROWS = [
   ["Goldstern", "Future Mr. and Mrs. Joshua A Goldstern", 2, false, {
     members: [
       { firstName: "Joshua A", lastName: "Goldstern" },
-      { firstName: "Anna", lastName: "Goldstern" }
+      { firstName: "Anna", lastName: "Rosing" }
     ]
   }],
   ["Greene", "Mr. and Mrs. Landon Greene", 2, false],
@@ -114,7 +114,12 @@ const RAW_ROWS = [
   ["Hamilton", "Mr. David Ross Hamilton", 1, false],
   ["Hamilton", "Mr. William Kearns Hamilton", 1, false],
   ["Harris", "Mr. and Mrs. Stuart Horsley Harris III", 2, false],
-  ["Heald", "Mr. Sam Heald", 2, false],
+  ["Heald", "Mr. Sam Heald", 2, false, {
+    members: [
+      { firstName: "Sam", lastName: "Heald" },
+      { firstName: "Rebekah", lastName: "Doochin" }
+    ]
+  }],
   ["Hegemier", "Mr. and Mrs. Matthew Hegemier", 2, false],
   ["Herndon", "Mr. Oliver Herndon and Ms. Coleman Lucas", 2, true],
   ["Herndon", "Mr. Sam Herndon", 1, false],
