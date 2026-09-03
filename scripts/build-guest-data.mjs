@@ -64,7 +64,16 @@ const RAW_ROWS = [
   ["Collins", "Mr. and Mrs. Stephen Collins", 5, true],
   ["Danzi", "Mr. and Mrs. Mark Danzi", 2, false],
   ["Davis", "Mr. Brad Davis", 1, false],
-  ["Davis", "The Davis Family", 2, false],
+  ["Davis", "The Davis Family", 6, false, {
+    members: [
+      { firstName: "Trip", lastName: "Davis" },
+      { firstName: "Nicole", lastName: "Davis" },
+      { firstName: "Izzi", lastName: "Davis" },
+      { firstName: "Eloise", lastName: "Davis" },
+      { firstName: "Norwood", lastName: "Davis" },
+      { firstName: "Emmy", lastName: "Davis" }
+    ]
+  }],
   ["Dearman", "Dr. Ken and Mr. Anthony Dearman", 2, true],
   ["DeFilippo", "Ms. Camryn DeFilippo", 1, false],
   ["Devito", "Mr. Cooper Devito", 1, false],
@@ -155,7 +164,14 @@ const RAW_ROWS = [
     ]
   }],
   ["Kreienbaum", "Mr. Henry Kreienbaum and Ms. Greer Saunders", 2, true],
-  ["Laing", "Mr. and Mrs. Chris Laing & family", 4, false],
+  ["Laing", "Mr. and Mrs. Chris Laing & family", 4, false, {
+    members: [
+      { firstName: "Chris", lastName: "Laing" },
+      { firstName: "Barkley", lastName: "Laing" },
+      { firstName: "Christopher", lastName: "Laing" },
+      { firstName: "Marian", lastName: "Laing" }
+    ]
+  }],
   ["Lesemann", "Mr. and Mrs. Reenst Lesemann", 2, false],
   ["Louis", "Mr. and Ms. Fisher Louis", 2, false],
   ["Lowe", "Mr. and Mrs. Courtney Lowe", 2, false],

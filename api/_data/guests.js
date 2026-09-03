@@ -554,19 +554,31 @@ export const GUESTS = [
     ]
   },
   {
-    "id": "davis-guest-1",
+    "id": "davis-trip",
     "members": [
       {
-        "firstName": "Guest 1",
-        "lastName": "Davis",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Trip",
+        "lastName": "Davis"
       },
       {
-        "firstName": "Guest 2",
-        "lastName": "Davis",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Nicole",
+        "lastName": "Davis"
+      },
+      {
+        "firstName": "Izzi",
+        "lastName": "Davis"
+      },
+      {
+        "firstName": "Eloise",
+        "lastName": "Davis"
+      },
+      {
+        "firstName": "Norwood",
+        "lastName": "Davis"
+      },
+      {
+        "firstName": "Emmy",
+        "lastName": "Davis"
       }
     ],
     "events": [
@@ -1459,22 +1471,16 @@ export const GUESTS = [
         "lastName": "Laing"
       },
       {
-        "firstName": "Guest 1",
-        "lastName": "Laing",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Barkley",
+        "lastName": "Laing"
       },
       {
-        "firstName": "Guest 2",
-        "lastName": "Laing",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Christopher",
+        "lastName": "Laing"
       },
       {
-        "firstName": "Guest 3",
-        "lastName": "Laing",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Marian",
+        "lastName": "Laing"
       }
     ],
     "events": [
