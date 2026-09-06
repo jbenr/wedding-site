@@ -64,14 +64,12 @@ const RAW_ROWS = [
   ["Collins", "Mr. and Mrs. Stephen Collins", 5, true],
   ["Danzi", "Mr. and Mrs. Mark Danzi", 2, false],
   ["Davis", "Mr. Brad Davis", 1, false],
-  ["Davis", "The Davis Family", 6, false, {
+  ["Davis", "The Davis Family", 4, false, {
     members: [
       { firstName: "Trip", lastName: "Davis" },
       { firstName: "Nicole", lastName: "Davis" },
       { firstName: "Izzi", lastName: "Davis" },
-      { firstName: "Eloise", lastName: "Davis" },
-      { firstName: "Norwood", lastName: "Davis" },
-      { firstName: "Emmy", lastName: "Davis" }
+      { firstName: "Eloise", lastName: "Davis" }
     ]
   }],
   ["Dearman", "Dr. Ken and Mr. Anthony Dearman", 2, true],
@@ -108,7 +106,12 @@ const RAW_ROWS = [
   }],
   ["Franz", "Mr. and Mrs. Thomas Franz", 2, false],
   ["Freedman", "Ms. Wendy Freedman", 1, false],
-  ["Garnett", "Future Mr. and Ms. Emerson Garnett", 1, false],
+  ["Garnett", "Future Mr. and Ms. Emerson Garnett", 2, false, {
+    members: [
+      { firstName: "Emerson", lastName: "Garnett" },
+      { firstName: "Julija", lastName: "Garnett" }
+    ]
+  }],
   ["Geismer", "Mr. and Mrs. Michael Geismer", 2, false],
   ["Geraghty", "Mr. George Geraghty", 1, false],
   ["Gibbons", "Mr. and Mrs. Joel Gibbons", 2, true, {
@@ -173,7 +176,12 @@ const RAW_ROWS = [
     ]
   }],
   ["Lesemann", "Mr. and Mrs. Reenst Lesemann", 2, false],
-  ["Louis", "Mr. and Ms. Fisher Louis", 2, false],
+  ["Louis", "Mr. and Ms. Fisher Louis", 2, false, {
+    members: [
+      { firstName: "Fisher", lastName: "Louis" },
+      { firstName: "Allie", lastName: "Louis" }
+    ]
+  }],
   ["Lowe", "Mr. and Mrs. Courtney Lowe", 2, false],
   ["Lowe", "Ms. Caitlyn Lowe and Mr. Sam Rodiger", 2, false],
   ["Mackey", "Mr. Brett Mackey and Ms. Megan McBride", 2, false],
@@ -251,7 +259,12 @@ const RAW_ROWS = [
   ["Williamson", "Mr. and Mrs. John Paul Williamson", 2, false],
   ["Wright", "Drs. Bryan and Katy Wright", 2, false],
   ["Wright", "Mr. and Mrs. Spencer Wright", 2, false],
-  ["Xiang", "Future Mr. and Mrs. Justin Xiang", 2, false],
+  ["Xiang", "Future Mr. and Mrs. Justin Xiang", 2, false, {
+    members: [
+      { firstName: "Justin", lastName: "Xiang" },
+      { firstName: "Amanda", lastName: "Xiang" }
+    ]
+  }],
   ["Yarborough", "Mr. and Mrs. Matthew Yarborough", 2, true],
   ["Young", "Mr. and Mrs. Matthew Young", 2, false, { qualifier: "FL" }],
   ["Young", "Mr. and Mrs. Matthew Young", 2, false, { qualifier: "OH" }],

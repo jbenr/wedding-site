@@ -571,14 +571,6 @@ export const GUESTS = [
       {
         "firstName": "Eloise",
         "lastName": "Davis"
-      },
-      {
-        "firstName": "Norwood",
-        "lastName": "Davis"
-      },
-      {
-        "firstName": "Emmy",
-        "lastName": "Davis"
       }
     ],
     "events": [
@@ -869,6 +861,10 @@ export const GUESTS = [
     "members": [
       {
         "firstName": "Emerson",
+        "lastName": "Garnett"
+      },
+      {
+        "firstName": "Julija",
         "lastName": "Garnett"
       }
     ],
@@ -1513,10 +1509,8 @@ export const GUESTS = [
         "lastName": "Louis"
       },
       {
-        "firstName": "Guest",
-        "lastName": "Louis",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Allie",
+        "lastName": "Louis"
       }
     ],
     "events": [
@@ -2575,10 +2569,8 @@ export const GUESTS = [
         "lastName": "Xiang"
       },
       {
-        "firstName": "Guest",
-        "lastName": "Xiang",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Amanda",
+        "lastName": "Xiang"
       }
     ],
     "events": [
