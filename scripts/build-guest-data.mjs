@@ -63,7 +63,7 @@ const RAW_ROWS = [
   ["Collins", "Mr. and Mrs. Patrick Collins", 2, false],
   ["Collins", "Mr. and Mrs. Stephen Collins", 5, true],
   ["Danzi", "Mr. and Mrs. Mark Danzi", 2, false],
-  ["Davis", "Mr. Brad Davis", 1, false],
+  ["Davis", "Mr. Brad Davis", 1, true],
   ["Davis", "The Davis Family", 4, false, {
     members: [
       { firstName: "Trip", lastName: "Davis" },
@@ -87,7 +87,7 @@ const RAW_ROWS = [
   ["Dickinson", "Mr. Tee Dickinson", 1, false],
   ["Dillard", "Mr. Ian Dillard and Guest", 2, false],
   ["Dilliard", "Drs. Reggie and Jennifer Dilliard", 2, false],
-  ["Dosey", "Future Mr. and Ms. Jordan Dosey", 2, true, {
+  ["Dosey", "Future Mr. and Ms. Jordan Dosey", 2, false, {
     members: [
       { firstName: "Jordan", lastName: "Dosey" },
       { firstName: "Grace", lastName: "Dosey" }
@@ -134,8 +134,13 @@ const RAW_ROWS = [
   ["Groome", "Mr. and Mrs. Peter Groome", 2, false],
   ["Hamilton", "Mr. and Mrs. Donald Ross Hamilton Jr", 2, false],
   ["Hamilton", "Mr. and Mrs. Marshall Hamilton and Family", 4, true],
-  ["Hamilton", "Mr. David Ross Hamilton", 1, false],
-  ["Hamilton", "Mr. William Kearns Hamilton", 1, false],
+  ["Hamilton", "Mr. David Ross Hamilton", 2, true, {
+    members: [
+      { firstName: "Ross", lastName: "Hamilton" },
+      { firstName: "Alexa", lastName: "Hamilton" }
+    ]
+  }],
+  ["Hamilton", "Mr. William Kearns Hamilton", 1, true],
   ["Harris", "Mr. and Mrs. Stuart Horsley Harris III", 2, false],
   ["Heald", "Mr. Sam Heald", 2, false, {
     members: [
@@ -190,20 +195,28 @@ const RAW_ROWS = [
   ["McNeese", "Mr. and Mrs. James C. McNeese", 2, true],
   ["Meadow", "Mr. and Mrs. Cary Meadow", 2, false],
   ["Miller", "Dr. and Mrs. Scott Miller", 2, false],
-  ["Miller", "The Miller Family", 5, false],
+  ["Miller", "The Miller Family", 5, false, {
+    members: [
+      { firstName: "Bruce", lastName: "Miller" },
+      { firstName: "Sue", lastName: "Miller" },
+      { firstName: "Max", lastName: "Miller" },
+      { firstName: "Charlie", lastName: "Miller" },
+      { firstName: "Cal", lastName: "Miller" }
+    ]
+  }],
   ["Montgomery", "Mr. and Mrs. Kelly Montgomery", 2, false],
   ["Myers", "Dr. and Mrs. Wallin Myers", 2, false],
   ["Nadler", "Mr. Matthew Nadler and Mr. Nicholas Bienen-Esayian", 2, false],
   ["Nicholson", "Mr. and Mrs. Steve Nicholson", 2, false],
   ["Northington", "Mr. and Mrs. Robert Northington", 2, false],
-  ["Northington", "Mr. Banks Northington and Ms. Caroline Hartigan", 2, false],
+  ["Northington", "Mr. Banks Northington and Ms. Caroline Hartigan", 2, true],
   ["Oken", "Mr. and Mrs. Glenn Oken", 2, false],
   ["O'Leary", "Ms. Kerin O'Leary", 1, false],
   ["Page", "Mr. Hughes Page and Ms. Kade Schwabacher", 2, false],
   ["Parker", "Ms. Lilly Parker", 2, true],
   ["Plumb", "Mr. and Mrs. William Plumb", 2, false],
   ["Rardin", "Ms. Amy Rardin", 1, false],
-  ["Reichert", "Mr. and Mrs. Gage Reichert", 2, false],
+  ["Reichert", "Mr. and Mrs. Gage Reichert", 2, true],
   ["Reichert", "Mr. and Mrs. Hunter Reichert", 2, true, {
     members: [
       { firstName: "Hunter", lastName: "Reichert" },
@@ -217,13 +230,13 @@ const RAW_ROWS = [
     ]
   }],
   ["Reichert", "Mr. Jonathan Charles Reichert and Ms. Elise Calzaretta", 2, true],
-  ["Reichert", "Mr. Angus Reichert", 1, false],
-  ["Reichert", "Mr. Griffin Reichert", 1, false],
-  ["Reichert", "Mr. Fox Reichert", 1, false],
+  ["Reichert", "Mr. Angus Reichert", 1, true],
+  ["Reichert", "Mr. Griffin Reichert", 1, true],
+  ["Reichert", "Mr. Fox Reichert", 1, true],
   ["Reichert", "Mr. Gresham Harrison Reichert and Ms. Olivia Rentz", 2, true],
   ["Reichert", "Mr. William Jackson Reichert", 1, true],
-  ["Reichert", "Mr. Tyler Reichert", 1, false],
-  ["Reichert", "Ms. Eve Reichert", 1, false],
+  ["Reichert", "Mr. Tyler Reichert", 1, true],
+  ["Reichert", "Ms. Eve Reichert", 1, true],
   ["Reid", "Mr. John Barlow Reid and Ms. Sarah Smith", 2, false],
   ["Reiss", "Mr. Josh Reiss and Ms. Maggie Lavoie", 2, false],
   ["Reiter", "Mr. and Mrs. Garrett Reiter", 2, false],
@@ -235,7 +248,7 @@ const RAW_ROWS = [
     ]
   }],
   ["Romness", "Mr. Brandon Watt and Ms. Anna Romness", 2, false],
-  ["Romness", "Mr. William Romness and Guest", 2, false],
+  ["Romness", "Mr. William Romness and Guest", 2, true],
   ["Romness", "Ms. Jane Romness and Guest", 2, false],
   ["Rutledge", "Ms. Doesy Rutledge", 1, true],
   ["Schaeffer", "The Schaeffer Family", 6, false],

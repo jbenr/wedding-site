@@ -550,6 +550,7 @@ export const GUESTS = [
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
@@ -736,7 +737,6 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
       "welcome"
     ]
   },
@@ -1074,14 +1074,19 @@ export const GUESTS = [
     ]
   },
   {
-    "id": "hamilton-david-ross",
+    "id": "hamilton-ross",
     "members": [
       {
-        "firstName": "David Ross",
+        "firstName": "Ross",
+        "lastName": "Hamilton"
+      },
+      {
+        "firstName": "Alexa",
         "lastName": "Hamilton"
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
@@ -1094,6 +1099,7 @@ export const GUESTS = [
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
@@ -1781,6 +1787,7 @@ export const GUESTS = [
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
@@ -1894,6 +1901,7 @@ export const GUESTS = [
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
@@ -1957,6 +1965,7 @@ export const GUESTS = [
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
@@ -1969,6 +1978,7 @@ export const GUESTS = [
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
@@ -1981,6 +1991,7 @@ export const GUESTS = [
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
@@ -2023,6 +2034,7 @@ export const GUESTS = [
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
@@ -2035,6 +2047,7 @@ export const GUESTS = [
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
@@ -2147,6 +2160,7 @@ export const GUESTS = [
       }
     ],
     "events": [
+      "rehearsal",
       "welcome"
     ]
   },
