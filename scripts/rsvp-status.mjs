@@ -24,7 +24,8 @@ Options:
   --summary        Print only the summary counts.
   --pending        Print summary plus households that have not RSVP'd.
   --rsvped         Print summary plus households that have RSVP'd.
-  --rd             Show only rehearsal dinner invited households.
+  --rd             Show only rehearsal dinner status (compact pending list by default).
+  --verbose        With --rd, show the full per-household seat-math breakdown instead of a compact list.
   --csv            Print household rows as CSV.
   --json           Print the full report as JSON.
   --db <url>       Override the Firebase Realtime Database URL.
@@ -39,7 +40,8 @@ function parseArgs(argv) {
     db: process.env.RSVP_DATABASE_URL || DEFAULT_DB,
     format: "text",
     mode: "all",
-    rehearsalDinnerOnly: false
+    rehearsalDinnerOnly: false,
+    verbose: false
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -54,6 +56,8 @@ function parseArgs(argv) {
       options.mode = "rsvped";
     } else if (arg === "--rd" || arg === "--rehearsal-dinner") {
       options.rehearsalDinnerOnly = true;
+    } else if (arg === "--verbose") {
+      options.verbose = true;
     } else if (arg === "--csv") {
       options.format = "csv";
     } else if (arg === "--json") {
@@ -219,34 +223,22 @@ function buildReport(meta, db) {
   };
 }
 
-function printSummary(report) {
+function printSummary(report, rehearsalDinnerOnly) {
   const { summary } = report;
-  console.log("RSVP Status");
-  console.log(`Checked: ${report.checkedAtText}`);
-  console.log(`Database: ${report.database}`);
-  console.log("Source: Firebase rsvpMeta. Full answers still live in Firebase rsvps and the RSVP sheet.");
+  console.log(`RSVP Status${rehearsalDinnerOnly ? " — Rehearsal Dinner" : ""} (${report.checkedAtText})`);
   console.log("");
-  console.log("Summary");
-  console.log(`  Total households: ${summary.totalHouseholds}`);
-  console.log(`  Total people/seats on guest list: ${summary.totalSeats}`);
-  console.log(`  Rehearsal dinner invited households: ${summary.rehearsalDinnerInvitedHouseholds}`);
-  console.log(`  Rehearsal dinner invited seats: ${summary.rehearsalDinnerInvitedSeats}`);
-  console.log(`  Rehearsal dinner RSVP'd households: ${summary.rehearsalDinnerRsvpedHouseholds}`);
-  console.log(`  Rehearsal dinner RSVP'd seats: ${summary.rehearsalDinnerRsvpedSeats}`);
-  console.log(`  Rehearsal dinner not yet RSVP'd households: ${summary.rehearsalDinnerPendingHouseholds}`);
-  console.log(`  Rehearsal dinner not yet RSVP'd seats: ${summary.rehearsalDinnerPendingSeats}`);
-  console.log(`  Welcome party invited seats: ${summary.welcomePartyInvitedSeats}`);
-  console.log(`  RSVP'd households: ${summary.rsvpedHouseholds}`);
-  console.log(`  Not yet RSVP'd households: ${summary.pendingHouseholds}`);
-  console.log(`  RSVP'd household seats: ${summary.rsvpedSeats}`);
-  console.log(`  Not yet RSVP'd seats: ${summary.pendingSeats}`);
-  console.log(`  Wedding accepts so far: ${summary.acceptedWeddingHeadcount}`);
-  if (summary.declinedWeddingHeadcountFromSubmittedHouseholds === null) {
-    console.log(`  Wedding declines from submitted households: unavailable (${summary.missingGuestCountHouseholds} missing guestCount)`);
-  } else {
-    console.log(`  Wedding declines from submitted households: ${summary.declinedWeddingHeadcountFromSubmittedHouseholds}`);
+
+  if (rehearsalDinnerOnly) {
+    console.log(`  Invited: ${summary.rehearsalDinnerInvitedHouseholds} households, ${summary.rehearsalDinnerInvitedSeats} seats`);
+    console.log(`  RSVP'd: ${summary.rehearsalDinnerRsvpedHouseholds} households, ${summary.rehearsalDinnerRsvpedSeats} seats`);
+    console.log(`  Pending: ${summary.rehearsalDinnerPendingHouseholds} households, ${summary.rehearsalDinnerPendingSeats} seats`);
+    return;
   }
-  console.log(`  Max wedding headcount if all pending attend: ${summary.maxWeddingHeadcountIfAllPendingAttend}`);
+
+  console.log(`  Guest list: ${summary.totalHouseholds} households, ${summary.totalSeats} seats`);
+  console.log(`  Wedding RSVP'd: ${summary.rsvpedHouseholds} households (${summary.acceptedWeddingHeadcount} accepts, ${summary.declinedWeddingHeadcountFromSubmittedHouseholds ?? "?"} declines)`);
+  console.log(`  Wedding pending: ${summary.pendingHouseholds} households, ${summary.pendingSeats} seats (max possible: ${summary.maxWeddingHeadcountIfAllPendingAttend})`);
+  console.log(`  Rehearsal dinner: ${summary.rehearsalDinnerRsvpedHouseholds}/${summary.rehearsalDinnerInvitedHouseholds} households RSVP'd (run --rd for detail)`);
   console.log(`  Latest RSVP: ${summary.latestSubmittedAtText || "none yet"}`);
   if (summary.unknownMetaHouseholds > 0) {
     console.log(`  Unknown rsvpMeta records: ${summary.unknownMetaHouseholds}`);
@@ -266,6 +258,18 @@ function printLatestSubmitted(report) {
       `  ${row.submittedAtText} - ${row.label} [${row.id}] - ${row.acceptedWeddingHeadcount ?? "?"} wedding accept${row.acceptedWeddingHeadcount === 1 ? "" : "s"}`
     );
   }
+}
+
+// A short, wrapped comma-list of household labels — for when the reader just
+// needs "who", not a seat-math breakdown repeated on every line.
+function printCompactList(title, rows) {
+  console.log("");
+  console.log(`${title} (${rows.length})`);
+  if (rows.length === 0) {
+    console.log("  none");
+    return;
+  }
+  console.log(`  ${rows.map((row) => row.label).join(", ")}`);
 }
 
 function printHouseholds(title, rows, { submittedList = false, rehearsalDinner = false, showStatus = false } = {}) {
@@ -336,18 +340,27 @@ function printCsv(report, mode, rehearsalDinnerOnly) {
   }
 }
 
-function printText(report, mode, rehearsalDinnerOnly) {
-  printSummary(report);
-  printLatestSubmitted(report);
+function printText(report, mode, rehearsalDinnerOnly, verbose) {
+  printSummary(report, rehearsalDinnerOnly);
+  if (!rehearsalDinnerOnly) printLatestSubmitted(report);
   if (mode === "summary") return;
 
   if (rehearsalDinnerOnly) {
-    if (mode === "rsvped") {
-      printHouseholds("Rehearsal dinner households that have RSVP'd", report.rehearsalDinner.submitted, { submittedList: true, rehearsalDinner: true });
-    } else if (mode === "pending") {
-      printHouseholds("Rehearsal dinner households not yet RSVP'd", report.rehearsalDinner.pending, { rehearsalDinner: true });
+    // Default (--rd alone) shows just who still needs to respond — that's
+    // the actionable part. --verbose restores the old full per-household
+    // seat-math breakdown for all three modes.
+    if (verbose) {
+      if (mode === "rsvped") {
+        printHouseholds("Rehearsal dinner households that have RSVP'd", report.rehearsalDinner.submitted, { submittedList: true, rehearsalDinner: true });
+      } else if (mode === "pending") {
+        printHouseholds("Rehearsal dinner households not yet RSVP'd", report.rehearsalDinner.pending, { rehearsalDinner: true });
+      } else {
+        printHouseholds("Rehearsal dinner invited households", report.rehearsalDinner.rows, { rehearsalDinner: true, showStatus: true });
+      }
+    } else if (mode === "rsvped") {
+      printCompactList("Rehearsal dinner — RSVP'd", report.rehearsalDinner.submitted);
     } else {
-      printHouseholds("Rehearsal dinner invited households", report.rehearsalDinner.rows, { rehearsalDinner: true, showStatus: true });
+      printCompactList("Rehearsal dinner — still need to RSVP", report.rehearsalDinner.pending);
     }
     return;
   }
@@ -384,7 +397,7 @@ async function main() {
   } else if (options.format === "csv") {
     printCsv(report, options.mode, options.rehearsalDinnerOnly);
   } else {
-    printText(report, options.mode, options.rehearsalDinnerOnly);
+    printText(report, options.mode, options.rehearsalDinnerOnly, options.verbose);
   }
 }
 
