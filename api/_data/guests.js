@@ -87,8 +87,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -248,8 +247,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -289,8 +287,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -306,8 +303,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -319,8 +315,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -356,8 +351,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -443,8 +437,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -464,8 +457,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -519,8 +511,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -550,8 +541,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -591,8 +581,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -656,8 +645,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -915,8 +903,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -928,8 +915,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1065,8 +1051,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1082,8 +1067,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1095,8 +1079,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1164,8 +1147,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1440,8 +1422,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1457,8 +1438,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1614,8 +1594,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1783,8 +1762,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1848,8 +1826,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1897,8 +1874,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1914,8 +1890,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1931,8 +1906,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1948,8 +1922,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1961,8 +1934,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1974,8 +1946,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -1987,8 +1958,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -2004,8 +1974,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -2017,8 +1986,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -2030,8 +1998,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -2043,8 +2010,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -2156,8 +2122,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -2187,8 +2152,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -2396,8 +2360,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -2413,8 +2376,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -2592,8 +2554,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -2699,8 +2660,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "rehearsal",
-      "welcome"
+      "rehearsal"
     ]
   },
   {

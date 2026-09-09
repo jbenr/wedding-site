@@ -9,9 +9,11 @@
 // Each row is [lastName, inviteLine, guestsOnInvite, rehearsalInvited, options].
 // When a household is invited to an event but one member is not, add
 // `eventExclusions: ["rehearsal"]` to that member.
-// The sheet has no separate "Welcome Party" column, so every household is
-// assumed invited to the Welcome Party (WELCOME_PARTY_FOR_ALL below) —
-// only the Rehearsal Dinner is a real subset. Flip that constant if wrong.
+// The sheet has no separate "Welcome Party" column, so every household NOT
+// invited to the Rehearsal Dinner is assumed invited to the Welcome Party
+// instead (WELCOME_PARTY_FOR_ALL below) — the two are mutually exclusive,
+// a household RSVPs to one or the other, never both. Flip the constant if
+// that default (everyone-not-at-RD gets Welcome Party) is wrong.
 
 import { writeFileSync } from "fs";
 import { fileURLToPath } from "url";
@@ -474,8 +476,10 @@ for (const [lastName, invite, guestsOnInvite, rehearsal, options = {}] of RAW_RO
   usedIds.set(baseId, count + 1);
   const id = count === 0 ? baseId : `${baseId}-${count + 1}`;
 
+  // Rehearsal Dinner and Welcome Party are mutually exclusive — a household
+  // invited to one is never also asked to RSVP for the other.
   const events = rehearsal ? ["rehearsal"] : [];
-  if (WELCOME_PARTY_FOR_ALL) events.push("welcome");
+  if (WELCOME_PARTY_FOR_ALL && !rehearsal) events.push("welcome");
 
   const household = {
     id,
