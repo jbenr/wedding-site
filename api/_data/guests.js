@@ -1653,37 +1653,27 @@ export const GUESTS = [
     ]
   },
   {
-    "id": "miller-guest-1",
+    "id": "miller-bruce",
     "members": [
       {
-        "firstName": "Guest 1",
-        "lastName": "Miller",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Bruce",
+        "lastName": "Miller"
       },
       {
-        "firstName": "Guest 2",
-        "lastName": "Miller",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Sue",
+        "lastName": "Miller"
       },
       {
-        "firstName": "Guest 3",
-        "lastName": "Miller",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Max",
+        "lastName": "Miller"
       },
       {
-        "firstName": "Guest 4",
-        "lastName": "Miller",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Charlie",
+        "lastName": "Miller"
       },
       {
-        "firstName": "Guest 5",
-        "lastName": "Miller",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Cal",
+        "lastName": "Miller"
       }
     ],
     "events": [
