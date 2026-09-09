@@ -127,12 +127,27 @@ const RAW_ROWS = [
       { firstName: "Anna", lastName: "Rosing" }
     ]
   }],
-  ["Greene", "Mr. and Mrs. Landon Greene", 2, false],
+  ["Greene", "Mr. and Mrs. Landon Greene", 2, false, {
+    members: [
+      { firstName: "Landon", lastName: "Greene" },
+      { firstName: "Sarah Grace", lastName: "Greene" }
+    ]
+  }],
   ["Greene", "Mr. Cameron Greene", 1, false],
   ["Greene", "Mr. Davis Greene", 1, false],
-  ["Greene", "Ms. Sharon Greene and Ms. Mallory Greene", 2, false],
+  ["Greene", "Ms. Sharon Greene and Ms. Mallory Greene", 2, false, {
+    members: [
+      { firstName: "Sharon", lastName: "Taraska" },
+      { firstName: "Mallory", lastName: "Greene" }
+    ]
+  }],
   ["Groome", "Mr. and Mrs. Peter Groome", 2, false],
-  ["Hamilton", "Mr. and Mrs. Donald Ross Hamilton Jr", 2, false],
+  ["Hamilton", "Mr. and Mrs. Donald Ross Hamilton Jr", 2, false, {
+    members: [
+      { firstName: "Donald Ross", lastName: "Hamilton Jr" },
+      { firstName: "Alexa", lastName: "Hamilton Jr" }
+    ]
+  }],
   ["Hamilton", "Mr. and Mrs. Marshall Hamilton and Family", 4, true],
   ["Hamilton", "Mr. David Ross Hamilton", 2, true, {
     members: [
