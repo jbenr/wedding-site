@@ -2407,14 +2407,12 @@ export const GUESTS = [
         "lastName": "Vallar"
       },
       {
-        "firstName": "Teddy",
+        "firstName": "Hatsy",
         "lastName": "Vallar"
       },
       {
-        "firstName": "Guest",
-        "lastName": "Vallar",
-        "placeholder": true,
-        "placeholderKind": "guest"
+        "firstName": "Teddy",
+        "lastName": "Vallar"
       }
     ],
     "events": [

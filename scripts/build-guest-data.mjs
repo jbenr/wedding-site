@@ -296,12 +296,10 @@ const RAW_ROWS = [
   ["Thompson", "Mr. and Mrs. Bryan Thompson", 2, true],
   ["Turnbull", "Ms. Lauren Turnbull and Mr. Cole Martin", 2, true],
   ["Turnbull", "The Turnbull Family", 3, false],
-  // Mrs. Vallar's first name is unknown — the missing 3rd seat is auto-filled
-  // below as a placeholder "Guest" for her; fill in her real name here once
-  // known.
-  ["Vallar", "Mr. and Mrs. Scott Vallar and Teddy Vallar", 3, false, {
+  ["Vallar", "Mr. Scott and Mrs. Hatsy Vallar, and Teddy Vallar", 3, false, {
     members: [
       { firstName: "Scott", lastName: "Vallar" },
+      { firstName: "Hatsy", lastName: "Vallar" },
       { firstName: "Teddy", lastName: "Vallar" }
     ]
   }],
