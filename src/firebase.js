@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, push, set, get, onValue, runTransaction } from "firebase/database";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBnhDg0vB098g8JDx_QMY7Yfpxt0l41x7M",
@@ -13,6 +14,13 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
+
+// Sign every visitor in anonymously so Realtime Database rules can require
+// `auth != null` without needing a login flow.
+signInAnonymously(auth).catch((error) => {
+  console.error("Anonymous Firebase sign-in failed:", error);
+});
 const clickCountRef = ref(db, "clickCount");
 const hoosierCountRef = ref(db, "goHoosiersCount");
 const deepTrackRef = (photoId) => ref(db, `deepTracks/${photoId}`);
@@ -31,6 +39,7 @@ const rsvpMetaRef = (householdId) => ref(db, `rsvpMeta/${householdId}`);
 
 export {
   db,
+  auth,
   clickCountRef,
   hoosierCountRef,
   deepTrackRef,
