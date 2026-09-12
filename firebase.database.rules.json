@@ -17,13 +17,13 @@
 
     "clickCount": {
       ".read": true,
-      ".write": true,
+      ".write": "auth != null",
       ".validate": "newData.isNumber() && newData.val() >= 0"
     },
 
     "goHoosiersCount": {
       ".read": true,
-      ".write": true,
+      ".write": "auth != null",
       ".validate": "newData.isNumber() && newData.val() >= 0"
     },
 
@@ -31,12 +31,12 @@
       ".read": true,
       "$photoId": {
         "likes": {
-          ".write": true,
+          ".write": "auth != null",
           ".validate": "newData.isNumber() && newData.val() >= 0"
         },
         "comments": {
           "$commentId": {
-            ".write": true,
+            ".write": "auth != null",
             ".validate": "newData.hasChildren(['text', 'ts']) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 280 && newData.child('ts').isNumber()"
           }
         }
@@ -46,7 +46,7 @@
     "goofyLikes": {
       ".read": true,
       "$photoId": {
-        ".write": true,
+        ".write": "auth != null",
         ".validate": "newData.isNumber() && newData.val() >= 0"
       }
     },
@@ -55,7 +55,7 @@
       ".read": true,
       "$photoId": {
         "$commentId": {
-          ".write": true,
+          ".write": "auth != null",
           ".validate": "newData.hasChildren(['text', 'ts']) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 280 && newData.child('ts').isNumber()"
         }
       }
@@ -64,7 +64,7 @@
     "hoosierLikes": {
       ".read": true,
       "$photoId": {
-        ".write": true,
+        ".write": "auth != null",
         ".validate": "newData.isNumber() && newData.val() >= 0"
       }
     },
@@ -73,7 +73,7 @@
       ".read": true,
       "$photoId": {
         "$commentId": {
-          ".write": true,
+          ".write": "auth != null",
           ".validate": "newData.hasChildren(['text', 'ts']) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 280 && newData.child('ts').isNumber()"
         }
       }
@@ -86,7 +86,7 @@
 
     "rsvps": {
       "$householdId": {
-        ".write": true,
+        ".write": "auth != null",
         ".validate": "newData.hasChildren(['submittedAt', 'guests'])",
 
         "submittedAt": {
@@ -121,7 +121,7 @@
     "rsvpMeta": {
       ".read": true,
       "$householdId": {
-        ".write": true,
+        ".write": "auth != null",
         ".validate": "newData.hasChildren(['submittedAt'])",
         "submittedAt": { ".validate": "newData.isNumber()" },
         "guestCount": { ".validate": "newData.isNumber() && newData.val() >= 0" },

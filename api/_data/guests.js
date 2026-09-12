@@ -614,6 +614,12 @@ export const GUESTS = [
       {
         "firstName": "Tate",
         "lastName": "Devito"
+      },
+      {
+        "firstName": "Guest",
+        "lastName": "Devito",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [
@@ -2088,7 +2094,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "welcome"
+      "rehearsal"
     ]
   },
   {
@@ -2156,43 +2162,29 @@ export const GUESTS = [
     ]
   },
   {
-    "id": "schaeffer-guest-1",
+    "id": "schaeffer-robert",
     "members": [
       {
-        "firstName": "Guest 1",
-        "lastName": "Schaeffer",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Robert",
+        "lastName": "Schaeffer"
       },
       {
-        "firstName": "Guest 2",
-        "lastName": "Schaeffer",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Stephanie",
+        "lastName": "Schaeffer"
       },
       {
-        "firstName": "Guest 3",
-        "lastName": "Schaeffer",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Izzy",
+        "lastName": "Schaeffer"
       },
       {
-        "firstName": "Guest 4",
-        "lastName": "Schaeffer",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Carrie",
+        "lastName": "Schaeffer"
       },
       {
-        "firstName": "Guest 5",
+        "firstName": "Guest",
         "lastName": "Schaeffer",
         "placeholder": true,
-        "placeholderKind": "family"
-      },
-      {
-        "firstName": "Guest 6",
-        "lastName": "Schaeffer",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2204,7 +2196,8 @@ export const GUESTS = [
     "members": [
       {
         "firstName": "John",
-        "lastName": "Schotta"
+        "lastName": "Schotta",
+        "displayName": "John (Heavy J) Schotta"
       },
       {
         "firstName": "Guest",
@@ -2222,7 +2215,8 @@ export const GUESTS = [
     "members": [
       {
         "firstName": "Rob",
-        "lastName": "Schotta"
+        "lastName": "Schotta",
+        "displayName": "Rob (Big R) Schotta"
       }
     ],
     "events": [
@@ -2399,6 +2393,28 @@ export const GUESTS = [
         "lastName": "Turnbull",
         "placeholder": true,
         "placeholderKind": "family"
+      }
+    ],
+    "events": [
+      "welcome"
+    ]
+  },
+  {
+    "id": "vallar-scott",
+    "members": [
+      {
+        "firstName": "Scott",
+        "lastName": "Vallar"
+      },
+      {
+        "firstName": "Teddy",
+        "lastName": "Vallar"
+      },
+      {
+        "firstName": "Guest",
+        "lastName": "Vallar",
+        "placeholder": true,
+        "placeholderKind": "guest"
       }
     ],
     "events": [
@@ -2619,6 +2635,12 @@ export const GUESTS = [
       {
         "firstName": "Chloe",
         "lastName": "Young"
+      },
+      {
+        "firstName": "Guest",
+        "lastName": "Young",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [

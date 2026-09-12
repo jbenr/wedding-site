@@ -77,7 +77,7 @@ const RAW_ROWS = [
   ["Dearman", "Dr. Ken and Mr. Anthony Dearman", 2, true],
   ["DeFilippo", "Ms. Camryn DeFilippo", 1, false],
   ["Devito", "Mr. Cooper Devito", 1, false],
-  ["Devito", "Mr. Tate Devito", 1, false],
+  ["Devito", "Mr. Tate Devito and Guest", 2, false],
   ["Devito", "Mrs. Lesli Devito", 1, false],
   ["Dickinson", "Mr. and Mrs. Cole Dickinson", 2, true, {
     members: [
@@ -258,7 +258,7 @@ const RAW_ROWS = [
   ["Reiss", "Mr. Josh Reiss and Ms. Maggie Lavoie", 2, false],
   ["Reiter", "Mr. and Mrs. Garrett Reiter", 2, false],
   ["Rittinger", "Ms. Kristy Rittinger", 1, false],
-  ["Romness", "Dr. and Mrs. Mark Romness", 2, false, {
+  ["Romness", "Dr. and Mrs. Mark Romness", 2, true, {
     members: [
       { firstName: "Mark", lastName: "Romness" },
       { firstName: "Christine", lastName: "Romness" }
@@ -268,9 +268,23 @@ const RAW_ROWS = [
   ["Romness", "Mr. William Romness and Guest", 2, true],
   ["Romness", "Ms. Jane Romness and Guest", 2, false],
   ["Rutledge", "Ms. Doesy Rutledge", 1, true],
-  ["Schaeffer", "The Schaeffer Family", 6, false],
-  ["Schotta", "Mr. John Schotta and Guest", 2, false],
-  ["Schotta", "Mr. Rob Schotta", 1, false],
+  ["Schaeffer", "Robert, Stephanie, Izzy, and Carrie Schaeffer and Guest", 5, false, {
+    members: [
+      { firstName: "Robert", lastName: "Schaeffer" },
+      { firstName: "Stephanie", lastName: "Schaeffer" },
+      { firstName: "Izzy", lastName: "Schaeffer" },
+      { firstName: "Carrie", lastName: "Schaeffer" }
+    ]
+  }],
+  // displayName is cosmetic only — shown on the RSVP form in place of
+  // "firstName lastName", but the RSVP itself still records the real name.
+  ["Schotta", "Mr. John Schotta and Guest", 2, false, {
+    members: [{ firstName: "John", lastName: "Schotta", displayName: "John (Heavy J) Schotta" }],
+    placeholderKind: "plus-one"
+  }],
+  ["Schotta", "Mr. Rob Schotta", 1, false, {
+    members: [{ firstName: "Rob", lastName: "Schotta", displayName: "Rob (Big R) Schotta" }]
+  }],
   ["Schotta", "Mr. Robert Schotta", 1, false],
   ["Schotta", "Ms. Carter Schotta", 1, false],
   ["Sezon", "Ms. Jeannine Sezon", 2, false],
@@ -282,6 +296,15 @@ const RAW_ROWS = [
   ["Thompson", "Mr. and Mrs. Bryan Thompson", 2, true],
   ["Turnbull", "Ms. Lauren Turnbull and Mr. Cole Martin", 2, true],
   ["Turnbull", "The Turnbull Family", 3, false],
+  // Mrs. Vallar's first name is unknown — the missing 3rd seat is auto-filled
+  // below as a placeholder "Guest" for her; fill in her real name here once
+  // known.
+  ["Vallar", "Mr. and Mrs. Scott Vallar and Teddy Vallar", 3, false, {
+    members: [
+      { firstName: "Scott", lastName: "Vallar" },
+      { firstName: "Teddy", lastName: "Vallar" }
+    ]
+  }],
   ["Venable", "Mr. and Mrs. Andrew Venable", 2, false],
   ["Walsh", "Mr. and Mrs. Andrew Walsh", 2, false],
   ["Warren", "Mr. and Mrs. Vaden Warren", 2, false],
@@ -299,7 +322,7 @@ const RAW_ROWS = [
   ["Young", "Mr. and Mrs. Matthew Young", 2, false, { qualifier: "FL" }],
   ["Young", "Mr. and Mrs. Matthew Young", 2, false, { qualifier: "OH" }],
   ["Young", "Mr. and Mrs. Oliver Young", 2, false],
-  ["Young", "Ms. Chloe Young", 1, false],
+  ["Young", "Ms. Chloe Young and Guest", 2, false],
   ["Young", "Mr. and Mrs. Stephen Young", 2, false],
   ["McNeese", "Mr. James McNeese II, Luke and Lance McNeese", 3, true],
   ["Crawford", "Mr. and Mrs. Wilson Crawford", 2, false],
@@ -469,7 +492,7 @@ const flagged = [];
 
 for (const [lastName, invite, guestsOnInvite, rehearsal, options = {}] of RAW_ROWS) {
   const { members, unparsed } = options.members
-    ? { members: withCount(options.members, guestsOnInvite, lastName, "unnamed extra", "guest") }
+    ? { members: withCount(options.members, guestsOnInvite, lastName, "unnamed extra", options.placeholderKind || "guest") }
     : parseInvite(lastName, invite, guestsOnInvite);
   const baseId = slugify(`${lastName}-${members[0]?.firstName || "guest"}`);
   const count = usedIds.get(baseId) || 0;

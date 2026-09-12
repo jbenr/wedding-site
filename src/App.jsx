@@ -2953,7 +2953,7 @@ function RSVPGuestName({ member, seatLabel, response, index, onChange, error, is
           fontFamily: "'Cormorant Garamond', serif"
         }}
       >
-        {member.firstName} {member.lastName}
+        {member.displayName || `${member.firstName} ${member.lastName}`}
       </p>
     );
   }
@@ -3006,7 +3006,7 @@ const RSVPGuestCard = React.forwardRef(function RSVPGuestCard(
 ) {
   const guestLabel = member.placeholder
     ? `${response.firstName || seatLabel} ${response.lastName}`.trim()
-    : `${member.firstName} ${member.lastName}`;
+    : member.displayName || `${member.firstName} ${member.lastName}`;
 
   return (
     <div ref={ref} style={{ ...getSectionCardStyle(isMobile), padding: isMobile ? "1.3rem" : "1.9rem" }}>

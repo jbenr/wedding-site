@@ -29,6 +29,9 @@ function serializeHousehold(household) {
     members: household.members.map((m) => ({
       firstName: m.firstName,
       lastName: m.lastName,
+      // Cosmetic-only nickname shown in place of "firstName lastName" on the
+      // RSVP form; the RSVP itself is still recorded under the real name.
+      ...(m.displayName ? { displayName: m.displayName } : {}),
       // Unnamed seats ("and Guest", "The X Family") come through flagged so
       // the form can ask whoever is responding to fill in the real name.
       ...(isPlaceholder(m) ? { placeholder: true, placeholderKind: m.placeholderKind || "guest" } : {}),
