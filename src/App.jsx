@@ -99,6 +99,7 @@ const DRAFTSMAN_URL = "https://app.marriott.com/reslink?id=1770319213584&key=GRP
 const ROSEMONT_FARM_ADDRESS = "241 Rosemont Farm Way, Charlottesville, VA 22903";
 const CHRIST_CHURCH_ADDRESS = "120 W High St, Charlottesville, VA 22902";
 const FARMINGTON_ADDRESS = "1625 Country Club Cir, Charlottesville, VA 22901";
+const BOARS_HEAD_ADDRESS = "200 Ednam Dr, Charlottesville, VA 22903";
 const CARD_FLIP_DURATION_MS = 650;
 const CELEBRATE_BUTTON_TEXT = "Can't Wait!";
 const HOLD_REVEAL_MS = 10000;
@@ -3854,7 +3855,23 @@ function InfoTab({ isMobile, reducedMotion }) {
             <ScheduleRow time="5:30 PM" event="Cocktail Hour" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} attire="Black Tie Optional" isMobile={isMobile} />
             <ScheduleRow time="6:30 PM" event="Reception & Dinner" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} attire="Black Tie Optional" isMobile={isMobile} />
             <ScheduleRow time="10:30 PM" event="Send Off" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} isMobile={isMobile} />
-            <ScheduleRow time="11:00 PM" event="Late Night" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} isLast isMobile={isMobile} />
+            <ScheduleRow time="11:00 PM" event="Late Night" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} isMobile={isMobile} />
+
+            {dayDivider()}
+
+            {/* Sunday */}
+            <h4 style={{
+              fontSize: isMobile ? "0.72rem" : "0.8rem",
+              fontWeight: 600,
+              color: COLORS.accent,
+              textTransform: "uppercase",
+              letterSpacing: isMobile ? "0.16em" : "0.2em",
+              marginBottom: "0.5rem"
+            }}>
+              Sunday, October 25
+            </h4>
+
+            <ScheduleRow time="10:00 AM" event="Farewell Brunch" location={renderVenueLocation("Boars Head Resort", BOARS_HEAD_ADDRESS)} isLast isMobile={isMobile} />
           </div>
         </div>
       </motion.div>
