@@ -371,11 +371,23 @@ const renderSectionTitle = (isMobile, text) => (
   <h3 style={getSectionTitleStyle(isMobile)}>{text}</h3>
 );
 
+const mapsUrl = (query) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+
 const renderVenueLocation = (name, address) => (
-  <>
-    {name}<br />
-    {address}
-  </>
+  <a
+    href={mapsUrl(address ? `${name}, ${address}` : name)}
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ color: "inherit", textDecoration: "none", borderBottom: "1px dotted currentColor" }}
+  >
+    {name}
+    {address && (
+      <>
+        <br />
+        {address}
+      </>
+    )}
+  </a>
 );
 
 const getTabPanelMotion = (reducedMotion) => ({
@@ -3833,7 +3845,7 @@ function InfoTab({ isMobile, reducedMotion }) {
               Friday, October 23
             </h4>
 
-            <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location="Birdwood Golf Club" note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} noteSuffix={`${GOLF_SPOTS_FILLED}/${GOLF_SPOTS_TOTAL} spots filled`} isMobile={isMobile} />
+            <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location={renderVenueLocation("Birdwood Golf Club")} note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} noteSuffix={`${GOLF_SPOTS_FILLED}/${GOLF_SPOTS_TOTAL} spots filled`} isMobile={isMobile} />
             <ScheduleRow time="5:30 PM" event="Rehearsal Dinner" location={renderVenueLocation("Farmington Country Club", FARMINGTON_ADDRESS)} attire="Cocktail Attire" isMobile={isMobile} />
             <ScheduleRow time="8:00 PM" event="Welcome Party" location={renderVenueLocation("Farmington Country Club", FARMINGTON_ADDRESS)} attire="Cocktail Attire" note="Guests are on their own for transportation to this event, see Shuttle Info for details." isLast isMobile={isMobile} />
 
@@ -3862,7 +3874,7 @@ function InfoTab({ isMobile, reducedMotion }) {
             <ScheduleRow time="5:30 PM" event="Cocktail Hour" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} attire="Black Tie" isMobile={isMobile} />
             <ScheduleRow time="6:30 PM" event="Reception & Dinner" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} attire="Black Tie" isMobile={isMobile} />
             <ScheduleRow time="10:30 PM" event="Send Off" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} isMobile={isMobile} />
-            <ScheduleRow time="11:00 PM" event="Late Night" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} isMobile={isMobile} />
+            <ScheduleRow time="11:00 PM" event="Late Night" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} isLast isMobile={isMobile} />
 
             {dayDivider()}
 
