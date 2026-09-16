@@ -95,6 +95,11 @@ import iuLogo from "./assets/IU.png";
 import hoosierLogo from "./assets/hoosier.png";
 const IU_LOGO_IMAGE = iuLogo;
 const GOLF_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc05xidXMl9XIGrUmGwN7IqLgqHv727BPUUq3r4118eVUyi-Q/viewform?usp=publish-editor";
+// Manual count from the "Wedding Golf" sign-up sheet responses — update this
+// when new golfers sign up. (Gage Reichert's duplicate resubmission on
+// 9/15 correcting his GHIN number is counted once, not twice.)
+const GOLF_SPOTS_FILLED = 17;
+const GOLF_SPOTS_TOTAL = 32;
 const DRAFTSMAN_URL = "https://app.marriott.com/reslink?id=1770319213584&key=GRP&app=resvlink";
 const ROSEMONT_FARM_ADDRESS = "241 Rosemont Farm Way, Charlottesville, VA 22903";
 const CHRIST_CHURCH_ADDRESS = "120 W High St, Charlottesville, VA 22902";
@@ -152,7 +157,7 @@ const useIsMobile = () => {
 };
 
 // Simple schedule row — clean two-column layout
-const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, isMobile }) => {
+const ScheduleRow = ({ time, event, location, attire, note, noteHref, noteSuffix, isLast, isMobile }) => {
   return (
     <div style={{
       padding: isMobile ? "0.9rem 0" : "0.8rem 0",
@@ -210,6 +215,7 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, is
               ) : (
                 note
               )}
+              {noteSuffix && <span style={{ color: COLORS.lightText }}> — {noteSuffix}</span>}
             </div>
           )}
         </div>
@@ -279,6 +285,7 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, isLast, is
                 ) : (
                   note
                 )}
+                {noteSuffix && <span style={{ color: COLORS.lightText }}> — {noteSuffix}</span>}
               </div>
             )}
           </div>
@@ -3826,7 +3833,7 @@ function InfoTab({ isMobile, reducedMotion }) {
               Friday, October 23
             </h4>
 
-            <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location="Birdwood Golf Club" note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} isMobile={isMobile} />
+            <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location="Birdwood Golf Club" note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} noteSuffix={`${GOLF_SPOTS_FILLED}/${GOLF_SPOTS_TOTAL} spots filled`} isMobile={isMobile} />
             <ScheduleRow time="5:30 PM" event="Rehearsal Dinner" location={renderVenueLocation("Farmington Country Club", FARMINGTON_ADDRESS)} attire="Cocktail Attire" isMobile={isMobile} />
             <ScheduleRow time="8:00 PM" event="Welcome Party" location={renderVenueLocation("Farmington Country Club", FARMINGTON_ADDRESS)} attire="Cocktail Attire" note="Guests are on their own for transportation to this event, see Shuttle Info for details." isLast isMobile={isMobile} />
 
@@ -3848,12 +3855,12 @@ function InfoTab({ isMobile, reducedMotion }) {
               time="4:30 PM"
               event="Ceremony"
               location={renderVenueLocation("Christ Episcopal Church", CHRIST_CHURCH_ADDRESS)}
-              attire="Black Tie Optional"
+              attire="Black Tie"
               note={<>Shuttles provided for guests staying at The Draftsman, Boars Head Resort, and The English Inn.<br />Driving in? Please arrive early - parking is limited downtown.</>}
               isMobile={isMobile}
             />
-            <ScheduleRow time="5:30 PM" event="Cocktail Hour" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} attire="Black Tie Optional" isMobile={isMobile} />
-            <ScheduleRow time="6:30 PM" event="Reception & Dinner" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} attire="Black Tie Optional" isMobile={isMobile} />
+            <ScheduleRow time="5:30 PM" event="Cocktail Hour" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} attire="Black Tie" isMobile={isMobile} />
+            <ScheduleRow time="6:30 PM" event="Reception & Dinner" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} attire="Black Tie" isMobile={isMobile} />
             <ScheduleRow time="10:30 PM" event="Send Off" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} isMobile={isMobile} />
             <ScheduleRow time="11:00 PM" event="Late Night" location={renderVenueLocation("Rosemont Farm", ROSEMONT_FARM_ADDRESS)} isMobile={isMobile} />
 
