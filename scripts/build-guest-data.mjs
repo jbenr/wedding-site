@@ -24,7 +24,16 @@ const WELCOME_PARTY_FOR_ALL = true;
 
 const RAW_ROWS = [
   ["Atwell", "Ms. Bridget Atwell", 1, false],
-  ["Barnes", "The Barnes Family", 4, true],
+  // Divorced parents — deliberately two separate invitations, not one household.
+  ["Barnes", "The Barnes Family", 4, true, {
+    members: [
+      { firstName: "Mandy", lastName: "Barnes" },
+      { firstName: "Maya", lastName: "Barnes" },
+      { firstName: "Sofia", lastName: "Barnes" },
+      { firstName: "Joe", lastName: "Barnes" }
+    ]
+  }],
+  ["Barnes", "Mr. Jason Barnes", 1, true],
   ["Barry", "Mr. Christopher Barry", 1, false],
   ["Bermudez", "Mr. and Mrs. Esteban Bermudez", 2, false],
   ["Berry", "Mr. and Mrs. Mike Berry", 2, false],
@@ -537,7 +546,7 @@ export const WEDDING_EVENT = {
   date: "Saturday, October 24, 2026",
   time: "4:30 PM",
   venue: "Christ Episcopal Church, then Rosemont Farm",
-  attire: "Black Tie Optional"
+  attire: "Black Tie"
 };
 
 export const EVENT_DEFINITIONS = {

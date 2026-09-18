@@ -295,6 +295,58 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, noteSuffix
   );
 };
 
+// Live golf sign-up count, with a manual refresh button — falls back to a
+// static number (see GOLF_SPOTS_FILLED) if the live source is unreachable.
+function GolfSpotsTracker({ fallbackFilled, total }) {
+  const [state, setState] = useState({ filled: fallbackFilled, total, loading: true });
+
+  const fetchCount = async () => {
+    setState((s) => ({ ...s, loading: true }));
+    try {
+      const res = await fetch("/api/golf-count");
+      const data = await res.json();
+      setState({
+        filled: typeof data.filled === "number" ? data.filled : fallbackFilled,
+        total: typeof data.total === "number" ? data.total : total,
+        loading: false
+      });
+    } catch {
+      setState((s) => ({ ...s, loading: false }));
+    }
+  };
+
+  useEffect(() => {
+    fetchCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <span>
+      {state.filled}/{state.total} spots filled
+      <button
+        type="button"
+        onClick={fetchCount}
+        disabled={state.loading}
+        title="Refresh count"
+        aria-label="Refresh golf spots count"
+        style={{
+          marginLeft: "0.4em",
+          border: "none",
+          background: "none",
+          padding: 0,
+          font: "inherit",
+          color: "inherit",
+          cursor: state.loading ? "default" : "pointer",
+          opacity: state.loading ? 0.5 : 1,
+          verticalAlign: "-0.05em"
+        }}
+      >
+        ↻
+      </button>
+    </span>
+  );
+}
+
 const getTabTitleStyle = (isMobile) => ({
   textAlign: "center",
   fontSize: isMobile ? "1.95rem" : "3rem",
@@ -3845,7 +3897,7 @@ function InfoTab({ isMobile, reducedMotion }) {
               Friday, October 23
             </h4>
 
-            <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location={renderVenueLocation("Birdwood Golf Club")} note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} noteSuffix={`${GOLF_SPOTS_FILLED}/${GOLF_SPOTS_TOTAL} spots filled`} isMobile={isMobile} />
+            <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location={renderVenueLocation("Birdwood Golf Club")} note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} noteSuffix={<GolfSpotsTracker fallbackFilled={GOLF_SPOTS_FILLED} total={GOLF_SPOTS_TOTAL} />} isMobile={isMobile} />
             <ScheduleRow time="5:30 PM" event="Rehearsal Dinner" location={renderVenueLocation("Farmington Country Club", FARMINGTON_ADDRESS)} attire="Cocktail Attire" isMobile={isMobile} />
             <ScheduleRow time="8:00 PM" event="Welcome Party" location={renderVenueLocation("Farmington Country Club", FARMINGTON_ADDRESS)} attire="Cocktail Attire" note="Guests are on their own for transportation to this event, see Shuttle Info for details." isLast isMobile={isMobile} />
 

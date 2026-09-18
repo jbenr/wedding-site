@@ -19,7 +19,7 @@ export const WEDDING_EVENT = {
   date: "Saturday, October 24, 2026",
   time: "4:30 PM",
   venue: "Christ Episcopal Church, then Rosemont Farm",
-  attire: "Black Tie Optional"
+  attire: "Black Tie"
 };
 
 export const EVENT_DEFINITIONS = {
@@ -59,31 +59,35 @@ export const GUESTS = [
     ]
   },
   {
-    "id": "barnes-guest-1",
+    "id": "barnes-mandy",
     "members": [
       {
-        "firstName": "Guest 1",
-        "lastName": "Barnes",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Mandy",
+        "lastName": "Barnes"
       },
       {
-        "firstName": "Guest 2",
-        "lastName": "Barnes",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Maya",
+        "lastName": "Barnes"
       },
       {
-        "firstName": "Guest 3",
-        "lastName": "Barnes",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Sofia",
+        "lastName": "Barnes"
       },
       {
-        "firstName": "Guest 4",
-        "lastName": "Barnes",
-        "placeholder": true,
-        "placeholderKind": "family"
+        "firstName": "Joe",
+        "lastName": "Barnes"
+      }
+    ],
+    "events": [
+      "rehearsal"
+    ]
+  },
+  {
+    "id": "barnes-jason",
+    "members": [
+      {
+        "firstName": "Jason",
+        "lastName": "Barnes"
       }
     ],
     "events": [
