@@ -2404,6 +2404,18 @@ export const GUESTS = [
     ]
   },
   {
+    "id": "upchurch-joe",
+    "members": [
+      {
+        "firstName": "Joe",
+        "lastName": "Upchurch"
+      }
+    ],
+    "events": [
+      "welcome"
+    ]
+  },
+  {
     "id": "vallar-scott",
     "members": [
       {

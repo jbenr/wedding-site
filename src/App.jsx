@@ -157,7 +157,7 @@ const useIsMobile = () => {
 };
 
 // Simple schedule row — clean two-column layout
-const ScheduleRow = ({ time, event, location, attire, note, noteHref, noteSuffix, isLast, isMobile }) => {
+const ScheduleRow = ({ time, event, location, attire, note, noteHref, noteSuffix, details, isLast, isMobile }) => {
   return (
     <div style={{
       padding: isMobile ? "0.9rem 0" : "0.8rem 0",
@@ -218,11 +218,21 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, noteSuffix
               {noteSuffix && <span style={{ color: COLORS.lightText }}> — {noteSuffix}</span>}
             </div>
           )}
+          {details && (
+            <div style={{
+              marginTop: "0.35rem",
+              fontSize: "0.7rem",
+              lineHeight: 1.55,
+              color: COLORS.lightText
+            }}>
+              {details}
+            </div>
+          )}
         </div>
       ) : (
         <div style={{
           display: "grid",
-          gridTemplateColumns: "minmax(92px, auto) minmax(0, 1fr)",
+          gridTemplateColumns: "minmax(92px, 140px) minmax(0, 1fr)",
           gap: "0.75rem",
           alignItems: "start"
         }}>
@@ -230,7 +240,8 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, noteSuffix
             flexShrink: 0,
             fontSize: "0.95rem",
             color: COLORS.lightText,
-            whiteSpace: "nowrap",
+            whiteSpace: "normal",
+            lineHeight: 1.3,
             paddingTop: "0.05rem"
           }}>
             {time}
@@ -286,6 +297,16 @@ const ScheduleRow = ({ time, event, location, attire, note, noteHref, noteSuffix
                   note
                 )}
                 {noteSuffix && <span style={{ color: COLORS.lightText }}> — {noteSuffix}</span>}
+              </div>
+            )}
+            {details && (
+              <div style={{
+                marginTop: "0.4rem",
+                fontSize: "0.76rem",
+                lineHeight: 1.55,
+                color: COLORS.lightText
+              }}>
+                {details}
               </div>
             )}
           </div>
@@ -3897,7 +3918,16 @@ function InfoTab({ isMobile, reducedMotion }) {
               Friday, October 23
             </h4>
 
-            <ScheduleRow time="10:00 AM" event="Scramble Golf Tournament" location={renderVenueLocation("Birdwood Golf Club")} note="If interested, fill out this form." noteHref={GOLF_FORM_URL || undefined} noteSuffix={<GolfSpotsTracker fallbackFilled={GOLF_SPOTS_FILLED} total={GOLF_SPOTS_TOTAL} />} isMobile={isMobile} />
+            <ScheduleRow
+              time="Tee times from 9:42 - 11:06"
+              event="Scramble Golf Tournament"
+              location={renderVenueLocation("Birdwood Golf Club")}
+              note="If interested, fill out this form."
+              noteHref={GOLF_FORM_URL || undefined}
+              noteSuffix={<GolfSpotsTracker fallbackFilled={GOLF_SPOTS_FILLED} total={GOLF_SPOTS_TOTAL} />}
+              details="$180, all-inclusive. If spots are full, text Ben (434-987-2302) or Hunter (434-409-4280) and we'll see what we can do. 2-man scramble, straight up, with prizes for 1st, 2nd, 3rd, longest drive, and closest to the pin. Teams will be made by handicap — let us know if you have a teammate preference."
+              isMobile={isMobile}
+            />
             <ScheduleRow time="5:30 PM" event="Rehearsal Dinner" location={renderVenueLocation("Farmington Country Club", FARMINGTON_ADDRESS)} attire="Cocktail Attire" isMobile={isMobile} />
             <ScheduleRow time="8:00 PM" event="Welcome Party" location={renderVenueLocation("Farmington Country Club", FARMINGTON_ADDRESS)} attire="Cocktail Attire" note="Guests are on their own for transportation to this event, see Shuttle Info for details." isLast isMobile={isMobile} />
 

@@ -305,6 +305,7 @@ const RAW_ROWS = [
   ["Thompson", "Mr. and Mrs. Bryan Thompson", 2, true],
   ["Turnbull", "Ms. Lauren Turnbull and Mr. Cole Martin", 2, true],
   ["Turnbull", "The Turnbull Family", 3, false],
+  ["Upchurch", "Mr. Joe Upchurch", 1, false],
   ["Vallar", "Mr. Scott and Mrs. Hatsy Vallar, and Teddy Vallar", 3, false, {
     members: [
       { firstName: "Scott", lastName: "Vallar" },
