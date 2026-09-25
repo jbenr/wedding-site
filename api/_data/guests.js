@@ -1590,6 +1590,22 @@ export const GUESTS = [
     ]
   },
   {
+    "id": "mcgill-peter",
+    "members": [
+      {
+        "firstName": "Peter",
+        "lastName": "McGill"
+      },
+      {
+        "firstName": "Jaclyn",
+        "lastName": "McGill"
+      }
+    ],
+    "events": [
+      "welcome"
+    ]
+  },
+  {
     "id": "mcneese-james-c",
     "members": [
       {

@@ -218,6 +218,12 @@ const RAW_ROWS = [
   ["Mackey", "Mr. Brett Mackey and Ms. Megan McBride", 2, false],
   ["Maurer", "Mr. and Mrs. James Maurer", 2, false],
   ["McGee", "Ms. Abby McGee", 1, false],
+  ["McGill", "Mr. Peter McGill and Mrs. Jaclyn McGill", 2, false, {
+    members: [
+      { firstName: "Peter", lastName: "McGill" },
+      { firstName: "Jaclyn", lastName: "McGill" }
+    ]
+  }],
   ["McNeese", "Mr. and Mrs. James C. McNeese", 2, true],
   ["Meadow", "Mr. and Mrs. Cary Meadow", 2, false],
   ["Miller", "Dr. and Mrs. Scott Miller", 2, false],
