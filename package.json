@@ -12,7 +12,8 @@
     "rsvp:summary": "node scripts/rsvp-status.mjs --summary",
     "rsvp:pending": "node scripts/rsvp-status.mjs --pending",
     "rsvp:rsvped": "node scripts/rsvp-status.mjs --rsvped",
-    "rsvp:rd": "node scripts/rsvp-status.mjs --rd"
+    "rsvp:rd": "node scripts/rsvp-status.mjs --rd",
+    "rsvp:sheet": "node scripts/rsvp-sheet-rebuild.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^1.6.1",

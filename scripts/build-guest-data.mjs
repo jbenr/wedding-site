@@ -263,7 +263,7 @@ const RAW_ROWS = [
   }],
   ["Reichert", "Mr. Jonathan Charles Reichert and Ms. Elise Calzaretta", 2, true],
   ["Reichert", "Mr. Angus Reichert", 1, true],
-  ["Reichert", "Mr. Griffin Reichert", 1, true],
+  ["Reichert", "Mr. Griffin Reichert and Guest", 2, true],
   ["Reichert", "Mr. Fox Reichert", 1, true],
   ["Reichert", "Mr. Gresham Harrison Reichert and Ms. Olivia Rentz", 2, true],
   ["Reichert", "Mr. William Jackson Reichert", 1, true],
@@ -326,7 +326,7 @@ const RAW_ROWS = [
   ["Williamson", "Mr. and Mrs. John Paul Williamson", 2, false],
   ["Wright", "Drs. Bryan and Katy Wright", 2, false],
   ["Wright", "Mr. and Mrs. Spencer Wright", 2, false],
-  ["Xiang", "Future Mr. and Mrs. Justin Xiang", 2, false, {
+  ["Xiang", "Future Mr. and Mrs. Justin Xiang", 2, true, {
     members: [
       { firstName: "Justin", lastName: "Xiang" },
       { firstName: "Amanda", lastName: "Xiang" }

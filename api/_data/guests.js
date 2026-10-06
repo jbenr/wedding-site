@@ -1969,6 +1969,12 @@ export const GUESTS = [
       {
         "firstName": "Griffin",
         "lastName": "Reichert"
+      },
+      {
+        "firstName": "Guest",
+        "lastName": "Reichert",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [
@@ -2582,7 +2588,7 @@ export const GUESTS = [
       }
     ],
     "events": [
-      "welcome"
+      "rehearsal"
     ]
   },
   {

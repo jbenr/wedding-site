@@ -71,6 +71,18 @@ wedding accepts so far, and the latest five RSVP timestamps. Full answers,
 meal choices, dietary notes, and Friday-event answers remain in Firebase
 `rsvps/<householdId>` and the mirrored `RSVPs` sheet.
 
+The live mirror is best-effort and can miss submissions. To rebuild the
+`RSVPs` tab from Firebase so it matches exactly, along with a `Pending` tab of
+households that haven't responded (each new RSVP removes itself from it):
+
+```bash
+npm run rsvp:sheet             # wipe and rewrite the RSVPs + Pending tabs
+npm run rsvp:sheet -- --dry-run # just print what Firebase has
+```
+
+This reads Firebase through the Firebase CLI, so it needs you logged in as a
+project owner once: `npx firebase-tools login`.
+
 ## Updating the guest list
 
 `api/_data/guests.js` is generated — don't hand-edit it.
