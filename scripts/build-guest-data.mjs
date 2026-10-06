@@ -238,7 +238,7 @@ const RAW_ROWS = [
   }],
   ["Montgomery", "Mr. and Mrs. Kelly Montgomery", 2, false],
   ["Myers", "Dr. and Mrs. Wallin Myers", 2, false],
-  ["Nadler", "Mr. Matthew Nadler and Mr. Nicholas Bienen-Esayian", 2, false],
+  ["Nadler", "Mr. Matthew Nadler", 1, false],
   ["Nicholson", "Mr. and Mrs. Steve Nicholson", 2, false],
   ["Northington", "Mr. and Mrs. Robert Northington", 2, false],
   ["Northington", "Mr. Banks Northington and Ms. Caroline Hartigan", 2, true],

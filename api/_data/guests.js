@@ -1729,10 +1729,6 @@ export const GUESTS = [
       {
         "firstName": "Matthew",
         "lastName": "Nadler"
-      },
-      {
-        "firstName": "Nicholas",
-        "lastName": "Bienen-Esayian"
       }
     ],
     "events": [
