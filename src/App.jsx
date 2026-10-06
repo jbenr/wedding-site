@@ -51,7 +51,30 @@ const courtneyPhotos = globToArray(import.meta.glob("./assets/courtney/*", { eag
 const addisonPhotos = globToArray(import.meta.glob("./assets/addison/*", { eager: true }));
 const lilyPhotos = globToArray(import.meta.glob("./assets/lily/*", { eager: true }));
 const mariaPhotos = globToArray(import.meta.glob("./assets/maria/*", { eager: true }));
-const goofyPhotos = globToArray(import.meta.glob("./assets/goofy/*", { eager: true }));
+// Goofy photo likes/comments are stored by position (deepTracks/0, /1, ...),
+// not filename, so a photo's slot must never change once it's live. Plain
+// filename order broke that when newer photos sorted ahead of the originals.
+// Append new photos to the END of this list; anything unlisted lands after it.
+const GOOFY_PHOTO_ORDER = [
+  // Original ten (Mar 2026) — slots 0–9
+  "IMG_0770", "IMG_0976", "IMG_0978", "IMG_0979", "IMG_0997",
+  "IMG_0998", "IMG_0999", "IMG_1010", "IMG_5115", "IMG_6888",
+  // Added Oct 2026 — slots 10–29
+  "IMG_0062", "IMG_0207", "IMG_0388", "IMG_0459", "IMG_0473",
+  "IMG_0546", "IMG_0645", "IMG_0658", "IMG_0683", "IMG_0811",
+  "IMG_0875", "IMG_0892", "IMG_0955", "IMG_1026", "IMG_1032",
+  "IMG_1033", "IMG_1046", "IMG_1077", "IMG_1090", "IMG_1136"
+];
+const goofyPhotoSlot = (path) => {
+  const index = GOOFY_PHOTO_ORDER.indexOf(path.split("/").pop().replace(/\.[^.]+$/, ""));
+  return index === -1 ? GOOFY_PHOTO_ORDER.length : index;
+};
+const goofyPhotos = globToArray(
+  Object.fromEntries(
+    Object.entries(import.meta.glob("./assets/goofy/*", { eager: true }))
+      .sort(([a], [b]) => goofyPhotoSlot(a) - goofyPhotoSlot(b) || a.localeCompare(b))
+  )
+);
 const hoosierPhotos = globToArray(import.meta.glob("./assets/hoosiers/*", { eager: true }));
 const maddiePhotos = globToArray(import.meta.glob("./assets/maddie/*", { eager: true }));
 const colemanPhotos = globToArray(import.meta.glob("./assets/coleman/*", { eager: true }));
@@ -872,7 +895,7 @@ function PeelOverlay({ isVisible, progress, peelOffset, isCommitting, isMobile, 
   );
 }
 
-// Captions for goofy photos — update to match your photos
+// Captions for goofy photos, in GOOFY_PHOTO_ORDER — update to match your photos
 const GOOFY_CAPTIONS = [
   "Looking good, you two",
   "Absolutely iconic",
@@ -883,7 +906,28 @@ const GOOFY_CAPTIONS = [
   "Main characters",
   "No notes",
   "Unhinged and in love",
-  "Certified goofballs"
+  "Certified goofballs",
+  // Added Oct 2026
+  "Straight to the pool room",
+  "Chaos, but make it cute",
+  "A deep cut for the real fans",
+  "Couldn't have planned it better",
+  "Zero thoughts, all vibes",
+  "The blooper reel",
+  "Somebody frame this",
+  "Peak Bemily",
+  "We have no explanation",
+  "Unmatched energy",
+  "Professionally unserious",
+  "Hall of fame material",
+  "Living their best life",
+  "This one's going in the slideshow",
+  "Simply built different",
+  "Mood forever",
+  "Caught in 4K",
+  "Rare footage",
+  "The lore runs deep",
+  "Ten out of ten"
 ];
 
 // Phase constants
