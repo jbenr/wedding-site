@@ -3284,9 +3284,19 @@ function RSVPNameField({ value, onChange, placeholder, suggestions, onPick, ...i
     updateRect();
     window.addEventListener("scroll", updateRect, true);
     window.addEventListener("resize", updateRect);
+    // Mobile keyboards resize/pan the page through window.visualViewport,
+    // not window itself — on iOS and Android, opening the keyboard fires
+    // visualViewport "resize"/"scroll" with no matching window event, so
+    // without this the dropdown's position goes stale the moment the
+    // keyboard animates in and can end up floating above the field.
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", updateRect);
+    vv?.addEventListener("scroll", updateRect);
     return () => {
       window.removeEventListener("scroll", updateRect, true);
       window.removeEventListener("resize", updateRect);
+      vv?.removeEventListener("resize", updateRect);
+      vv?.removeEventListener("scroll", updateRect);
     };
   }, [showDropdown, suggestions.length]);
 
@@ -3353,6 +3363,16 @@ function RSVPNameField({ value, onChange, placeholder, suggestions, onPick, ...i
                 aria-selected={i === activeIndex}
                 // onMouseDown (not onClick) fires before the input's onBlur,
                 // so the pick registers before the dropdown would otherwise close.
+                // onTouchStart covers the same case on mobile: without it, a tap
+                // can blur the input (closing the dropdown) before the browser's
+                // compatibility mousedown event reaches this suggestion, so the
+                // pick is silently dropped. preventDefault here stops that
+                // compatibility mouse event from firing at all, so the two
+                // handlers never double-fire.
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  onPick(s);
+                }}
                 onMouseDown={(e) => {
                   e.preventDefault();
                   onPick(s);
