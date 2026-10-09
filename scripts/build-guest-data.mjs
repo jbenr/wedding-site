@@ -38,6 +38,8 @@ const RAW_ROWS = [
   ["Bermudez", "Mr. and Mrs. Esteban Bermudez", 2, false],
   ["Berry", "Mr. and Mrs. Mike Berry", 2, false],
   ["Berry", "Mr. and Mrs. Fritz Berry", 2, false],
+  ["Berry", "Mr. Fritz Berry Jr and Guest", 2, false],
+  ["Berry", "Sheridan Berry and Guest", 2, false],
   ["Bienen-Esayian", "Mr. Nicholas Bienen-Esayian", 1, false],
   ["Billings", "Mrs. Lisa Billings and Guest", 2, false],
   ["Billings", "Mr. Nicholas Billings and Guest", 2, false],

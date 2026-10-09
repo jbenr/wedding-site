@@ -161,6 +161,42 @@ export const GUESTS = [
     ]
   },
   {
+    "id": "berry-fritz-2",
+    "members": [
+      {
+        "firstName": "Fritz",
+        "lastName": "Berry Jr"
+      },
+      {
+        "firstName": "Guest",
+        "lastName": "Berry",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
+      }
+    ],
+    "events": [
+      "welcome"
+    ]
+  },
+  {
+    "id": "berry-sheridan",
+    "members": [
+      {
+        "firstName": "Sheridan",
+        "lastName": "Berry"
+      },
+      {
+        "firstName": "Guest",
+        "lastName": "Berry",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
+      }
+    ],
+    "events": [
+      "welcome"
+    ]
+  },
+  {
     "id": "bienen-esayian-nicholas",
     "members": [
       {
