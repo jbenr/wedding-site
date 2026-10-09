@@ -42,6 +42,7 @@ const RAW_ROWS = [
   ["Billings", "Mrs. Lisa Billings and Guest", 2, false],
   ["Billings", "Mr. Nicholas Billings and Guest", 2, false],
   ["Bladt", "Mr. and Mrs. William Bladt", 4, false],
+  ["Blanton", "Mr. and Mrs. Jay Blanton", 2, false],
   ["Bodman", "Future Mr. and Ms. Charlie Bodman", 2, true, {
     members: [
       { firstName: "Charlie", lastName: "Bodman" },
@@ -180,6 +181,7 @@ const RAW_ROWS = [
   ["Holmes", "Ms. Hobby Holmes and Guest", 2, false],
   ["Horak", "Mr. and Mrs. Thomas Horak", 2, false],
   ["Hurley", "Mr. and Mrs. Charles Hurley and Family", 4, false],
+  ["Ibbeken", "Mr. and Mrs. David Ibbeken", 2, false],
   ["Johan", "Mr. and Mrs. Christopher Johan", 2, false],
   ["Johan", "Mr. and Mrs. Paul Johan", 2, false],
   ["Johan", "Ms. Carter Johan and guest", 2, false],

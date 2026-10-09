@@ -239,6 +239,24 @@ export const GUESTS = [
     ]
   },
   {
+    "id": "blanton-jay",
+    "members": [
+      {
+        "firstName": "Jay",
+        "lastName": "Blanton"
+      },
+      {
+        "firstName": "Guest",
+        "lastName": "Blanton",
+        "placeholder": true,
+        "placeholderKind": "guest"
+      }
+    ],
+    "events": [
+      "welcome"
+    ]
+  },
+  {
     "id": "bodman-charlie",
     "members": [
       {
@@ -1230,6 +1248,24 @@ export const GUESTS = [
       {
         "firstName": "Guest 3",
         "lastName": "Hurley",
+        "placeholder": true,
+        "placeholderKind": "guest"
+      }
+    ],
+    "events": [
+      "welcome"
+    ]
+  },
+  {
+    "id": "ibbeken-david",
+    "members": [
+      {
+        "firstName": "David",
+        "lastName": "Ibbeken"
+      },
+      {
+        "firstName": "Guest",
+        "lastName": "Ibbeken",
         "placeholder": true,
         "placeholderKind": "guest"
       }
