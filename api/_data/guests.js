@@ -777,6 +777,18 @@ export const GUESTS = [
     ]
   },
   {
+    "id": "divecchia-adriana",
+    "members": [
+      {
+        "firstName": "Adriana",
+        "lastName": "DiVecchia"
+      }
+    ],
+    "events": [
+      "welcome"
+    ]
+  },
+  {
     "id": "dosey-jordan",
     "members": [
       {
@@ -948,6 +960,18 @@ export const GUESTS = [
       {
         "firstName": "George",
         "lastName": "Geraghty"
+      }
+    ],
+    "events": [
+      "welcome"
+    ]
+  },
+  {
+    "id": "giles-ava",
+    "members": [
+      {
+        "firstName": "Ava",
+        "lastName": "Giles"
       }
     ],
     "events": [

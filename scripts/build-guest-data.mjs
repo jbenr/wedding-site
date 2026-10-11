@@ -101,6 +101,7 @@ const RAW_ROWS = [
   ["Dickinson", "Mr. Tee Dickinson", 1, false],
   ["Dillard", "Mr. Ian Dillard and Guest", 2, false],
   ["Dilliard", "Drs. Reggie and Jennifer Dilliard", 2, false],
+  ["DiVecchia", "Ms. Adriana DiVecchia", 1, false],
   ["Dosey", "Future Mr. and Ms. Jordan Dosey", 2, false, {
     members: [
       { firstName: "Jordan", lastName: "Dosey" },
@@ -128,6 +129,7 @@ const RAW_ROWS = [
   }],
   ["Geismer", "Mr. and Mrs. Michael Geismer", 2, false],
   ["Geraghty", "Mr. George Geraghty", 1, false],
+  ["Giles", "Ms. Ava Giles", 1, false],
   ["Gibbons", "Mr. and Mrs. Joel Gibbons", 2, true, {
     members: [
       { firstName: "Joel", lastName: "Gibbons" },
