@@ -2389,6 +2389,12 @@ export const GUESTS = [
       {
         "firstName": "Sami",
         "lastName": "Shope"
+      },
+      {
+        "firstName": "Guest",
+        "lastName": "Shope",
+        "placeholder": true,
+        "placeholderKind": "plus-one"
       }
     ],
     "events": [

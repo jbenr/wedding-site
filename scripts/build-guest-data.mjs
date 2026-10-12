@@ -309,7 +309,7 @@ const RAW_ROWS = [
   ["Schotta", "Mr. Robert Schotta", 1, false],
   ["Schotta", "Ms. Carter Schotta", 1, false],
   ["Sezon", "Ms. Jeannine Sezon", 2, false],
-  ["Shope", "Ms. Sami Shope", 1, false],
+  ["Shope", "Ms. Sami Shope and Guest", 2, false],
   ["Spadaccini", "Mr. Matt Baffuto and Mrs. Erin Spadaccini", 2, false],
   ["Stalfort", "Mr. and Mrs. Sean Stalfort", 2, false],
   ["Takes", "Mr. Craig Takes and Mrs. Heather Takes-Trees", 2, false],
