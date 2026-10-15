@@ -23,6 +23,8 @@ import ut from "./assets/UT.png";
 import uva from "./assets/UVA.png";
 import w from "./assets/W.svg";
 import wl from "./assets/WL.png";
+import dartmouth from "./assets/dartmouth.png";
+import giants from "./assets/giants.png";
 
 // Helper to turn an import.meta.glob result into an array of URLs
 const globToArray = (modules) =>
@@ -78,6 +80,7 @@ const goofyPhotos = globToArray(
 const hoosierPhotos = globToArray(import.meta.glob("./assets/hoosiers/*", { eager: true }));
 const maddiePhotos = globToArray(import.meta.glob("./assets/maddie/*", { eager: true }));
 const colemanPhotos = globToArray(import.meta.glob("./assets/coleman/*", { eager: true }));
+const romnessPhotos = globToArray(import.meta.glob("./assets/romness/*", { eager: true }));
 
 // Toggle RSVP form visibility (set to true when invites are sent)
 const RSVP_ENABLED = true;
@@ -4389,6 +4392,7 @@ function WeddingPartyTab({ isMobile, reducedMotion }) {
     { frontName: "Henry Kreienbaum", backName: "Henry Cignetti", relation: "Dog", photos: henryPhotos, role: "Groomsman", maxBench: "265 lbs", fortyYard: "5.3s", handicap: "15.0", relationshipStatus: "Taken", currentCity: "Atlanta, GA", college: "James Madison University", collegeLogo: dukes, collegeLogoScale: 1.5, footballTeam: "Washington Commanders", footballLogo: commies, comment: "Don't ask this guy about NASCAR, but do ask about Curt Cignetti. And definitely ask for a Juul rip." },
     { frontName: "Oliver Herndon", backName: "Oli", relation: "Dog", photos: oliPhotos, role: "Groomsman", maxBench: "255 lbs", fortyYard: "4.6s", handicap: "22.0", relationshipStatus: "Engaged", currentCity: "New York, NY", college: "Washington & Lee University", collegeLogo: wl, footballTeam: "Washington Redskins", footballLogo: skins, comment: "Don give a piss bout nun but the Tide. And slow pitch softball. And zyns. Don't let this guy or his fiancée know that you have zyns." },
     { frontName: "Joel Gibbons V", backName: "Wood", relation: "Dog", photos: woodsPhotos, role: "Groomsman", maxBench: "155 lbs", fortyYard: "6.7s", handicap: "21.0", relationshipStatus: "Taken?", currentCity: "Washington DC", college: "Indiana University", collegeLogo: hoosierLogo, footballTeam: "Houston Texans", footballLogo: tex, comment: "While Wood is pretty smoked out, his exotic artwork will surely be worth millions one day. Don't mention politics around this guy, but do mention au pairs." },
+    { frontName: "William Romness", backName: "Beastula", relation: "—", photos: romnessPhotos, role: "Groomsman", maxBench: "245 lbs", fortyYard: "4.45s", handicap: "42.0", relationshipStatus: "—", currentCity: "—", college: "Dartmouth College", collegeLogo: dartmouth, footballTeam: "New York Giants", footballLogo: giants, comment: "" },
     { frontName: "Wyatt Collins", backName: "Wyatt", relation: "Brother-in-law", photos: wyattPhotos, role: "Groomsman", maxBench: "225 lbs", fortyYard: "5.5s", handicap: "8.0", relationshipStatus: "Single", currentCity: "Knoxville, TN", college: "University of Tennessee", collegeLogo: ut, collegeLogoScale: 0.9, footballTeam: "The Vols", footballLogo: ut, footballLogoScale: 0.9, comment: "Known for his e4 openings as white and JUCO league thunder thighs. Don't trust your girlfriend around this guy." }
   ];
 
