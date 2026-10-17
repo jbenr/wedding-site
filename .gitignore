@@ -24,3 +24,8 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Golf data (guest names, handicaps, phone numbers)
+golf/*.tsv
+golf/*.csv
+golf/*.txt
